@@ -1,5 +1,7 @@
 package com.alwa.spread;
 
+import static com.alwa.spread.SpreadValidator.validateCumulativeObjectType;
+
 public class SpreadUtil {
 
     private static <T> Spread<T> spread(T seed) {
@@ -11,6 +13,7 @@ public class SpreadUtil {
     }
 
     public static <T> Spread<T> cumulative(T example) {
+        validateCumulativeObjectType(example);
         return cumulativeSpread(example);
     }
 

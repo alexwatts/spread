@@ -154,4 +154,9 @@ public class SpreaderTest {
 
     }
 
+    @Test
+    public void testUnsupportedCumulativeClassValidation() {
+        Spread<TestDataObject> unsupportedCumulative = SpreadUtil.cumulative(new TestDataObject());
+    }
+
 }
