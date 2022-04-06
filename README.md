@@ -50,7 +50,7 @@ This works in a similar way for factory methods:
      List<ElectricityReading> readings =
             new Spreader<ElectricityReading>()
                 .factory(
-                    () -> ElectricityReading.::new
+                    () -> ElectricityReading::new
                 )
                 .mutators(
                     electricityReading -> electricityReading.setReadingTime(Spread.in(everyHour)),
