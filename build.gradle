@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group 'com.alwa'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+
+processResources {
+    filesMatching("*.properties") {
+        expand project.properties
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    testImplementation("org.assertj:assertj-core:3.22.0")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
