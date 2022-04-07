@@ -8,9 +8,8 @@ public class BigDecimalFunctionResolver extends StepFunctionResolver {
 
     @Override
     Function getStepFunction(int totalSteps, int currentStep, Object seed, RoundingMode roundingMode) {
-
         Function<BigDecimal, BigDecimal> evenStepFunction =
-                previousValue -> ((BigDecimal) seed).divide(BigDecimal.valueOf(totalSteps), roundingMode);
+                value -> ((BigDecimal) seed).divide(BigDecimal.valueOf(totalSteps), roundingMode);
 
         return evenStepFunction;
     }

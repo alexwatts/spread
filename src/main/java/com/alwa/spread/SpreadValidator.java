@@ -8,7 +8,8 @@ import java.util.stream.Collectors;
 public class SpreadValidator {
 
     private static List<Class> supportedCumulativeClasses = Arrays.asList(
-            BigDecimal.class
+            BigDecimal.class,
+            Integer.class
     );
 
     public static void validateCumulativeObjectType(Object cumulativeObject) {

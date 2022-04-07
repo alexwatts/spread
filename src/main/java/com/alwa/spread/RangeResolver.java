@@ -21,6 +21,7 @@ public class RangeResolver {
     private Map<Class, StepFunctionResolver> getResolverMap() {
         Map<Class, StepFunctionResolver> resolverMap = new HashMap<>();
         resolverMap.put(BigDecimal.class, new BigDecimalFunctionResolver());
+        resolverMap.put(Integer.class, new IntegerFunctionResolver());
         return resolverMap;
     }
 
