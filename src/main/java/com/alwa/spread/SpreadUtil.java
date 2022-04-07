@@ -1,5 +1,8 @@
 package com.alwa.spread;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import static com.alwa.spread.SpreadValidator.validateCumulativeObjectType;
 
 public class SpreadUtil {
@@ -12,6 +15,10 @@ public class SpreadUtil {
         return spread(seed);
     }
 
+    public static <T> Spread<T> cumulative(BigDecimal example, RoundingMode roundingMode) {
+       return cumulativeSpread(example, roundingMode);
+    }
+
     public static <T> Spread<T> cumulative(T example) {
         validateCumulativeObjectType(example);
         return cumulativeSpread(example);
@@ -22,7 +29,11 @@ public class SpreadUtil {
     }
 
     private static <T> Spread<T> cumulativeSpread(T seed) {
-        return new CumulativeSpread<>(seed, null, null);
+        return new CumulativeSpread<>(seed, null, null, RoundingMode.HALF_UP);
+    }
+
+    private static <T> Spread<T> cumulativeSpread(BigDecimal seed, RoundingMode roundingMode) {
+        return new CumulativeSpread<>(seed, null, null,roundingMode);
     }
 
     private static <T> Spread<T> fixedSpread(T seed) {

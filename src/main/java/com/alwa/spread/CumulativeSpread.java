@@ -1,16 +1,19 @@
 package com.alwa.spread;
 
+import java.math.RoundingMode;
 import java.util.function.Function;
 
 public class CumulativeSpread<T> extends Spread<T> {
 
-    public CumulativeSpread(Object seedOrExample, Function<?, ?> stepFunction, Function<?, ?> mapFunction) {
+    private RoundingMode roundingMode;
+
+    public CumulativeSpread(Object seedOrExample, Function<?, ?> stepFunction, Function<?, ?> mapFunction, RoundingMode roundingMode) {
         super(seedOrExample, stepFunction, mapFunction);
-        resolveInitialAndStepFunction();
+        this.roundingMode = roundingMode;
     }
 
-    private void resolveInitialAndStepFunction() {
-        RangeResolver rangeResolver = new RangeResolver(getSeedOrExample());
-        setStepFunction(rangeResolver.resolveStepFunction());
+    public RoundingMode getRoundingMode() {
+        return roundingMode;
     }
+
 }

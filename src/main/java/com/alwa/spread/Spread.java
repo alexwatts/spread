@@ -40,12 +40,14 @@ public class Spread<T> extends BaseSpread {
 
     protected void init(int steps) {
         values = new Object[steps];
-        values[0] = getSeedOrExample();
-        IntStream.range(1, steps)
+        IntStream.range(0, steps)
             .forEach(i ->
                 values[i] = nextValue(
+                    steps,
+                    i + 1,
                     ((Function<Object, Object>) stepFunction),
-                    values[i -1]
+                    seedOrExample,
+                    previousValue(i, values)
                 )
             );
         current = 0;
@@ -76,11 +78,38 @@ public class Spread<T> extends BaseSpread {
         return mapFunction;
     }
 
-    private Object nextValue(Function<Object, Object> stepFunction, Object previousValue) {
-        if (stepFunction != null) {
-            return stepFunction.apply(previousValue);
+    private Object nextValue(
+            int totalSteps,
+            int currentStep,
+            Function<Object, Object> stepFunction,
+            Object seedOrExample,
+            Object previousValue) {
+            return applyCumulativeOrStandardStep(totalSteps, currentStep, stepFunction, seedOrExample, previousValue);
+    }
+
+    private Object applyCumulativeOrStandardStep(int totalSteps,
+                                                 int currentStep,
+                                                 Function<Object, Object> stepFunction,
+                                                 Object seedOrExample,
+                                                 Object previousValue) {
+        if (this instanceof FixedSpread) {
+            return seedOrExample;
+        }
+        else if (this instanceof CumulativeSpread) {
+            RangeResolver rangeResolver = new RangeResolver(seedOrExample);
+            Function<Object, Object> cumulativeStepFunction =
+                    rangeResolver.resolveStepFunction(totalSteps, currentStep, ((CumulativeSpread)this).getRoundingMode());
+            return cumulativeStepFunction.apply(seedOrExample);
         } else {
-            return previousValue;
+            return stepFunction.apply(previousValue);
+        }
+    }
+
+    private Object previousValue(int i, Object[] values) {
+        if (i == 0) {
+            return seedOrExample;
+        } else {
+            return values[i - 1];
         }
     }
 

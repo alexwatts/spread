@@ -1,6 +1,9 @@
 package com.alwa.spread;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 public class RangeResolver {
@@ -11,8 +14,14 @@ public class RangeResolver {
         this.example = example;
     }
 
-    public Function resolveStepFunction() {
-        return (Function<BigDecimal, BigDecimal>) value -> value.add(BigDecimal.ONE);
+    public Function resolveStepFunction(int totalSteps, int currentStep, RoundingMode roundingMode) {
+        return getResolverMap().get(example.getClass()).getStepFunction(totalSteps, currentStep, example, roundingMode);
+    }
+
+    private Map<Class, StepFunctionResolver> getResolverMap() {
+        Map<Class, StepFunctionResolver> resolverMap = new HashMap<>();
+        resolverMap.put(BigDecimal.class, new BigDecimalFunctionResolver());
+        return resolverMap;
     }
 
 }
