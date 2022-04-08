@@ -7,7 +7,8 @@ You can define a spread of values to be injected into test objects via construct
 
 For example, for a range of <code>LocalDateTime</code> values incrementing by hour:
 
-    Spread<LocalDateTime> everyHour = SpreadUtil
+    Spread<LocalDateTime> everyHour = 
+              SpreadUtil
                 .initial(LocalDateTime.MIN)
                 .step(previousDate -> previousDate.plusHours(1));
  
@@ -18,7 +19,8 @@ You can also define 'cumulative' Spreads, for example, a series of <code>BigDeci
     
 If you need to change the type of the <code>Spread</code> you can map a spread to any other type eg:
 
-    Spread<Instant> everyHour = SpreadUtil
+    Spread<Instant> everyHour = 
+              SpreadUtil
                 .initial(LocalDateTime.MIN)
                 .step(previousDate -> previousDate.plusHours(1))
                 .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
@@ -28,7 +30,10 @@ To inject <code>Spread</code> ranges into test objects you can use a <code>Sprea
     List<ElectricityReading> readings =
             new Spreader<ElectricityReading>()
                 .factory(
-                    () -> new ElectricityReading(Spread.in(everyHour), Spread.in(cumulativeReadings))
+                    () -> new ElectricityReading(
+                                 Spread.in(everyHour), 
+                                 Spread.in(cumulativeReadings)
+                          )
                 )
                 .steps(24 * 7)
                 .spread()
@@ -39,7 +44,10 @@ This works in a similar way for factory methods:
     List<ElectricityReading> readings =
             new Spreader<ElectricityReading>()
                 .factory(
-                    () -> ElectricityReading.newInstance(Spread.in(everyHour), Spread.in(cumulativeReadings))
+                    () -> ElectricityReading.newInstance(
+                             Spread.in(everyHour), 
+                             Spread.in(cumulativeReadings)
+                          )
                 )
                 .steps(24 * 7)
                 .spread()
