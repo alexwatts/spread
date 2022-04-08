@@ -16,17 +16,22 @@ public class SpreaderTest {
 
     @Test
     public void viaConstructor() {
-        Spread<Instant> everyHour = SpreadUtil
+        Spread<Instant> everyHour =
+                SpreadUtil
                 .initial(LocalDateTime.MIN)
                 .step(previousDate -> previousDate.plusHours(1))
                 .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
 
-        Spread<BigDecimal> cumulativeReadings = SpreadUtil.cumulative(BigDecimal.valueOf(10000), RoundingMode.HALF_DOWN);
+        Spread<BigDecimal> cumulativeReadings =
+                SpreadUtil.cumulative(BigDecimal.valueOf(10000), RoundingMode.HALF_DOWN);
 
         List<TestDataObject> readings =
             new Spreader<TestDataObject>()
                 .factory(
-                    () -> new TestDataObject(Spread.in(everyHour), Spread.in(cumulativeReadings))
+                    () -> new TestDataObject(
+                            Spread.in(everyHour),
+                            Spread.in(cumulativeReadings)
+                    )
                 )
                 .steps(24 * 7)
                 .spread()
@@ -37,12 +42,14 @@ public class SpreaderTest {
 
     @Test
     public void viaFactoryMethod() {
-        Spread<Instant> everyHour = SpreadUtil
+        Spread<Instant> everyHour =
+                SpreadUtil
                 .initial(LocalDateTime.MIN)
                 .step(previousDate -> previousDate.plusHours(1))
                 .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
 
-        Spread<BigDecimal> cumulativeReadings = SpreadUtil.cumulative(BigDecimal.valueOf(10000));
+        Spread<BigDecimal> cumulativeReadings =
+                SpreadUtil.cumulative(BigDecimal.valueOf(10000));
 
         List<TestDataObject> readings =
                 new Spreader<TestDataObject>()
@@ -67,7 +74,8 @@ public class SpreaderTest {
                     .step(previousDate -> previousDate.plusHours(1))
                     .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
 
-        Spread<BigDecimal> cumulativeReadings = SpreadUtil.cumulative(BigDecimal.valueOf(10000));
+        Spread<BigDecimal> cumulativeReadings =
+                SpreadUtil.cumulative(BigDecimal.valueOf(10000));
 
         List<TestDataObject> readings =
             new Spreader<TestDataObject>()
@@ -85,25 +93,31 @@ public class SpreaderTest {
 
     @Test
     public void constructorAndMutator() {
-        Spread<Instant> everyHour = SpreadUtil
-                .initial(LocalDateTime.MIN)
-                .step(previousDate -> previousDate.plusHours(1))
-                .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
+        Spread<Instant> everyHour =
+            SpreadUtil
+            .initial(LocalDateTime.MIN)
+            .step(previousDate -> previousDate.plusHours(1))
+            .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
 
-        Spread<BigDecimal> cumulativeReadings = SpreadUtil.cumulative(BigDecimal.valueOf(10000));
+        Spread<BigDecimal> cumulativeReadings =
+                SpreadUtil.cumulative(BigDecimal.valueOf(10000));
 
-        Spread<String> fixedStringValue = SpreadUtil.fixed("bananna");
+        Spread<String> fixedStringValue =
+                SpreadUtil.fixed("bananna");
 
         List<TestDataObject> readings =
-                new Spreader<TestDataObject>()
-                        .factory(TestDataObject::new)
-                        .factory(
-                                () -> new TestDataObject(Spread.in(everyHour), Spread.in(cumulativeReadings))
-                        )
-                        .mutator(testDataObject -> testDataObject.setStringField(Spread.in(fixedStringValue)))
-                        .steps(24 * 7)
-                        .spread()
-                        .collect(Collectors.toList());
+            new Spreader<TestDataObject>()
+                    .factory(TestDataObject::new)
+                    .factory(
+                            () -> new TestDataObject(
+                                    Spread.in(everyHour),
+                                    Spread.in(cumulativeReadings)
+                            )
+                    )
+                    .mutator(testDataObject -> testDataObject.setStringField(Spread.in(fixedStringValue)))
+                    .steps(24 * 7)
+                    .spread()
+                    .collect(Collectors.toList());
 
         assertThat(readings.size()).isEqualTo(24 * 7);
     }
@@ -123,7 +137,10 @@ public class SpreaderTest {
         List<PrimativeTestDataObject> dataObjects =
                 new Spreader<PrimativeTestDataObject>()
                         .factory(
-                            () -> new PrimativeTestDataObject(Spread.in(everyInt), Spread.in(someDoubles))
+                            () -> new PrimativeTestDataObject(
+                                    Spread.in(everyInt),
+                                    Spread.in(someDoubles)
+                            )
                         )
                         .steps(24 * 7)
                         .spread()
@@ -170,6 +187,44 @@ public class SpreaderTest {
     }
 
     @Test
+    public void testMissingStepsThrowsValidation() {
+        SpreaderException thrown = assertThrows(
+                SpreaderException.class,
+                () -> new Spreader<PrimativeTestDataObject>()
+                        .factory(
+                            () -> new PrimativeTestDataObject(
+                                Spread.in(new FixedSpread<>(1)),
+                                Spread.in(new FixedSpread<>(2d))
+                            )
+                        )
+                        .spread(),
+                "Expected SpreaderException because steps method was missing"
+        );
+        assertThat(thrown.getMessage())
+                .contains("Spreader spread() failure, missing steps. You may need to add a step definition to define how many objects to spread.");
+    }
+
+    @Test
+    public void testNegativeStepsThrowsValidation() {
+        SpreaderException thrown = assertThrows(
+                SpreaderException.class,
+                () -> new Spreader<PrimativeTestDataObject>()
+                        .factory(
+                                () -> new PrimativeTestDataObject(
+                                        Spread.in(new FixedSpread<>(1)),
+                                        Spread.in(new FixedSpread<>(2d))
+                                )
+                        )
+                        .steps(-1)
+                        .spread(),
+                "Expected SpreaderException because steps method was missing"
+        );
+        assertThat(thrown.getMessage())
+                .contains("Spreader spread() failure, steps Invalid. Steps must be defined as a positive integer and defines how many objects to spread. Invalid Steps: [-1]");
+    }
+
+
+    @Test
     public void testMissingFactoryThrowsValidation() {
 
         SpreaderException thrown = assertThrows(
@@ -177,10 +232,11 @@ public class SpreaderTest {
                 () -> new Spreader<PrimativeTestDataObject>()
                         .steps(24 * 7)
                         .spread(),
-                "Expected SpreaderException because factory method was missing"
+                "Expected SpreaderException because factory was missing"
         );
         assertThat(thrown.getMessage())
-                .contains("Spreader spread() failure, missing factory. You may need to add a factory to call a constructor, or a factory method, to create instances.");
+                .contains("Spreader spread() failure, missing factory. " +
+                        "You may need to add a factory to call a constructor, or a factory method, to create instances.");
     }
 
 }

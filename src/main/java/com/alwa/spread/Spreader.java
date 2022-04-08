@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 public class Spreader<T> {
 
-    private int steps;
+    private Integer steps;
     private Callable<T> factoryTemplate;
     private List<MutatorTemplateAndParameters> mutatorTemplateAndParameters;
     private Spread[] factoryParameters;
@@ -42,6 +42,7 @@ public class Spreader<T> {
 
     private void validateSpread() {
         validateFactoryTemplate();
+        validateSteps();
     }
 
     private Object createNextObject() {
@@ -142,6 +143,16 @@ public class Spreader<T> {
         if (factoryTemplate == null) {
             String message = "Spreader spread() failure, missing factory. You may need to add a factory to call a constructor, or a factory method, to create instances.";
             throw new SpreaderException(message);
+        }
+    }
+
+    private void validateSteps() {
+        if (steps == null) {
+            String message = "Spreader spread() failure, missing steps. You may need to add a step definition to define how many objects to spread.";
+            throw new SpreaderException(message);
+        } else if (steps <= 0) {
+            String message = "Spreader spread() failure, steps Invalid. Steps must be defined as a positive integer and defines how many objects to spread. Invalid Steps: [%s]";
+            throw new SpreaderException(String.format(message, steps));
         }
     }
 
