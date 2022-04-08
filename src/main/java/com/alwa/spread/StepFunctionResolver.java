@@ -9,7 +9,7 @@ public abstract class StepFunctionResolver {
 
     Map<String, Object[]> valuesMap = new HashMap<>();
 
-    protected abstract Object[] initialiseValuesMap(String valuesMapKey, int totalSteps, Object example, RoundingMode roudingMode);
+    protected abstract Object[] initialiseValuesMap(String valuesMapKey, int totalSteps, Object example, RoundingMode roundingMode);
 
     Function<Object, Object> getStepFunction(int totalSteps, int currentStep, Object example, RoundingMode roundingMode) {
         return  value -> getValue(totalSteps, currentStep, example, roundingMode);

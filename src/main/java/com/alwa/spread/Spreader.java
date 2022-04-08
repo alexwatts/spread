@@ -30,6 +30,7 @@ public class Spreader<T> {
     }
 
     public Stream<T> spread() {
+        validateSpread();
         initialiseFactorySpreads();
         initialiseMutatorSpreads();
         Object[] dataObjects = new Object[steps];
@@ -37,6 +38,10 @@ public class Spreader<T> {
             dataObjects[i] = createNextObject();
         }
         return (Stream<T>)Arrays.stream(dataObjects);
+    }
+
+    private void validateSpread() {
+        validateFactoryTemplate();
     }
 
     private Object createNextObject() {
@@ -131,6 +136,13 @@ public class Spreader<T> {
             }
         }
         return nextObject;
+    }
+
+    private void validateFactoryTemplate() {
+        if (factoryTemplate == null) {
+            String message = "Spreader spread() failure, missing factory. You may need to add a factory to call a constructor, or a factory method, to create instances.";
+            throw new SpreaderException(message);
+        }
     }
 
 }

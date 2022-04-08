@@ -169,4 +169,18 @@ public class SpreaderTest {
                 .contains("Unsupported Cumulative Spread Object - Type:[class com.alwa.spread.TestDataObject]");
     }
 
+    @Test
+    public void testMissingFactoryThrowsValidation() {
+
+        SpreaderException thrown = assertThrows(
+                SpreaderException.class,
+                () -> new Spreader<PrimativeTestDataObject>()
+                        .steps(24 * 7)
+                        .spread(),
+                "Expected SpreaderException because factory method was missing"
+        );
+        assertThat(thrown.getMessage())
+                .contains("Spreader spread() failure, missing factory. You may need to add a factory to call a constructor, or a factory method, to create instances.");
+    }
+
 }
