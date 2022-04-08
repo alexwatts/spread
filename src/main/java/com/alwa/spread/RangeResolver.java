@@ -18,6 +18,10 @@ public class RangeResolver {
         return getResolverMap().get(example.getClass()).getStepFunction(totalSteps, currentStep, example, roundingMode);
     }
 
+    public boolean validateSeed() {
+        return getResolverMap().get(example.getClass()).validateSeed(example);
+    }
+
     private Map<Class, StepFunctionResolver> getResolverMap() {
         Map<Class, StepFunctionResolver> resolverMap = new HashMap<>();
         resolverMap.put(BigDecimal.class, new BigDecimalFunctionResolver());

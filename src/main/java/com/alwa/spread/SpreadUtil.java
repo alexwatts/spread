@@ -3,7 +3,7 @@ package com.alwa.spread;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static com.alwa.spread.SpreadValidator.validateCumulativeObjectType;
+import static com.alwa.spread.SpreadValidator.validateCumulativeSpread;
 
 public class SpreadUtil {
 
@@ -20,7 +20,7 @@ public class SpreadUtil {
     }
 
     public static <T> Spread<T> cumulative(T example) {
-        validateCumulativeObjectType(example);
+        validateCumulativeSpread(example);
         return cumulativeSpread(example);
     }
 

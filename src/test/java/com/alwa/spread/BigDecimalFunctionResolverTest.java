@@ -57,4 +57,12 @@ public class BigDecimalFunctionResolverTest {;
         assertThat(total).isEqualTo(largeSeed);
     }
 
+    @Test
+    public void testValidation() {
+        assertThat(bigDecimalFunctionResolver.validateSeed(BigDecimal.valueOf(-1))).isFalse();
+        assertThat(bigDecimalFunctionResolver.validateSeed(BigDecimal.valueOf(0))).isFalse();
+        assertThat(bigDecimalFunctionResolver.validateSeed(null)).isFalse();
+        assertThat(bigDecimalFunctionResolver.validateSeed(BigDecimal.valueOf(50))).isTrue();
+    }
+
 }

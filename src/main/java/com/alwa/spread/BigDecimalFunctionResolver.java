@@ -7,6 +7,11 @@ import java.util.Arrays;
 public class BigDecimalFunctionResolver extends StepFunctionResolver {
 
     @Override
+    protected boolean validateSeed(Object seed) {
+        return seed != null && ((BigDecimal) seed).compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    @Override
     public Object[] initialiseValuesMap(String valuesMapKey, int totalSteps, Object example, RoundingMode roundingMode) {
         Object[] values = new Object[totalSteps];
         BigDecimal seed = (BigDecimal) example;

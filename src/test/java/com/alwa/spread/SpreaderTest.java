@@ -209,14 +209,14 @@ public class SpreaderTest {
         SpreaderException thrown = assertThrows(
                 SpreaderException.class,
                 () -> new Spreader<PrimativeTestDataObject>()
-                        .factory(
-                                () -> new PrimativeTestDataObject(
-                                        Spread.in(new FixedSpread<>(1)),
-                                        Spread.in(new FixedSpread<>(2d))
-                                )
+                    .factory(
+                        () -> new PrimativeTestDataObject(
+                            Spread.in(new FixedSpread<>(1)),
+                            Spread.in(new FixedSpread<>(2d))
                         )
-                        .steps(-1)
-                        .spread(),
+                    )
+                    .steps(-1)
+                    .spread(),
                 "Expected SpreaderException because steps method was missing"
         );
         assertThat(thrown.getMessage())
@@ -237,6 +237,17 @@ public class SpreaderTest {
         assertThat(thrown.getMessage())
                 .contains("Spreader spread() failure, missing factory. " +
                         "You may need to add a factory to call a constructor, or a factory method, to create instances.");
+    }
+
+    @Test
+    public void testNegativeCumulativeSpreadThrowsValidation() {
+        SpreadException thrown = assertThrows(
+                SpreadException.class,
+                () -> SpreadUtil.cumulative(BigDecimal.valueOf(-1)),
+                "Expected SpreadException because cumulative value is negative"
+        );
+        assertThat(thrown.getMessage())
+                .contains("Invalid Spread Object - Type:[class java.math.BigDecimal], Value: -1]");
     }
 
 }

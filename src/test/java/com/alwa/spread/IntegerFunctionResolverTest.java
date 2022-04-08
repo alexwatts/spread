@@ -39,4 +39,12 @@ public class IntegerFunctionResolverTest {;
         assertThat(total).isEqualTo(largeSeed);
     }
 
+    @Test
+    public void testValidation() {
+        assertThat(integerFunctionResolver.validateSeed(-1)).isFalse();
+        assertThat(integerFunctionResolver.validateSeed(0)).isFalse();
+        assertThat(integerFunctionResolver.validateSeed(null)).isFalse();
+        assertThat(integerFunctionResolver.validateSeed(50)).isTrue();
+    }
+
 }

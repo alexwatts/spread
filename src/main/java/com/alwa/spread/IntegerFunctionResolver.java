@@ -19,4 +19,9 @@ public class IntegerFunctionResolver extends StepFunctionResolver {
         return valuesMap.get(valuesMapKey);
     }
 
+    @Override
+    protected boolean validateSeed(Object seed) {
+        return seed != null && (Integer) seed > 0;
+    }
+
 }
