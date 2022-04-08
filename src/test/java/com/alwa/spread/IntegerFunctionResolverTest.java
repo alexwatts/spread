@@ -3,6 +3,7 @@ package com.alwa.spread;
 import org.junit.jupiter.api.Test;
 
 import java.math.RoundingMode;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -22,5 +23,19 @@ public class IntegerFunctionResolverTest {;
                 integerFunctionResolver.getStepFunction(2, 2, seed, roundingMode).apply(seed)
         ).isEqualTo(Integer.valueOf(200));
     }
+
+    @Test
+    public void manyValuesTest() {
+        int largeSeed = 20000;
+        Integer total =
+            IntStream.range(1, 499)
+                .mapToObj(i ->
+                        integerFunctionResolver.getStepFunction(498, i, largeSeed, roundingMode).apply(largeSeed)
+                )
+                .map(i -> ((Integer) i))
+                .reduce(0, Integer::sum);
+        assertThat(total).isEqualTo(largeSeed);
+    }
+
 
 }

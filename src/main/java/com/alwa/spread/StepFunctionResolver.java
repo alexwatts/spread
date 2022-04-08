@@ -22,11 +22,10 @@ public abstract class StepFunctionResolver {
     private Object getValue(int totalSteps, int currentStep, Object example, RoundingMode roundingMode) {
         String valuesMapKey = valuesMapKey(totalSteps, example);
         if (valuesMap.containsKey(valuesMapKey)) {
-            return valuesMap.get(valuesMapKey)[currentStep];
+            return valuesMap.get(valuesMapKey)[currentStep - 1];
         } else {
             return initialiseValuesMap(valuesMapKey, totalSteps, example, roundingMode)[currentStep - 1];
         }
     }
-
 
 }
