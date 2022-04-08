@@ -9,11 +9,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class BigDecimalFunctionResolverTest {;
 
-    private BigDecimalFunctionResolver bigDecimalFunctionResolver = new BigDecimalFunctionResolver();
-
-    private BigDecimal seed = BigDecimal.valueOf(10000);
-
-    private RoundingMode roundingMode = RoundingMode.HALF_EVEN;
+    private final BigDecimalFunctionResolver bigDecimalFunctionResolver = new BigDecimalFunctionResolver();
+    private final BigDecimal seed = BigDecimal.valueOf(10000);
+    private final RoundingMode roundingMode = RoundingMode.HALF_EVEN;
 
     @Test
     public void simpleCumulativeTest() {

@@ -9,9 +9,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class IntegerFunctionResolverTest {;
 
     private IntegerFunctionResolver integerFunctionResolver = new IntegerFunctionResolver();
-
     private Integer seed = 400;
-
     private RoundingMode roundingMode = RoundingMode.HALF_EVEN;
 
     @Test

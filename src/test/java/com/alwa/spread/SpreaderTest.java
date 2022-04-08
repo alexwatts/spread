@@ -61,10 +61,11 @@ public class SpreaderTest {
 
     @Test
     public void valuesViaMutators() {
-        Spread<Instant> everyHour = SpreadUtil
-                .initial(LocalDateTime.MIN)
-                .step(previousDate -> previousDate.plusHours(1))
-                .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
+        Spread<Instant> everyHour =
+                SpreadUtil
+                    .initial(LocalDateTime.MIN)
+                    .step(previousDate -> previousDate.plusHours(1))
+                    .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
 
         Spread<BigDecimal> cumulativeReadings = SpreadUtil.cumulative(BigDecimal.valueOf(10000));
 
