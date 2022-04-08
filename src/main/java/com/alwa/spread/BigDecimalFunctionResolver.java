@@ -11,24 +11,30 @@ public class BigDecimalFunctionResolver extends StepFunctionResolver {
         Object[] values = new Object[totalSteps];
         BigDecimal seed = (BigDecimal) example;
         BigDecimal baseValue;
-        BigDecimal fractionalPart;
+        BigDecimal fractionalPart = null;
         if (isIntegerValue(seed)) {
             baseValue = seed.divide(BigDecimal.valueOf(totalSteps), roundingMode);
         } else {
             fractionalPart = getFractionalPart(seed);
-            baseValue = seed.subtract(fractionalPart);
+            baseValue = seed.subtract(fractionalPart)
+                    .setScale(0, roundingMode)
+                    .divide(BigDecimal.valueOf(totalSteps), roundingMode);
         }
         Arrays.fill(values, baseValue);
         int step = baseValue.intValue() * totalSteps;
         for (int i = 0; i < ((BigDecimal) example).intValue() - step; i++) {
             values[i] = ((BigDecimal) values[i]).add(BigDecimal.ONE);
         }
+        if (fractionalPart != null) {
+            values[0] = ((BigDecimal)values[0]).add(fractionalPart);
+        }
+
         valuesMap.put(valuesMapKey, values);
         return valuesMap.get(valuesMapKey);
     }
 
     private BigDecimal getFractionalPart(BigDecimal seed) {
-        return seed.subtract(seed.stripTrailingZeros());
+        return seed.remainder(BigDecimal.ONE);
     }
 
     private boolean isIntegerValue(BigDecimal bd) {
