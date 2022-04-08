@@ -18,11 +18,10 @@ public class BigDecimalFunctionResolver extends StepFunctionResolver {
             fractionalPart = getFractionalPart(seed);
             baseValue = seed.subtract(fractionalPart);
         }
-
         Arrays.fill(values, baseValue);
         int step = baseValue.intValue() * totalSteps;
         for (int i = 0; i < ((BigDecimal) example).intValue() - step; i++) {
-            values[i] = (int) values[i] + 1;
+            values[i] = ((BigDecimal) values[i]).add(BigDecimal.ONE);
         }
         valuesMap.put(valuesMapKey, values);
         return valuesMap.get(valuesMapKey);
@@ -35,4 +34,5 @@ public class BigDecimalFunctionResolver extends StepFunctionResolver {
     private boolean isIntegerValue(BigDecimal bd) {
         return bd.stripTrailingZeros().scale() <= 0;
     }
+
 }
