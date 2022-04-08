@@ -17,11 +17,11 @@ public class IntegerFunctionResolverTest {;
     public void simpleCumulativeTest() {
         assertThat(
                 integerFunctionResolver.getStepFunction(1, 1, seed, roundingMode).apply(seed)
-        ).isEqualTo(Integer.valueOf(400));
+        ).isEqualTo(400);
 
         assertThat(
                 integerFunctionResolver.getStepFunction(2, 2, seed, roundingMode).apply(seed)
-        ).isEqualTo(Integer.valueOf(200));
+        ).isEqualTo(200);
     }
 
     @Test
