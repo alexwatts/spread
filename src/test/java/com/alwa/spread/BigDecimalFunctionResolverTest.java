@@ -32,13 +32,13 @@ public class BigDecimalFunctionResolverTest {;
         BigDecimal largeSeed = BigDecimal.valueOf(500000);
         BigDecimal total =
             IntStream.range(1, 499)
-                    .mapToObj(i ->
-                        bigDecimalFunctionResolver
-                                .getStepFunction(498, i, largeSeed, roundingMode)
-                                .apply(largeSeed)
-                    )
-                    .map(i -> ((BigDecimal) i))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .mapToObj(i ->
+                    bigDecimalFunctionResolver
+                        .getStepFunction(498, i, largeSeed, roundingMode)
+                        .apply(largeSeed)
+                )
+                .map(i -> ((BigDecimal) i))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         assertThat(total).isEqualTo(largeSeed);
     }
 
@@ -47,13 +47,13 @@ public class BigDecimalFunctionResolverTest {;
         BigDecimal largeSeed = BigDecimal.valueOf(500000.342364365);
         BigDecimal total =
                 IntStream.range(1, 499)
-                        .mapToObj(i ->
-                            bigDecimalFunctionResolver
-                                .getStepFunction(498, i, largeSeed, roundingMode)
-                                .apply(largeSeed)
-                        )
-                        .map(i -> ((BigDecimal) i))
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .mapToObj(i ->
+                        bigDecimalFunctionResolver
+                            .getStepFunction(498, i, largeSeed, roundingMode)
+                            .apply(largeSeed)
+                    )
+                    .map(i -> ((BigDecimal) i))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         assertThat(total).isEqualTo(largeSeed);
     }
 
@@ -62,13 +62,13 @@ public class BigDecimalFunctionResolverTest {;
         BigDecimal smallSeed = BigDecimal.valueOf(1.342364365);
         BigDecimal total =
                 IntStream.range(1, 78601)
-                        .mapToObj(i ->
-                                bigDecimalFunctionResolver
-                                        .getStepFunction(78600, i, smallSeed, roundingMode)
-                                        .apply(smallSeed)
-                        )
-                        .map(i -> ((BigDecimal) i))
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .mapToObj(i ->
+                        bigDecimalFunctionResolver
+                            .getStepFunction(78600, i, smallSeed, roundingMode)
+                            .apply(smallSeed)
+                    )
+                    .map(i -> ((BigDecimal) i))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         assertThat(total).isEqualTo(smallSeed);
     }
 
@@ -77,13 +77,13 @@ public class BigDecimalFunctionResolverTest {;
         BigDecimal smallSeed = BigDecimal.valueOf(17);
         BigDecimal total =
                 IntStream.range(1, 78601)
-                        .mapToObj(i ->
-                                bigDecimalFunctionResolver
-                                        .getStepFunction(78600, i, smallSeed, roundingMode)
-                                        .apply(smallSeed)
-                        )
-                        .map(i -> ((BigDecimal) i))
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .mapToObj(i ->
+                        bigDecimalFunctionResolver
+                            .getStepFunction(78600, i, smallSeed, roundingMode)
+                            .apply(smallSeed)
+                    )
+                    .map(i -> ((BigDecimal) i))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         assertThat(total).isEqualTo(smallSeed);
     }
 

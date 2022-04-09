@@ -6,14 +6,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class Spreader<T> {
+
+    private static final Logger LOGGER = Logger.getLogger(Spreader.class.getName());
 
     private Integer steps;
     private Callable<T> factoryTemplate;
     private List<MutatorTemplateAndParameters> mutatorTemplateAndParameters;
     private Spread[] factoryParameters;
+    private Boolean debug;
 
     public Spreader() {
     }
@@ -30,6 +35,9 @@ public class Spreader<T> {
     }
 
     public Stream<T> spread() {
+        printSplash();
+        //printSummary();
+
         validateSpread();
         initialiseFactorySpreads();
         initialiseMutatorSpreads();
@@ -40,6 +48,26 @@ public class Spreader<T> {
         return (Stream<T>)Arrays.stream(dataObjects);
     }
 
+    private void printSplash() {
+        String message ="\n" +
+                        "   ____                             __\n" +
+                        "  / __/   ___   ____ ___  ___ _ ___/ /\n" +
+                        "  _\\ \\   / _ \\ / __// -_)/ _ `// _  / \n" +
+                        " /___/  / .__//_/   \\__/ \\_,_/ \\_,_/  \n" +
+                        "       /_/                            \n";
+        LOGGER.info(message);
+    }
+
+    public Spreader<T> mutator(Consumer<T> setterTemplate) {
+        captureMutatorTemplateAndParameters(setterTemplate.getClass().getDeclaredFields(), setterTemplate);
+        return this;
+    }
+
+    public Spreader<T> debug() {
+        this.debug = true;
+        LOGGER.setLevel(Level.FINE);
+        return this;
+    }
     private void validateSpread() {
         validateFactoryTemplate();
         validateSteps();
@@ -58,11 +86,6 @@ public class Spreader<T> {
     private void captureFactorySpreads(Callable<T> factoryTemplate) {
         this.factoryTemplate = factoryTemplate;
         captureFactoryParameters(factoryTemplate.getClass().getDeclaredFields(), factoryTemplate);
-    }
-
-    public Spreader<T> mutator(Consumer<T> setterTemplate) {
-        captureMutatorTemplateAndParameters(setterTemplate.getClass().getDeclaredFields(), setterTemplate);
-        return this;
     }
 
     @SafeVarargs

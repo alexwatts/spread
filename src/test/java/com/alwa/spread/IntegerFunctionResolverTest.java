@@ -30,9 +30,9 @@ public class IntegerFunctionResolverTest {;
         Integer total =
             IntStream.range(1, 499)
                 .mapToObj(i ->
-                        integerFunctionResolver
-                                .getStepFunction(498, i, largeSeed, roundingMode)
-                                .apply(largeSeed)
+                    integerFunctionResolver
+                        .getStepFunction(498, i, largeSeed, roundingMode)
+                        .apply(largeSeed)
                 )
                 .map(i -> ((Integer) i))
                 .reduce(0, Integer::sum);
