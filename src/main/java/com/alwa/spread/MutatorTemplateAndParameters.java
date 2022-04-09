@@ -1,6 +1,8 @@
 package com.alwa.spread;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class MutatorTemplateAndParameters<T> {
 
@@ -20,4 +22,11 @@ public class MutatorTemplateAndParameters<T> {
         return parameters;
     }
 
+    @Override
+    public String toString() {
+        return String.format("MutatorTemplateAndParameters{" +
+            "mutatorTemplate=" + mutatorTemplate +
+            ", parameters=[\n    %s\n]" +
+        "}", Arrays.stream(parameters).map(Spread::toString).collect(Collectors.joining(" \n")));
+    }
 }

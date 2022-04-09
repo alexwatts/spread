@@ -249,31 +249,4 @@ public class SpreaderTest {
                 .contains("Invalid Spread Object - Type:[class java.math.BigDecimal], Value: -1]");
     }
 
-    @Test
-    public void testWithDebug() {
-        Spread<Instant> everyHour =
-            SpreadUtil
-                .initial(LocalDateTime.MIN)
-                .step(previousDate -> previousDate.plusHours(1))
-                .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
-
-        Spread<BigDecimal> cumulativeReadings =
-            SpreadUtil.cumulative(BigDecimal.valueOf(10000), RoundingMode.HALF_DOWN);
-
-        List<TestDataObject> readings =
-            new Spreader<TestDataObject>()
-                .factory(
-                    () -> new TestDataObject(
-                        Spread.in(everyHour),
-                        Spread.in(cumulativeReadings)
-                    )
-                )
-                .steps(24 * 7)
-                .debug()
-                .spread()
-                .collect(Collectors.toList());
-
-        assertThat(readings.size()).isEqualTo(24 * 7);
-    }
-
 }

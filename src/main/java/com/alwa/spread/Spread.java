@@ -113,4 +113,14 @@ public class Spread<T> extends BaseSpread {
         }
     }
 
+    @Override
+    public String toString() {
+        return String.format("Spread<%s>{" +
+            "current=" + current +
+            ", seedOrExample=" + seedOrExample +
+            ", stepFunction=" + stepFunction +
+            ", mapFunction=" + mapFunction +
+            '}', this.getClass());
+    }
+
 }

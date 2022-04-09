@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Spreader<T> {
@@ -35,9 +35,10 @@ public class Spreader<T> {
     }
 
     public Stream<T> spread() {
-        printSplash();
-        //printSummary();
-
+        if (debug != null && debug) {
+            printSplash();
+            printSummary();
+        }
         validateSpread();
         initialiseFactorySpreads();
         initialiseMutatorSpreads();
@@ -58,6 +59,21 @@ public class Spreader<T> {
         LOGGER.info(message);
     }
 
+    private void printSummary() {
+        LOGGER.info("\n");
+        LOGGER.info(String.format("Factory template :[%s]\n", factoryTemplate));
+        if (factoryParameters == null || factoryParameters.length == 0) {
+            LOGGER.info(String.format("No Factory injector.s\n"));
+        } else {
+            LOGGER.info(String.format("Factory injectors :[\n%s\n]\n", Arrays.stream(factoryParameters).map(Spread::toString).collect(Collectors.joining(" \n"))));
+        }
+        if (mutatorTemplateAndParameters == null) {
+            LOGGER.info(String.format("No Mutator injectors.\n"));
+        } else {
+            LOGGER.info(String.format("Mutator injectors :[\n%s\n]\n", mutatorTemplateAndParameters.stream().map(MutatorTemplateAndParameters::toString).collect(Collectors.joining(" \n"))));
+        }
+    }
+
     public Spreader<T> mutator(Consumer<T> setterTemplate) {
         captureMutatorTemplateAndParameters(setterTemplate.getClass().getDeclaredFields(), setterTemplate);
         return this;
@@ -65,7 +81,6 @@ public class Spreader<T> {
 
     public Spreader<T> debug() {
         this.debug = true;
-        LOGGER.setLevel(Level.FINE);
         return this;
     }
     private void validateSpread() {
