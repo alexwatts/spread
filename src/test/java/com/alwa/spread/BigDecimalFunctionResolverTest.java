@@ -58,6 +58,36 @@ public class BigDecimalFunctionResolverTest {;
     }
 
     @Test
+    public void manyValuesMoreStepsThanFractionalTotal() {
+        BigDecimal smallSeed = BigDecimal.valueOf(1.342364365);
+        BigDecimal total =
+                IntStream.range(1, 78601)
+                        .mapToObj(i ->
+                                bigDecimalFunctionResolver
+                                        .getStepFunction(78600, i, smallSeed, roundingMode)
+                                        .apply(smallSeed)
+                        )
+                        .map(i -> ((BigDecimal) i))
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+        assertThat(total).isEqualTo(smallSeed);
+    }
+
+    @Test
+    public void manyValuesMoreStepsThanIntegerTotal() {
+        BigDecimal smallSeed = BigDecimal.valueOf(17);
+        BigDecimal total =
+                IntStream.range(1, 78601)
+                        .mapToObj(i ->
+                                bigDecimalFunctionResolver
+                                        .getStepFunction(78600, i, smallSeed, roundingMode)
+                                        .apply(smallSeed)
+                        )
+                        .map(i -> ((BigDecimal) i))
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+        assertThat(total).isEqualTo(smallSeed);
+    }
+
+    @Test
     public void testValidation() {
         assertThat(bigDecimalFunctionResolver.validateSeed(BigDecimal.valueOf(-1))).isFalse();
         assertThat(bigDecimalFunctionResolver.validateSeed(BigDecimal.valueOf(0))).isFalse();

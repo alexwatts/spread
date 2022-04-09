@@ -29,7 +29,6 @@ public class SpreadValidator {
             String message = "Invalid Spread Object - Type:[%s], Value: %s]";
             throw new SpreadException(String.format(message, cumulativeObject.getClass(), cumulativeObject));
         }
-
     }
 
     private static String unsupportedCumulativeObjectTypeMessage(Object cumulativeObject) {

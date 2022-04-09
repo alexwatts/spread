@@ -223,7 +223,6 @@ public class SpreaderTest {
                 .contains("Spreader spread() failure, steps Invalid. Steps must be defined as a positive integer and defines how many objects to spread. Invalid Steps: [-1]");
     }
 
-
     @Test
     public void testMissingFactoryThrowsValidation() {
 
