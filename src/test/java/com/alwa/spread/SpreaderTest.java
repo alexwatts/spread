@@ -36,7 +36,6 @@ public class SpreaderTest {
                         Spread.in(cumulativeReadings)
                     )
                 )
-                .debug()
                 .steps(24 * 7)
                 .spread()
                 .collect(Collectors.toList());
@@ -89,7 +88,6 @@ public class SpreaderTest {
                         testDataObject -> testDataObject.setBigDecimalField(Spread.in(cumulativeReadings))
                 )
                 .steps(24 * 7)
-                .debug()
                 .spread()
                 .collect(Collectors.toList());
 
@@ -127,7 +125,6 @@ public class SpreaderTest {
                                 )
                     )
                     .steps(24 * 7)
-                    .debug()
                     .spread()
                     .collect(Collectors.toList());
 
