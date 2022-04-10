@@ -23,7 +23,10 @@ public class SpreaderTest {
                     .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
 
         Spread<BigDecimal> cumulativeReadings =
-                SpreadUtil.cumulative(BigDecimal.valueOf(10000), RoundingMode.HALF_DOWN);
+                SpreadUtil.cumulative(
+                    BigDecimal.valueOf(10000),
+                    RoundingMode.DOWN
+                );
 
         List<TestDataObject> readings =
             new Spreader<TestDataObject>()
@@ -33,6 +36,7 @@ public class SpreaderTest {
                         Spread.in(cumulativeReadings)
                     )
                 )
+                .debug()
                 .steps(24 * 7)
                 .spread()
                 .collect(Collectors.toList());
@@ -85,6 +89,7 @@ public class SpreaderTest {
                         testDataObject -> testDataObject.setBigDecimalField(Spread.in(cumulativeReadings))
                 )
                 .steps(24 * 7)
+                .debug()
                 .spread()
                 .collect(Collectors.toList());
 
@@ -109,13 +114,20 @@ public class SpreaderTest {
             new Spreader<TestDataObject>()
                     .factory(TestDataObject::new)
                     .factory(
-                            () -> new TestDataObject(
-                                    Spread.in(everyHour),
-                                    Spread.in(cumulativeReadings)
-                            )
+                        () -> new TestDataObject(
+                            Spread.in(everyHour),
+                            Spread.in(cumulativeReadings)
+                        )
                     )
-                    .mutator(testDataObject -> testDataObject.setStringField(Spread.in(fixedStringValue)))
+                    .mutator(
+                        testDataObject ->
+                            testDataObject
+                                .setStringField(
+                                    Spread.in(fixedStringValue)
+                                )
+                    )
                     .steps(24 * 7)
+                    .debug()
                     .spread()
                     .collect(Collectors.toList());
 
@@ -138,8 +150,8 @@ public class SpreaderTest {
                 new Spreader<PrimativeTestDataObject>()
                         .factory(
                             () -> new PrimativeTestDataObject(
-                                    Spread.in(everyInt),
-                                    Spread.in(someDoubles)
+                                Spread.in(everyInt),
+                                Spread.in(someDoubles)
                             )
                         )
                         .steps(24 * 7)
@@ -225,7 +237,6 @@ public class SpreaderTest {
 
     @Test
     public void testMissingFactoryThrowsValidation() {
-
         SpreaderException thrown = assertThrows(
                 SpreaderException.class,
                 () -> new Spreader<PrimativeTestDataObject>()

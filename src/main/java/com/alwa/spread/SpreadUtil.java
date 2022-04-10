@@ -29,7 +29,7 @@ public class SpreadUtil {
     }
 
     private static <T> Spread<T> cumulativeSpread(T seed) {
-        return new CumulativeSpread<>(seed, null, null, RoundingMode.HALF_UP);
+        return new CumulativeSpread<>(seed, null, null, RoundingMode.DOWN);
     }
 
     private static <T> Spread<T> cumulativeSpread(BigDecimal seed, RoundingMode roundingMode) {

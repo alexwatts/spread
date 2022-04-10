@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Spreader<T> {
@@ -35,13 +36,16 @@ public class Spreader<T> {
     }
 
     public Stream<T> spread() {
-        if (debug != null && debug) {
+        if (isDebugMode()) {
             printSplash();
             printSummary();
         }
         validateSpread();
         initialiseFactorySpreads();
         initialiseMutatorSpreads();
+        if (isDebugMode()) {
+            printUnmappedValueMatrix();
+        }
         Object[] dataObjects = new Object[steps];
         for (int i = 0; i < steps; i++) {
             dataObjects[i] = createNextObject();
@@ -74,6 +78,50 @@ public class Spreader<T> {
         }
     }
 
+    private void printUnmappedValueMatrix() {
+        LOGGER.info("\n");
+        LOGGER.info("Spread will use these data arrays to feed though factory injectors....\n");
+        StringBuilder factoryValueMatrix = new StringBuilder();
+        factoryValueMatrix.append("\n");
+        if (factoryParameters.length > 0) {
+            factoryValueMatrix.append(
+                Arrays.stream(factoryParameters).map(param -> " |----------------Spread----------------| ").collect(Collectors.joining())
+            );
+            factoryValueMatrix.append("\n");
+            IntStream.range(0, steps).forEach(i -> factoryValueMatrix.append(centeredRow(factoryParameters, i)));
+            LOGGER.info(factoryValueMatrix.toString());
+        } else {
+            LOGGER.info("Empty factory injectors, no Spreads....\n");
+        }
+
+        LOGGER.info("\n");
+        LOGGER.info("Spread will use these data arrays to feed though mutator methods....\n");
+
+        StringBuilder mutatorValueMatrix = new StringBuilder();
+        mutatorValueMatrix.append("\n");
+        for (MutatorTemplateAndParameters mutatorTemplateAndParameter: mutatorTemplateAndParameters) {
+            LOGGER.info(String.format("Mutator....[{%s}]\n", mutatorTemplateAndParameter.getMutatorTemplate()));
+            mutatorValueMatrix.append(
+                Arrays.stream(mutatorTemplateAndParameter.getParameters()).map(param -> " |----------------Spread----------------| ").collect(Collectors.joining())
+            );
+            mutatorValueMatrix.append("\n");
+            IntStream.range(0, steps).forEach(i -> mutatorValueMatrix.append(centeredRow(mutatorTemplateAndParameter.getParameters(), i)));
+
+        }
+        LOGGER.info(mutatorValueMatrix.toString());
+    }
+
+    private String centeredRow(Spread[] factoryParameters, int rowNumber) {
+        String centeredRow = Arrays.stream(factoryParameters)
+            .map(spread -> centerString(40, spread.getValues()[rowNumber].toString()))
+            .collect(Collectors.joining(" "));
+        return centeredRow + "\n";
+    }
+
+    public static String centerString (int width, String s) {
+        return String.format("%-" + width  + "s", String.format("%" + (s.length() + (width - s.length()) / 2) + "s", s));
+    }
+
     public Spreader<T> mutator(Consumer<T> setterTemplate) {
         captureMutatorTemplateAndParameters(setterTemplate.getClass().getDeclaredFields(), setterTemplate);
         return this;
@@ -83,6 +131,11 @@ public class Spreader<T> {
         this.debug = true;
         return this;
     }
+
+    private boolean isDebugMode() {
+        return debug != null && debug;
+    }
+
     private void validateSpread() {
         validateFactoryTemplate();
         validateSteps();
