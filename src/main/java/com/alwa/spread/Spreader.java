@@ -99,16 +99,18 @@ public class Spreader<T> {
 
         StringBuilder mutatorValueMatrix = new StringBuilder();
         mutatorValueMatrix.append("\n");
-        for (MutatorTemplateAndParameters mutatorTemplateAndParameter: mutatorTemplateAndParameters) {
-            LOGGER.info(String.format("Mutator....[{%s}]\n", mutatorTemplateAndParameter.getMutatorTemplate()));
-            mutatorValueMatrix.append(
-                Arrays.stream(mutatorTemplateAndParameter.getParameters()).map(param -> " |----------------Spread----------------| ").collect(Collectors.joining())
-            );
-            mutatorValueMatrix.append("\n");
-            IntStream.range(0, steps).forEach(i -> mutatorValueMatrix.append(centeredRow(mutatorTemplateAndParameter.getParameters(), i)));
+        if (mutatorTemplateAndParameters != null && !mutatorTemplateAndParameters.isEmpty()) {
+            for (MutatorTemplateAndParameters mutatorTemplateAndParameter: mutatorTemplateAndParameters) {
+                LOGGER.info(String.format("Mutator....[{%s}]\n", mutatorTemplateAndParameter.getMutatorTemplate()));
+                mutatorValueMatrix.append(
+                    Arrays.stream(mutatorTemplateAndParameter.getParameters()).map(param -> " |----------------Spread----------------| ").collect(Collectors.joining())
+                );
+                mutatorValueMatrix.append("\n");
+                IntStream.range(0, steps).forEach(i -> mutatorValueMatrix.append(centeredRow(mutatorTemplateAndParameter.getParameters(), i)));
 
+            }
+            LOGGER.info(mutatorValueMatrix.toString());
         }
-        LOGGER.info(mutatorValueMatrix.toString());
     }
 
     private String centeredRow(Spread[] factoryParameters, int rowNumber) {
