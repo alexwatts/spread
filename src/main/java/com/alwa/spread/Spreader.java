@@ -183,7 +183,7 @@ public class Spreader<T> {
         if (parameter instanceof Spread) {
             return (Spread<T>)parameter;
         } else {
-            return new FixedSpread<>(parameter);
+            return new FixedSpread<>(null, null, parameter);
         }
     }
 

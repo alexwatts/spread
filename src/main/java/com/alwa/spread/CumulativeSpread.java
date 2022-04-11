@@ -7,8 +7,12 @@ public class CumulativeSpread<T> extends Spread<T> {
 
     private RoundingMode roundingMode;
 
-    public CumulativeSpread(Object seedOrExample, Function<?, ?> stepFunction, Function<?, ?> mapFunction, RoundingMode roundingMode) {
-        super(seedOrExample, stepFunction, mapFunction);
+    public CumulativeSpread(
+        Function<?, ?> stepFunction,
+        Function<?, ?> mapFunction,
+        RoundingMode roundingMode,
+        Object... seedOrExamples) {
+        super(stepFunction, mapFunction, seedOrExamples);
         this.roundingMode = roundingMode;
     }
 

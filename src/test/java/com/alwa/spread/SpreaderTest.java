@@ -24,8 +24,7 @@ public class SpreaderTest {
 
         Spread<BigDecimal> cumulativeReadings =
                 SpreadUtil.cumulative(
-                    BigDecimal.valueOf(10000),
-                    RoundingMode.DOWN
+                    BigDecimal.valueOf(10000)
                 );
 
         List<TestDataObject> readings =
@@ -202,8 +201,8 @@ public class SpreaderTest {
                 () -> new Spreader<PrimativeTestDataObject>()
                         .factory(
                             () -> new PrimativeTestDataObject(
-                                Spread.in(new FixedSpread<>(1)),
-                                Spread.in(new FixedSpread<>(2d))
+                                Spread.in(SpreadUtil.fixed(1)),
+                                Spread.in(SpreadUtil.fixed(2d))
                             )
                         )
                         .spread(),
@@ -220,8 +219,8 @@ public class SpreaderTest {
                 () -> new Spreader<PrimativeTestDataObject>()
                     .factory(
                         () -> new PrimativeTestDataObject(
-                            Spread.in(new FixedSpread<>(1)),
-                            Spread.in(new FixedSpread<>(2d))
+                            Spread.in(SpreadUtil.fixed(1)),
+                            Spread.in(SpreadUtil.fixed(2d))
                         )
                     )
                     .steps(-1)
@@ -255,6 +254,31 @@ public class SpreaderTest {
         );
         assertThat(thrown.getMessage())
                 .contains("Invalid Spread Object - Type:[class java.math.BigDecimal], Value: -1]");
+    }
+
+    @Test
+    public void testSequencedSpreadViaConstructor() {
+        Spread<Instant> threeDates =
+            SpreadUtil.sequence(
+                LocalDateTime.of(2020, 1, 1, 1, 1),
+                LocalDateTime.of(2020, 1, 2, 1, 1),
+                LocalDateTime.of(2020, 1, 3, 1, 1)
+            ).map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
+
+        Spread<BigDecimal> cumulativeReadings =
+            SpreadUtil.cumulative(
+                BigDecimal.valueOf(10000),
+                RoundingMode.DOWN
+            );
+
+        List<TestDataObject> dataObjects =
+            new Spreader<TestDataObject>()
+                .factory(() -> new TestDataObject(Spread.in(threeDates), Spread.in(cumulativeReadings)))
+                .steps(24 * 7)
+                .spread()
+                .collect(Collectors.toList());
+
+        assertThat(dataObjects.size()).isEqualTo(24 * 7);
     }
 
 }

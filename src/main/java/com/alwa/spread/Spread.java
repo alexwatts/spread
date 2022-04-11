@@ -1,5 +1,6 @@
 package com.alwa.spread;
 
+import java.util.Arrays;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
@@ -7,31 +8,39 @@ public class Spread<T> extends BaseSpread {
 
     private Integer current;
 
-    private final Object seedOrExample;
+    private final Object[] seedsOrExamples;
     private Function<?, ?> stepFunction;
     private Function<?, ?> mapFunction;
 
-    public Spread(Object seedOrExample) {
-        this.seedOrExample = seedOrExample;
-    }
-
     public Spread(
-            Object seedOrExample,
             Function<?, ?> stepFunction,
-            Function<?, ?> mapFunction) {
-        this.seedOrExample = seedOrExample;
+            Function<?, ?> mapFunction,
+            Object... seedsOrExamples) {
+        this.seedsOrExamples = Arrays.stream(seedsOrExamples).toArray();
         this.stepFunction = stepFunction;
         this.mapFunction = mapFunction;
     }
 
     public <R> Spread<R> step(Function<? super T, ? extends R> stepFunction) {
         this.stepFunction = stepFunction;
-        return new Spread<>(seedOrExample, stepFunction, mapFunction);
+        return new Spread<>(stepFunction, mapFunction, seedsOrExamples);
     }
 
     public <R> Spread<R> map(Function<? super T, ? extends R> mapFunction) {
         this.mapFunction = mapFunction;
-        return new Spread<>(seedOrExample, stepFunction, mapFunction);
+        if (this instanceof FixedSpread) {
+            return new FixedSpread<>(stepFunction, mapFunction, seedsOrExamples);
+        } else if (this instanceof CumulativeSpread) {
+            return new CumulativeSpread<>(
+                stepFunction,
+                mapFunction, ((CumulativeSpread<T>) this).getRoundingMode(),
+                seedsOrExamples
+            );
+        } else if (this instanceof SequenceSpread) {
+            return new SequenceSpread<>(stepFunction, mapFunction, seedsOrExamples);
+        } else {
+            return new Spread<>(stepFunction, mapFunction, seedsOrExamples);
+        }
     }
 
     public static <T> T in(Spread<T> of) {
@@ -46,7 +55,7 @@ public class Spread<T> extends BaseSpread {
                     steps,
                     i + 1,
                     ((Function<Object, Object>) stepFunction),
-                    seedOrExample,
+                    seedsOrExamples,
                     previousValue(i, values)
                 )
             );
@@ -62,8 +71,8 @@ public class Spread<T> extends BaseSpread {
         return value;
     }
 
-    public Object getSeedOrExample() {
-        return seedOrExample;
+    public Object[] getSeedOrExamples() {
+        return seedsOrExamples;
     }
 
     public Function<?, ?> getStepFunction() {
@@ -82,24 +91,26 @@ public class Spread<T> extends BaseSpread {
             int totalSteps,
             int currentStep,
             Function<Object, Object> stepFunction,
-            Object seedOrExample,
+            Object[] seedsOrExamples,
             Object previousValue) {
-            return applyCumulativeOrStandardStep(totalSteps, currentStep, stepFunction, seedOrExample, previousValue);
+            return applyCumulativeOrStandardStep(totalSteps, currentStep, stepFunction, seedsOrExamples, previousValue);
     }
 
     private Object applyCumulativeOrStandardStep(int totalSteps,
                                                  int currentStep,
                                                  Function<Object, Object> stepFunction,
-                                                 Object seedOrExample,
+                                                 Object[] seedsOrExamples,
                                                  Object previousValue) {
         if (this instanceof FixedSpread) {
-            return seedOrExample;
+            return seedsOrExamples[0];
+        } else if (this instanceof SequenceSpread) {
+            return seedsOrExamples[(currentStep - 1) % seedsOrExamples.length];
         }
         else if (this instanceof CumulativeSpread) {
-            RangeResolver rangeResolver = new RangeResolver(seedOrExample);
+            RangeResolver rangeResolver = new RangeResolver(seedsOrExamples[0]);
             Function<Object, Object> cumulativeStepFunction =
                     rangeResolver.resolveStepFunction(totalSteps, currentStep, ((CumulativeSpread)this).getRoundingMode());
-            return cumulativeStepFunction.apply(seedOrExample);
+            return cumulativeStepFunction.apply(seedsOrExamples[0]);
         } else {
             return stepFunction.apply(previousValue);
         }
@@ -107,7 +118,7 @@ public class Spread<T> extends BaseSpread {
 
     private Object previousValue(int i, Object[] values) {
         if (i == 0) {
-            return seedOrExample;
+            return seedsOrExamples[0];
         } else {
             return values[i - 1];
         }
@@ -117,7 +128,7 @@ public class Spread<T> extends BaseSpread {
     public String toString() {
         return String.format("Spread<%s>{" +
             "current=" + current +
-            ", seedOrExample=" + seedOrExample +
+            ", seedOrExample=" + seedsOrExamples[0] +
             ", stepFunction=" + stepFunction +
             ", mapFunction=" + mapFunction +
             '}', this.getClass());

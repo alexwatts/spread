@@ -7,8 +7,8 @@ import static com.alwa.spread.SpreadValidator.validateCumulativeSpread;
 
 public class SpreadUtil {
 
-    private static <T> Spread<T> spread(T seed) {
-        return new Spread<T>(seed, null, null);
+    private static <T> Spread<T> spread(T seedOrExamples) {
+        return new Spread<T>(null, null, seedOrExamples);
     }
 
     public static <T> Spread<T> initial(T seed) {
@@ -29,15 +29,19 @@ public class SpreadUtil {
     }
 
     private static <T> Spread<T> cumulativeSpread(T seed) {
-        return new CumulativeSpread<>(seed, null, null, RoundingMode.DOWN);
+        return new CumulativeSpread<>(null, null, RoundingMode.DOWN, seed);
     }
 
     private static <T> Spread<T> cumulativeSpread(BigDecimal seed, RoundingMode roundingMode) {
-        return new CumulativeSpread<>(seed, null, null,roundingMode);
+        return new CumulativeSpread<>(null, null,roundingMode, seed);
     }
 
     private static <T> Spread<T> fixedSpread(T seed) {
-        return new FixedSpread<>(seed);
+        return new FixedSpread<>(null, null, seed);
+    }
+
+    public static <T> Spread<T> sequence(T... examples) {
+        return new SequenceSpread<>(null, null, examples);
     }
 
 }
