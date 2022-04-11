@@ -1,5 +1,6 @@
 package com.alwa.spread;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -274,6 +275,31 @@ public class SpreaderTest {
         List<TestDataObject> dataObjects =
             new Spreader<TestDataObject>()
                 .factory(() -> new TestDataObject(Spread.in(threeDates), Spread.in(cumulativeReadings)))
+                .steps(24 * 7)
+                .spread()
+                .collect(Collectors.toList());
+
+        assertThat(dataObjects.size()).isEqualTo(24 * 7);
+    }
+
+    @Test
+    public void randomStringTest() {
+        Spread<Instant> fixedDate =
+            SpreadUtil.fixed(LocalDateTime.MIN)
+                .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
+
+        Spread<BigDecimal> cumulativeReadings =
+            SpreadUtil.cumulative(
+                BigDecimal.valueOf(10000)
+            );
+
+        Spread<String> callRandomString =
+            SpreadUtil.call((String) -> RandomStringUtils.random(7, true, true));
+
+        List<TestDataObject> dataObjects =
+            new Spreader<TestDataObject>()
+                .factory(() -> new TestDataObject(Spread.in(fixedDate), Spread.in(cumulativeReadings)))
+                .mutator(testDataObject -> testDataObject.setStringField(Spread.in(callRandomString)))
                 .steps(24 * 7)
                 .spread()
                 .collect(Collectors.toList());

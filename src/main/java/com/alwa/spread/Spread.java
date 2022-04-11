@@ -38,6 +38,8 @@ public class Spread<T> extends BaseSpread {
             );
         } else if (this instanceof SequenceSpread) {
             return new SequenceSpread<>(stepFunction, mapFunction, seedsOrExamples);
+        } else if (this instanceof CallSpread) {
+            return new CallSpread<>(stepFunction, mapFunction, seedsOrExamples);
         } else {
             return new Spread<>(stepFunction, mapFunction, seedsOrExamples);
         }
@@ -109,8 +111,10 @@ public class Spread<T> extends BaseSpread {
         else if (this instanceof CumulativeSpread) {
             RangeResolver rangeResolver = new RangeResolver(seedsOrExamples[0]);
             Function<Object, Object> cumulativeStepFunction =
-                    rangeResolver.resolveStepFunction(totalSteps, currentStep, ((CumulativeSpread)this).getRoundingMode());
+                rangeResolver.resolveStepFunction(totalSteps, currentStep, ((CumulativeSpread) this).getRoundingMode());
             return cumulativeStepFunction.apply(seedsOrExamples[0]);
+        } else if (this instanceof CallSpread) {
+            return stepFunction.apply(seedsOrExamples[0]);
         } else {
             return stepFunction.apply(previousValue);
         }

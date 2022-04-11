@@ -2,6 +2,7 @@ package com.alwa.spread;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.function.Function;
 
 import static com.alwa.spread.SpreadValidator.validateCumulativeSpread;
 
@@ -24,7 +25,7 @@ public class SpreadUtil {
         return cumulativeSpread(example);
     }
 
-    public static <T >Spread<T> fixed(T example) {
+    public static <T>Spread<T> fixed(T example) {
         return fixedSpread(example);
     }
 
@@ -42,6 +43,10 @@ public class SpreadUtil {
 
     public static <T> Spread<T> sequence(T... examples) {
         return new SequenceSpread<>(null, null, examples);
+    }
+
+    public static Spread<String> call(Function<?, ?> functionToCall) {
+        return new CallSpread<>(functionToCall, null, new Object());
     }
 
 }
