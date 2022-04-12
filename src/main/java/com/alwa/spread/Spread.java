@@ -34,6 +34,7 @@ public class Spread<T> extends BaseSpread {
             return new CumulativeSpread<>(
                 stepFunction,
                 mapFunction, ((CumulativeSpread<T>) this).getRoundingMode(),
+                ((CumulativeSpread<T>) this).getFractionalAtom(),
                 seedsOrExamples
             );
         } else if (this instanceof SequenceSpread) {
@@ -111,7 +112,7 @@ public class Spread<T> extends BaseSpread {
         else if (this instanceof CumulativeSpread) {
             RangeResolver rangeResolver = new RangeResolver(seedsOrExamples[0]);
             Function<Object, Object> cumulativeStepFunction =
-                rangeResolver.resolveStepFunction(totalSteps, currentStep, ((CumulativeSpread) this).getRoundingMode());
+                rangeResolver.resolveStepFunction(totalSteps, currentStep, ((CumulativeSpread) this).getRoundingMode(), ((CumulativeSpread) this).getFractionalAtom());
             return cumulativeStepFunction.apply(seedsOrExamples[0]);
         } else if (this instanceof CallSpread) {
             return stepFunction.apply(seedsOrExamples[0]);

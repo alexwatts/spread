@@ -12,7 +12,7 @@ public class BigDecimalFunctionResolver extends StepFunctionResolver {
     }
 
     @Override
-    public Object[] initialiseValuesMap(String valuesMapKey, int totalSteps, Object example, RoundingMode roundingMode) {
+    public Object[] initialiseValuesMap(String valuesMapKey, int totalSteps, Object example, RoundingMode roundingMode, BigDecimal fractionalAtom) {
         Object[] values = new Object[totalSteps];
         BigDecimal seed = (BigDecimal) example;
         BigDecimal baseValue;
@@ -35,8 +35,16 @@ public class BigDecimalFunctionResolver extends StepFunctionResolver {
             values[i] = ((BigDecimal) values[i]).add(BigDecimal.ONE);
         }
 
+        int valuesIndex = 0;
         if (fractionalPart != null) {
-            values[0] = ((BigDecimal)values[0]).add(fractionalPart);
+            while (fractionalPart.compareTo(BigDecimal.ZERO) > 0) {
+                if (valuesIndex == values.length) {
+                    valuesIndex = 0;
+                }
+                values[valuesIndex] = ((BigDecimal)values[valuesIndex]).add(fractionalAtom);
+                fractionalPart = fractionalPart.subtract(fractionalAtom);
+                valuesIndex++;
+            }
         }
 
         valuesMap.put(valuesMapKey, values);

@@ -276,6 +276,7 @@ public class SpreaderTest {
             new Spreader<TestDataObject>()
                 .factory(() -> new TestDataObject(Spread.in(threeDates), Spread.in(cumulativeReadings)))
                 .steps(24 * 7)
+                .debug()
                 .spread()
                 .collect(Collectors.toList());
 

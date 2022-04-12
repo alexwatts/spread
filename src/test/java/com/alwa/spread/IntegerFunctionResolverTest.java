@@ -2,6 +2,7 @@ package com.alwa.spread;
 
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.stream.IntStream;
 
@@ -12,15 +13,16 @@ public class IntegerFunctionResolverTest {;
     private IntegerFunctionResolver integerFunctionResolver = new IntegerFunctionResolver();
     private Integer seed = 400;
     private RoundingMode roundingMode = RoundingMode.HALF_EVEN;
+    private final BigDecimal fractionalAtom = BigDecimal.valueOf(0.01);
 
     @Test
     public void simpleCumulativeTest() {
         assertThat(
-                integerFunctionResolver.getStepFunction(1, 1, seed, roundingMode).apply(seed)
+                integerFunctionResolver.getStepFunction(1, 1, seed, roundingMode, fractionalAtom).apply(seed)
         ).isEqualTo(400);
 
         assertThat(
-                integerFunctionResolver.getStepFunction(2, 2, seed, roundingMode).apply(seed)
+                integerFunctionResolver.getStepFunction(2, 2, seed, roundingMode, fractionalAtom).apply(seed)
         ).isEqualTo(200);
     }
 
@@ -31,7 +33,7 @@ public class IntegerFunctionResolverTest {;
             IntStream.range(1, 499)
                 .mapToObj(i ->
                     integerFunctionResolver
-                        .getStepFunction(498, i, largeSeed, roundingMode)
+                        .getStepFunction(498, i, largeSeed, roundingMode, fractionalAtom)
                         .apply(largeSeed)
                 )
                 .map(i -> ((Integer) i))

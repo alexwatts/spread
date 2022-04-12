@@ -30,11 +30,11 @@ public class SpreadUtil {
     }
 
     private static <T> Spread<T> cumulativeSpread(T seed) {
-        return new CumulativeSpread<>(null, null, RoundingMode.DOWN, seed);
+        return new CumulativeSpread<>(null, null, RoundingMode.DOWN, BigDecimal.valueOf(0.01), seed);
     }
 
     private static <T> Spread<T> cumulativeSpread(BigDecimal seed, RoundingMode roundingMode) {
-        return new CumulativeSpread<>(null, null,roundingMode, seed);
+        return new CumulativeSpread<>(null, null, roundingMode, BigDecimal.valueOf(0.01), seed);
     }
 
     private static <T> Spread<T> fixedSpread(T seed) {

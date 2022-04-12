@@ -13,16 +13,17 @@ public class BigDecimalFunctionResolverTest {;
     private final BigDecimalFunctionResolver bigDecimalFunctionResolver = new BigDecimalFunctionResolver();
     private final BigDecimal seed = BigDecimal.valueOf(10000);
     private final RoundingMode roundingMode = RoundingMode.HALF_EVEN;
+    private final BigDecimal fractionalAtom = BigDecimal.valueOf(0.0001);
 
     @Test
     public void simpleCumulativeTest() {
         assertThat(
-                bigDecimalFunctionResolver.getStepFunction(1, 1, seed, roundingMode).apply(seed)
+                bigDecimalFunctionResolver.getStepFunction(1, 1, seed, roundingMode, fractionalAtom).apply(seed)
         ).isEqualTo(BigDecimal.valueOf(10000));
 
         assertThat(
                 bigDecimalFunctionResolver
-                        .getStepFunction(2, 2, seed, roundingMode)
+                        .getStepFunction(2, 2, seed, roundingMode, fractionalAtom)
                         .apply(seed)
         ).isEqualTo(BigDecimal.valueOf(5000));
     }
@@ -34,7 +35,7 @@ public class BigDecimalFunctionResolverTest {;
             IntStream.range(1, 499)
                 .mapToObj(i ->
                     bigDecimalFunctionResolver
-                        .getStepFunction(498, i, largeSeed, roundingMode)
+                        .getStepFunction(498, i, largeSeed, roundingMode, fractionalAtom)
                         .apply(largeSeed)
                 )
                 .map(i -> ((BigDecimal) i))
@@ -44,32 +45,32 @@ public class BigDecimalFunctionResolverTest {;
 
     @Test
     public void manyValuesFractionalTest() {
-        BigDecimal largeSeed = BigDecimal.valueOf(500000.342364365);
+        BigDecimal largeSeed = BigDecimal.valueOf(500000.342);
         BigDecimal total =
                 IntStream.range(1, 499)
                     .mapToObj(i ->
                         bigDecimalFunctionResolver
-                            .getStepFunction(498, i, largeSeed, roundingMode)
+                            .getStepFunction(498, i, largeSeed, roundingMode, fractionalAtom)
                             .apply(largeSeed)
                     )
                     .map(i -> ((BigDecimal) i))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
-        assertThat(total).isEqualTo(largeSeed);
+        assertThat(total.setScale(3, roundingMode)).isEqualTo(largeSeed);
     }
 
     @Test
     public void manyValuesMoreStepsThanFractionalTotal() {
-        BigDecimal smallSeed = BigDecimal.valueOf(1.342364365);
+        BigDecimal smallSeed = BigDecimal.valueOf(1.342);
         BigDecimal total =
                 IntStream.range(1, 78601)
                     .mapToObj(i ->
                         bigDecimalFunctionResolver
-                            .getStepFunction(78600, i, smallSeed, roundingMode)
+                            .getStepFunction(78600, i, smallSeed, roundingMode, fractionalAtom)
                             .apply(smallSeed)
                     )
                     .map(i -> ((BigDecimal) i))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
-        assertThat(total).isEqualTo(smallSeed);
+        assertThat(total.setScale(3, roundingMode)).isEqualTo(smallSeed);
     }
 
     @Test
@@ -79,12 +80,12 @@ public class BigDecimalFunctionResolverTest {;
                 IntStream.range(1, 78601)
                     .mapToObj(i ->
                         bigDecimalFunctionResolver
-                            .getStepFunction(78600, i, smallSeed, roundingMode)
+                            .getStepFunction(78600, i, smallSeed, roundingMode, fractionalAtom)
                             .apply(smallSeed)
                     )
                     .map(i -> ((BigDecimal) i))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
-        assertThat(total).isEqualTo(smallSeed);
+        assertThat(total).isEqualTo(smallSeed.stripTrailingZeros());
     }
 
     @Test

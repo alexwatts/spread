@@ -14,8 +14,8 @@ public class RangeResolver {
         this.example = example;
     }
 
-    public Function resolveStepFunction(int totalSteps, int currentStep, RoundingMode roundingMode) {
-        return getResolverMap().get(example.getClass()).getStepFunction(totalSteps, currentStep, example, roundingMode);
+    public Function resolveStepFunction(int totalSteps, int currentStep, RoundingMode roundingMode, BigDecimal fractionalAtom) {
+        return getResolverMap().get(example.getClass()).getStepFunction(totalSteps, currentStep, example, roundingMode, fractionalAtom);
     }
 
     public boolean validateSeed() {
