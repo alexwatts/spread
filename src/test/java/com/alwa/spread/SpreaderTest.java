@@ -254,7 +254,7 @@ public class SpreaderTest {
                 "Expected SpreadException because cumulative value is negative"
         );
         assertThat(thrown.getMessage())
-                .contains("Invalid Spread Object - Type:[class java.math.BigDecimal], Value: -1]");
+                .contains("Invalid Spread Object - Type:[class java.math.BigDecimal], Value:[-1]");
     }
 
     @Test
@@ -276,7 +276,6 @@ public class SpreaderTest {
             new Spreader<TestDataObject>()
                 .factory(() -> new TestDataObject(Spread.in(threeDates), Spread.in(cumulativeReadings)))
                 .steps(24 * 7)
-                .debug()
                 .spread()
                 .collect(Collectors.toList());
 

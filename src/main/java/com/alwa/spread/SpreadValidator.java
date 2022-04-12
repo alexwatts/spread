@@ -26,7 +26,7 @@ public class SpreadValidator {
     public static void validateCumulativeObjectValue(Object cumulativeObject) {
         RangeResolver rangeResolver = new RangeResolver(cumulativeObject);
         if (!rangeResolver.validateSeed()) {
-            String message = "Invalid Spread Object - Type:[%s], Value: %s]";
+            String message = "Invalid Spread Object - Type:[%s], Value:[%s]";
             throw new SpreadException(String.format(message, cumulativeObject.getClass(), cumulativeObject));
         }
     }
