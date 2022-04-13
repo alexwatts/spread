@@ -1,16 +1,10 @@
 package com.alwa.spread;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class SpreadValidator {
 
-    private static List<Class> supportedCumulativeClasses = Arrays.asList(
-            BigDecimal.class,
-            Integer.class
-    );
+
 
     public static void validateCumulativeSpread(Object cumulativeObject) {
         validateCumulativeObjectType(cumulativeObject);
@@ -18,7 +12,7 @@ public class SpreadValidator {
     }
 
     public static void validateCumulativeObjectType(Object cumulativeObject) {
-        if (!supportedCumulativeClasses.contains(cumulativeObject.getClass())) {
+        if (!SupportedFunctionResolvers.supportedFunctionResolvers().containsKey(cumulativeObject.getClass())) {
             throw new SpreadException(unsupportedCumulativeObjectTypeMessage(cumulativeObject));
         }
     }
@@ -40,7 +34,8 @@ public class SpreadValidator {
                         messageFormat,
                         cumulativeObject.getClass(),
                         cumulativeObject,
-                        supportedCumulativeClasses
+                        SupportedFunctionResolvers.supportedFunctionResolvers()
+                            .keySet()
                                 .stream()
                                 .map(Class::getName)
                                 .collect(Collectors.joining(" "))

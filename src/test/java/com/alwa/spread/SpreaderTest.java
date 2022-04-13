@@ -307,4 +307,26 @@ public class SpreaderTest {
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
     }
 
+    @Test
+    public void longTestTest() {
+        Spread<Double> doubleValues =
+            SpreadUtil.cumulative(
+                10000d
+            );
+
+        Spread<Integer> integerValues =
+            SpreadUtil.cumulative(
+                10000
+            );
+
+        List<PrimativeTestDataObject> dataObjects =
+            new Spreader<PrimativeTestDataObject>()
+                .factory(() -> new PrimativeTestDataObject(Spread.in(integerValues), Spread.in(doubleValues)))
+                .steps(24 * 7)
+                .spread()
+                .collect(Collectors.toList());
+
+        assertThat(dataObjects.size()).isEqualTo(24 * 7);
+    }
+
 }
