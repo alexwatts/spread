@@ -3,6 +3,7 @@ package com.alwa.spread;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -322,6 +323,37 @@ public class SpreaderTest {
         List<PrimativeTestDataObject> dataObjects =
             new Spreader<PrimativeTestDataObject>()
                 .factory(() -> new PrimativeTestDataObject(Spread.in(integerValues), Spread.in(doubleValues)))
+                .steps(24 * 7)
+                .spread()
+                .collect(Collectors.toList());
+
+        assertThat(dataObjects.size()).isEqualTo(24 * 7);
+    }
+
+    @Test
+    public void bigIntegerTest() {
+        Spread<Instant> everyHour =
+            SpreadUtil
+                .initial(LocalDateTime.MIN)
+                .step(previousDate -> previousDate.plusHours(1))
+                .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
+
+        Spread<BigDecimal> bigDecimalValues =
+            SpreadUtil.cumulative(
+                BigDecimal.valueOf(70000)
+            );
+
+        Spread<BigInteger> bigIntegerValues =
+            SpreadUtil.cumulative(
+                BigInteger.valueOf(70000)
+            );
+
+        List<TestDataObject> dataObjects =
+            new Spreader<TestDataObject>()
+                .factory(() -> new TestDataObject(Spread.in(everyHour), Spread.in(bigDecimalValues)))
+                .mutator(
+                    testDataObject -> testDataObject.setBigInteger(Spread.in(bigIntegerValues))
+                )
                 .steps(24 * 7)
                 .spread()
                 .collect(Collectors.toList());

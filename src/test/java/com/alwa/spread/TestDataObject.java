@@ -1,6 +1,7 @@
 package com.alwa.spread;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.Instant;
 
 public class TestDataObject {
@@ -8,6 +9,7 @@ public class TestDataObject {
     private String stringField;
     private Instant timeField;
     private BigDecimal bigDecimalField;
+    private BigInteger bigInteger;
 
     public TestDataObject() {
     }
@@ -49,4 +51,7 @@ public class TestDataObject {
         this.bigDecimalField = bigDecimalField;
     }
 
+    public void setBigInteger(BigInteger bigInteger) {
+        this.bigInteger = bigInteger;
+    }
 }

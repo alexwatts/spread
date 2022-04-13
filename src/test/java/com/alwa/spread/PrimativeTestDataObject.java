@@ -1,10 +1,13 @@
 package com.alwa.spread;
 
+import java.math.BigInteger;
+
 public class PrimativeTestDataObject {
 
     private String stringField;
     private int intField;
     private double doubleField;
+    private BigInteger bigInteger;
 
     public PrimativeTestDataObject() {
     }
@@ -42,4 +45,7 @@ public class PrimativeTestDataObject {
         this.doubleField = doubleField;
     }
 
+    public void setBigInteger(BigInteger bigInteger) {
+        this.bigInteger = bigInteger;
+    }
 }
