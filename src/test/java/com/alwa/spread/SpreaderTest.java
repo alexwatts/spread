@@ -201,13 +201,13 @@ public class SpreaderTest {
         SpreaderException thrown = assertThrows(
                 SpreaderException.class,
                 () -> new Spreader<PrimativeTestDataObject>()
-                        .factory(
-                            () -> new PrimativeTestDataObject(
-                                Spread.in(SpreadUtil.fixed(1)),
-                                Spread.in(SpreadUtil.fixed(2d))
-                            )
+                    .factory(
+                        () -> new PrimativeTestDataObject(
+                            Spread.in(SpreadUtil.fixed(1)),
+                            Spread.in(SpreadUtil.fixed(2d))
                         )
-                        .spread(),
+                    )
+                    .spread(),
                 "Expected SpreaderException because steps method was missing"
         );
         assertThat(thrown.getMessage())
@@ -309,7 +309,7 @@ public class SpreaderTest {
     }
 
     @Test
-    public void longTestTest() {
+    public void longTest() {
         Spread<Double> doubleValues =
             SpreadUtil.cumulative(
                 10000d
@@ -359,6 +359,11 @@ public class SpreaderTest {
                 .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
+    }
+
+    @Test
+    public void testSelectSpread() {
+
     }
 
 }
