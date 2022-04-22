@@ -99,9 +99,19 @@ The <code>Spreader</code> accepts a mode for debug. You can add a <code>.debug()
             new Spreader<Foo>()
                 .factory(Foo::new)
                 .mutators(
-                        foo -> foo.setBar(Spread.in(bar))
+                    foo -> foo.setBar(Spread.in(bar))
                 )
                 .steps(20)
                 .debug()
                 .spread()
                 .collect(Collectors.toList());
+
+### Cumulative
+The cumulative feature tries to feed values in as uniform a way as possible. Meaning that it strives to try to keep all values across a dataset as close as is possible, ideally, all the same value. This is not always possible tho depending on the cumulative value and the number of specified steps. If there is any fractional part of a cumulative target to be distributed across test objects, <code>Spreader</code> tries to break up a fractional portion of a number into 'fractional atoms' before spreading these across test objects. The default fractional atom is 0.01 but can be specified where required. Additionally, the <code>RoundingMode</code> can be configured. eg:
+
+    Spread<BigDecimal> cumulativeReadings =
+            SpreadUtil.cumulative(
+                BigDecimal.valueOf(10000),
+                RoundingMode.DOWN, //rounding mode
+                BigDecimal.valueOf(0.01d) //fractional atom
+            );
