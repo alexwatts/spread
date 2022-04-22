@@ -44,10 +44,10 @@ public class ShortFunctionResolverTest {;
 
     @Test
     public void testValidation() {
-        assertThat(shortFunctionResolver.validateSeed(-1)).isFalse();
-        assertThat(shortFunctionResolver.validateSeed(0)).isFalse();
+        assertThat(shortFunctionResolver.validateSeed((short)-1)).isFalse();
+        assertThat(shortFunctionResolver.validateSeed((short)0)).isFalse();
         assertThat(shortFunctionResolver.validateSeed(null)).isFalse();
-        assertThat(shortFunctionResolver.validateSeed(50)).isTrue();
+        assertThat(shortFunctionResolver.validateSeed((short)50)).isTrue();
     }
 
 }

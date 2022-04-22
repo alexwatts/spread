@@ -69,4 +69,39 @@ This works in a similar way for factory methods:
                 .collect(Collectors.toList());
                 
  The <code>spread()</code> method of the <code>Spreader</code> class returns a <code>Stream</code> of the target object type, meaning that we are free to collect the resultant stream into any desired groupings or collection types available to us via the Java stream API features, eg. <code>Map</code> <code>Set</code> etc.             
-                
+
+## Other Features
+
+### Sequence
+You can define a sequence of values in a <code>spread</code> which will feed in and repeat for as many steps are defined eg.
+
+    Spread<String> threeNames =
+            SpreadUtil.sequence(
+                "John",
+                "Emma",
+                "Sophie"
+            );
+
+### Fixed
+You can define fixed values which will fill as specified, for as many steps as specified eg:
+
+    Spread<Double> fixedDouble = SpreadUtil.fixed(1.6d);
+
+### Custom
+You can define your own logic to fill values for the defined steps eg:
+    
+    Spread<String> randomString = SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
+
+### Debug
+The <code>Spreader</code> accepts a mode for debug. You can add a <code>.debug()</code> call to the <code>Spreader</code> chain to enable additional logging, including a tabular print of the string representation of the values being fed into objects. eg:
+
+    List<Foo> foo =
+            new Spreader<Foo>()
+                .factory(Foo::new)
+                .mutators(
+                        foo -> foo.setBar(Spread.in(bar))
+                )
+                .steps(20)
+                .debug()
+                .spread()
+                .collect(Collectors.toList());

@@ -14,6 +14,8 @@ public class SupportedFunctionResolvers {
         resolverMap.put(Double.class, new DoubleFunctionResolver());
         resolverMap.put(Long.class, new LongFunctionResolver());
         resolverMap.put(Integer.class, new IntegerFunctionResolver());
+        resolverMap.put(Float.class, new FloatFunctionResolver());
+        resolverMap.put(Short.class, new ShortFunctionResolver());
         return resolverMap;
     }
 

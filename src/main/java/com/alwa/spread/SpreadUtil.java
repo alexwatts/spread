@@ -45,7 +45,7 @@ public class SpreadUtil {
         return new SequenceSpread<>(null, null, examples);
     }
 
-    public static Spread<String> call(Function<?, ?> functionToCall) {
+    public static Spread<String> custom(Function<?, ?> functionToCall) {
         return new CallSpread<>(functionToCall, null, new Object());
     }
 

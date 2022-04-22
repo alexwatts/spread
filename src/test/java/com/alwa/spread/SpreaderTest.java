@@ -295,7 +295,7 @@ public class SpreaderTest {
             );
 
         Spread<String> callRandomString =
-            SpreadUtil.call((String) -> RandomStringUtils.random(7, true, true));
+            SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
 
         List<TestDataObject> dataObjects =
             new Spreader<TestDataObject>()
@@ -359,11 +359,6 @@ public class SpreaderTest {
                 .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
-    }
-
-    @Test
-    public void testSelectSpread() {
-
     }
 
 }

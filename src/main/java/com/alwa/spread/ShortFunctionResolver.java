@@ -28,7 +28,7 @@ public class ShortFunctionResolver extends StepFunctionResolver {
 
     @Override
     protected boolean validateSeed(Object seed) {
-        return seed != null && (Integer) seed > 0;
+        return seed != null && (Short) seed > 0;
     }
 
 }
