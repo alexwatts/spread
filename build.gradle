@@ -4,7 +4,7 @@ plugins {
     id 'info.solidsoft.pitest' version '1.7.0'
 }
 
-group 'io.github'
+group 'io.github.alexwatts'
 version '1.0-SNAPSHOT'
 
 repositories {
