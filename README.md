@@ -1,5 +1,5 @@
 # Spread
-Spread is a ergonomic helper library for building test objects quickly and fluently without needing to write builders.
+Spread is a ergonomic helper library for building test objects quickly and fluently without needing to write or generate builders.
 Spread tries to preserve full control of the generated objects whist also doing what you would expect where things are unspecified.
 
 You can use it in Tests to generate Objects with dymanic values into Java collection types (<code>List</code>, <code>Set</code>, <code>Map</code>, etc)
