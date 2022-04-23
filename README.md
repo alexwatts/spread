@@ -40,7 +40,7 @@ If you need to change the type of the <code>Spread</code> you can map a spread t
                 .step(previousDate -> previousDate.plusHours(1))
                 .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
     
-To inject a <code>Spread</code> into some test objects you can use a <code>Spreader</code> object and wrap constructor arguments with <code>Spread.in()</code> to inject <code>Spread</code> instances into your test object. Spreader will generate one object for every step: 
+To inject a <code>Spread</code> into some test objects you can use a <code>Spreader</code> object and wrap constructor arguments with <code>Spread.in()</code> to inject <code>Spread</code> instances into your test object. <code>Spreader</code> will generate one object for every step: 
     
     List<ElectricityReading> readings =
             new Spreader<ElectricityReading>()
