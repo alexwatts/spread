@@ -19,3 +19,7 @@ gradle-com.rbs.techtest.app.setting
 # gradle/wrapper/gradle-wrapper.properties
 # Ignore Gradle build output directory
 build
+
+admin
+
+gradle.properties
