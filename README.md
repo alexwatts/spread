@@ -2,6 +2,8 @@
 Spread is a ergonomic helper library for building test objects quickly and fluently without needing to write builders.
 Spread tries to preserve full control of the generated objects whist also doing what you would expect where things are unspecified.
 
+You can use it in Tests to generate Objects with dymanic values into Java collection types (<code>List</code>, <code>Set</code>, <code>Map</code>, etc)
+
 ## Getting Started
 You can find <code>Spread</code> on Maven central and import it into a Maven or Gradle project with:
 
