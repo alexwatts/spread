@@ -3,6 +3,19 @@ Spread is a ergonomic helper library for building test objects quickly and fluen
 Spread tries to preserve full control of the generated objects whist also doing what you would expect where things are unspecified.
 
 ## Getting Started
+You can find <code>Spread</code> on Maven central and import it into a Maven or Gradle project with:
+
+#### Maven
+    <dependency>
+        <groupId>io.github.alexwatts</groupId>
+        <artifactId>spread</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+
+#### Gradle
+    implementation 'io.github.alexwatts:spread:1.0.0'
+
+#### Usage
 You can define a spread of values to be injected into test objects via constructor/factory method/mutatator methods.
 
 For example, for a range of <code>LocalDateTime</code> values incrementing by hour:
