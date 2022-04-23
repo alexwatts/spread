@@ -23,9 +23,9 @@ You can define a spread of values to be injected into test objects via construct
 For example, for a range of <code>LocalDateTime</code> values incrementing by hour:
 
     Spread<LocalDateTime> everyHour = 
-              SpreadUtil
-                .initial(LocalDateTime.MIN)
-                .step(previousDate -> previousDate.plusHours(1));
+          SpreadUtil
+            .initial(LocalDateTime.MIN)
+            .step(previousDate -> previousDate.plusHours(1));
  
 
 You can also define 'cumulative' Spreads, for example, a series of <code>BigDecimal</code> values with a cumulative total of 10000:
@@ -35,10 +35,10 @@ You can also define 'cumulative' Spreads, for example, a series of <code>BigDeci
 If you need to change the type of the <code>Spread</code> you can map a spread to any other type eg:
 
     Spread<Instant> everyHour = 
-              SpreadUtil
-                .initial(LocalDateTime.MIN)
-                .step(previousDate -> previousDate.plusHours(1))
-                .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
+          SpreadUtil
+            .initial(LocalDateTime.MIN)
+            .step(previousDate -> previousDate.plusHours(1))
+            .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
     
 To inject a <code>Spread</code> into some test objects you can use a <code>Spreader</code> object and wrap constructor arguments with <code>Spread.in()</code> to inject <code>Spread</code> instances into your test object. <code>Spreader</code> will generate one object for every step: 
     
