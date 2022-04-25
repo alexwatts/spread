@@ -130,3 +130,14 @@ The cumulative feature tries to feed values in as uniform a way as possible. Mea
                 RoundingMode.DOWN, //rounding mode
                 BigDecimal.valueOf(0.01d) //fractional atom
             );
+
+### Related
+You can define a spread that is based on the values of another spread. For instance, you can define a spread that will evaluate its value based on the step value of another spread. For instance as below a <code>Boolean</code> value that feeds in <code>true</code> if the step value of the related spread starts with an 'a' eg:
+
+    Spread<String> threeLetterSpread =
+            SpreadUtil.sequence("a", "b", "c");
+
+    Spread<Boolean> startsWithAnA =
+        SpreadUtil.
+            related(threeLetterSpread)
+            .step(relatedValue -> relatedValue.startsWith("a"));

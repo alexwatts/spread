@@ -1,6 +1,6 @@
 package com.alwa.spread;
 
-public class BaseSpread {
+public abstract class BaseSpread {
 
     protected Object[] values;
 

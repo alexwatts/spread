@@ -361,4 +361,28 @@ public class SpreaderTest {
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
     }
 
+    @Test
+    public void testBasedOn() {
+        Spread<String> threeLetterSpread =
+            SpreadUtil.sequence("a", "b", "c");
+
+        Spread<Boolean> startsWithAnA =
+            SpreadUtil.
+                related(threeLetterSpread)
+                .step(relatedValue -> relatedValue.startsWith("a"));
+
+        List<TestDataObject> dataObjects =
+            new Spreader<TestDataObject>()
+                .factory(TestDataObject::new)
+                .mutator(
+                    testDataObject -> testDataObject.setBooleanField(Spread.in(startsWithAnA))
+                )
+                .steps(24 * 7)
+                .spread()
+                .collect(Collectors.toList());
+
+        assertThat(dataObjects.size()).isEqualTo(24 * 7);
+
+    }
+
 }

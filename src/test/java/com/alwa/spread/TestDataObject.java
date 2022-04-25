@@ -10,6 +10,7 @@ public class TestDataObject {
     private Instant timeField;
     private BigDecimal bigDecimalField;
     private BigInteger bigInteger;
+    private Boolean booleanField;
 
     public TestDataObject() {
     }
@@ -53,5 +54,13 @@ public class TestDataObject {
 
     public void setBigInteger(BigInteger bigInteger) {
         this.bigInteger = bigInteger;
+    }
+
+    public Boolean getBooleanField() {
+        return booleanField;
+    }
+
+    public void setBooleanField(Boolean booleanField) {
+        this.booleanField = booleanField;
     }
 }

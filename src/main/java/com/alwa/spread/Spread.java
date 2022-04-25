@@ -1,10 +1,13 @@
 package com.alwa.spread;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
 public class Spread<T> extends BaseSpread {
+
+    private boolean initialised;
 
     private Integer current;
 
@@ -23,13 +26,25 @@ public class Spread<T> extends BaseSpread {
 
     public <R> Spread<R> step(Function<? super T, ? extends R> stepFunction) {
         this.stepFunction = stepFunction;
-        return new Spread<>(stepFunction, mapFunction, seedsOrExamples);
+        return newTypedSpread(this.mapFunction, stepFunction);
     }
 
     public <R> Spread<R> map(Function<? super T, ? extends R> mapFunction) {
         this.mapFunction = mapFunction;
+        return newTypedSpread(mapFunction, this.stepFunction);
+    }
+
+    public boolean isInitialised() {
+        return initialised;
+    }
+
+    private <R> Spread<R> newTypedSpread(
+        Function<?, ?> mapFunction,
+        Function<?, ?> stepFunction) {
         if (this instanceof FixedSpread) {
             return new FixedSpread<>(stepFunction, mapFunction, seedsOrExamples);
+        } else if (this instanceof RelatedSpread) {
+            return new RelatedSpread<>(stepFunction, mapFunction, seedsOrExamples);
         } else if (this instanceof CumulativeSpread) {
             return new CumulativeSpread<>(
                 stepFunction,
@@ -51,6 +66,11 @@ public class Spread<T> extends BaseSpread {
     }
 
     protected void init(int steps) {
+        if (this instanceof RelatedSpread) {
+            if (!((Spread)this.seedsOrExamples[0]).isInitialised()) {
+                ((Spread)this.seedsOrExamples[0]).init(steps);
+            }
+        }
         values = new Object[steps];
         IntStream.range(0, steps)
             .forEach(i ->
@@ -63,6 +83,7 @@ public class Spread<T> extends BaseSpread {
                 )
             );
         current = 0;
+        initialised = true;
     }
 
     private T next() {
@@ -116,6 +137,8 @@ public class Spread<T> extends BaseSpread {
             return cumulativeStepFunction.apply(seedsOrExamples[0]);
         } else if (this instanceof CallSpread) {
             return stepFunction.apply(seedsOrExamples[0]);
+        } else if (this instanceof RelatedSpread) {
+            return stepFunction.apply(((Spread)this.seedsOrExamples[0]).previousValue(currentStep , ((Spread)this.seedsOrExamples[0]).values));
         } else {
             return stepFunction.apply(previousValue);
         }
@@ -128,6 +151,7 @@ public class Spread<T> extends BaseSpread {
             return values[i - 1];
         }
     }
+
 
     @Override
     public String toString() {

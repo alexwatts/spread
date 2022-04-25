@@ -57,4 +57,7 @@ public class SpreadUtil {
         return new CallSpread<>(functionToCall, null, new Object());
     }
 
+    public static  <T> Spread<T> related(Spread<T> related) {
+        return new RelatedSpread<>(null, null, related);
+    }
 }

@@ -27,4 +27,5 @@ public class CumulativeSpread<T> extends Spread<T> {
     public BigDecimal getFractionalAtom() {
         return fractionalAtom;
     }
+
 }
