@@ -45,7 +45,7 @@ publishing {
         mavenJava(MavenPublication) {
             from(components.java)
             pom {
-                name = 'publish-java'
+                name = 'Spread'
                 description = 'Spread. Its an ergonomic helper library for building Java Test Objects'
                 url = 'https://github.com/alexwatts/spread'
                 licenses {
