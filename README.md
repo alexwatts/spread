@@ -89,7 +89,7 @@ This works in a similar way for factory methods:
 ## Other Features
 
 ### Sequence
-You can define a sequence of values in a <code>spread</code> which will feed in and repeat for as many steps are defined eg.
+You can define a sequence of values in a <code>Spread</code> which will feed in and repeat for as many steps are defined eg.
 
     Spread<String> threeNames =
             SpreadUtil.sequence(
@@ -133,7 +133,7 @@ The cumulative feature tries to feed values in as uniform a way as possible. Mea
             );
 
 ### Related
-You can define a spread that is based on the values of another spread. For instance, you can define a spread that will evaluate its value based on the step value of another spread. For instance as below a <code>Boolean</code> value that feeds in <code>true</code> if the step value of the related spread starts with an 'a' eg:
+You can define a <code>Spread</code> that is based on the values of another 'related' spread. For instance, you can define a spread that will evaluate its value based on the step value of another spread. For instance as below a <code>Boolean</code> value that feeds in <code>true</code> if the step value of the related spread starts with an 'a' eg:
 
     Spread<String> threeLetterSpread =
             SpreadUtil.sequence("a", "b", "c");
