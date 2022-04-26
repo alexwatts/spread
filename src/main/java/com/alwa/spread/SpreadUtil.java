@@ -46,6 +46,10 @@ public class SpreadUtil {
         return new CumulativeSpread<>(null, null, roundingMode, fractionalAtom, seed);
     }
 
+    private static <T> Spread<T> cumulativeSpread(BigDecimal seed, BigDecimal fractionalAtom) {
+        return new CumulativeSpread<>(null, null, RoundingMode.DOWN, fractionalAtom, seed);
+    }
+
     private static <T> Spread<T> fixedSpread(T seed) {
         return new FixedSpread<>(null, null, seed);
     }

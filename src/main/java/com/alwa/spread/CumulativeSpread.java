@@ -29,8 +29,30 @@ public class CumulativeSpread<T> extends Spread<T> {
 
             RangeResolver rangeResolver = new RangeResolver(seedsOrExamples[0]);
             Function<Object, Object> cumulativeStepFunction =
-                rangeResolver.resolveStepFunction(totalSteps, currentStep, ((CumulativeSpread) this).getRoundingMode(), this.getFractionalAtom());
+                rangeResolver.resolveStepFunction(totalSteps, currentStep, this.getRoundingMode(), this.getFractionalAtom());
             return cumulativeStepFunction.apply(seedsOrExamples[0]);
+    }
+
+    @Override
+    protected <R> Spread<R> step(Function<? super T, ? extends R> stepFunction) {
+        this.stepFunction = stepFunction;
+        return new CumulativeSpread<>(
+            stepFunction,
+            mapFunction, this.getRoundingMode(),
+            this.getFractionalAtom(),
+            seedsOrExamples
+        );
+    }
+
+    @Override
+    protected <R> Spread<R> map(Function<? super T, ? extends R> mapFunction) {
+        this.mapFunction = mapFunction;
+        return new CumulativeSpread<>(
+            stepFunction,
+            mapFunction, this.getRoundingMode(),
+            this.getFractionalAtom(),
+            seedsOrExamples
+        );
     }
 
     public RoundingMode getRoundingMode() {

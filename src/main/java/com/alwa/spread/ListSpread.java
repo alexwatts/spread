@@ -26,6 +26,7 @@ public class ListSpread<T> extends Spread<T> {
                                                    Object previousValue) {
 
         Spread<T> targetSpread = ((Spread<T>) seedsOrExamples[0]);
+
         return new Spreader<List<T>>()
             .factory(ArrayList::new)
             .mutators(list -> list.add(Spread.in(targetSpread)))
@@ -33,6 +34,18 @@ public class ListSpread<T> extends Spread<T> {
             .debug()
             .spread()
             .collect(Collectors.toList());
+    }
+
+    @Override
+    protected <R> Spread<R> step(Function<? super T, ? extends R> stepFunction) {
+        this.stepFunction = stepFunction;
+        return new ListSpread<>(stepFunction, mapFunction, this.getSteps(), seedsOrExamples);
+    }
+
+    @Override
+    protected <R> Spread<R> map(Function<? super T, ? extends R> mapFunction) {
+        this.mapFunction = mapFunction;
+        return new ListSpread<>(stepFunction, mapFunction, this.getSteps(), seedsOrExamples);
     }
 
     public int getSteps() {

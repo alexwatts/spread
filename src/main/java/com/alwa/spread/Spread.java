@@ -10,9 +10,9 @@ public class Spread<T> extends BaseSpread {
 
     private Integer current;
 
-    private final Object[] seedsOrExamples;
-    private Function<?, ?> stepFunction;
-    private Function<?, ?> mapFunction;
+    protected final Object[] seedsOrExamples;
+    protected Function<?, ?> stepFunction;
+    protected Function<?, ?> mapFunction;
 
     public Spread(
             Function<?, ?> stepFunction,
@@ -23,43 +23,18 @@ public class Spread<T> extends BaseSpread {
         this.mapFunction = mapFunction;
     }
 
-    public <R> Spread<R> step(Function<? super T, ? extends R> stepFunction) {
+    protected <R> Spread<R> step(Function<? super T, ? extends R> stepFunction) {
         this.stepFunction = stepFunction;
-        return newTypedSpread(this.mapFunction, stepFunction);
+        return new Spread<>(stepFunction, mapFunction, seedsOrExamples);
     }
 
-    public <R> Spread<R> map(Function<? super T, ? extends R> mapFunction) {
+    protected <R> Spread<R> map(Function<? super T, ? extends R> mapFunction) {
         this.mapFunction = mapFunction;
-        return newTypedSpread(mapFunction, this.stepFunction);
+        return new Spread<>(stepFunction, mapFunction, seedsOrExamples);
     }
 
     public boolean isInitialised() {
         return initialised;
-    }
-
-    private <R> Spread<R> newTypedSpread(
-        Function<?, ?> mapFunction,
-        Function<?, ?> stepFunction) {
-        if (this instanceof FixedSpread) {
-            return new FixedSpread<>(stepFunction, mapFunction, seedsOrExamples);
-        } else if (this instanceof RelatedSpread) {
-            return new RelatedSpread<>(stepFunction, mapFunction, seedsOrExamples);
-        } else if (this instanceof CumulativeSpread) {
-            return new CumulativeSpread<>(
-                stepFunction,
-                mapFunction, ((CumulativeSpread<T>) this).getRoundingMode(),
-                ((CumulativeSpread<T>) this).getFractionalAtom(),
-                seedsOrExamples
-            );
-        } else if (this instanceof SequenceSpread) {
-            return new SequenceSpread<>(stepFunction, mapFunction, seedsOrExamples);
-        } else if (this instanceof CallSpread) {
-            return new CallSpread<>(stepFunction, mapFunction, seedsOrExamples);
-        } else if (this instanceof ListSpread) {
-            return new ListSpread<>(stepFunction, mapFunction, ((ListSpread<T>) this).getSteps(), seedsOrExamples);
-        } else {
-            return new Spread<>(stepFunction, mapFunction, seedsOrExamples);
-        }
     }
 
     public static <T> T in(Spread<T> of) {
