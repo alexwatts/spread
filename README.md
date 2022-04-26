@@ -144,7 +144,7 @@ You can define a <code>Spread</code> that is based on the values of another 'rel
             .step(relatedValue -> relatedValue.startsWith("a"));
 
 ### Nesting Collection types
-If you need to inject collection types into a Test Object, you can wrap a <code>Spread</code> using a collection helper from <code>SpreadUtil</code>. You need to specify a nested number of steps, and <code>Spreader</code> will nest as many elements as specified steps into each test generated test object. For example as below, where a nested <code>List<BigDecimal></code> containing 6 elements is nested in to each of the 168 test Objects
+If you need to inject collection types into a Test Object, you can wrap a <code>Spread</code> using a collection helper from <code>SpreadUtil</code>. You need to specify a nested number of steps, and <code>Spreader</code> will nest as many elements as specified steps into each generated test object. For example as below, where a nested <code>List<BigDecimal></code> containing 6 elements is nested in to each of the 168 test Objects
 
     Spread<List<BigDecimal>> cumulativeReadingsListed =
             SpreadUtil.list(
