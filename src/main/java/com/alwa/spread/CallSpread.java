@@ -11,11 +11,11 @@ public class CallSpread<T> extends Spread<T> {
     }
 
     @Override
-    protected Object applyCumulativeOrStandardStep(int totalSteps,
-                                                   int currentStep,
-                                                   Function<Object, Object> stepFunction,
-                                                   Object[] seedsOrExamples,
-                                                   Object previousValue) {
+    protected Object applyStep(int totalSteps,
+                               int currentStep,
+                               Function<Object, Object> stepFunction,
+                               Object[] seedsOrExamples,
+                               Object previousValue) {
         return stepFunction.apply(seedsOrExamples[0]);
     }
 

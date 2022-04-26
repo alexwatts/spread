@@ -93,14 +93,14 @@ public class Spread<T> extends BaseSpread {
             Function<Object, Object> stepFunction,
             Object[] seedsOrExamples,
             Object previousValue) {
-            return applyCumulativeOrStandardStep(totalSteps, currentStep, stepFunction, seedsOrExamples, previousValue);
+            return applyStep(totalSteps, currentStep, stepFunction, seedsOrExamples, previousValue);
     }
 
-    protected Object applyCumulativeOrStandardStep(int totalSteps,
-                                                 int currentStep,
-                                                 Function<Object, Object> stepFunction,
-                                                 Object[] seedsOrExamples,
-                                                 Object previousValue) {
+    protected Object applyStep(int totalSteps,
+                               int currentStep,
+                               Function<Object, Object> stepFunction,
+                               Object[] seedsOrExamples,
+                               Object previousValue) {
 
             return stepFunction.apply(previousValue);
     }
@@ -117,7 +117,7 @@ public class Spread<T> extends BaseSpread {
     public String toString() {
         return String.format("Spread<%s>{" +
             "current=" + current +
-            ", seedOrExample=" + seedsOrExamples[0] +
+            ", seedOrExamples=" + seedsOrExamples[0] +
             ", stepFunction=" + stepFunction +
             ", mapFunction=" + mapFunction +
             '}', this.getClass());

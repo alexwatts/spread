@@ -11,11 +11,11 @@ public class FixedSpread<T> extends Spread<T> {
     }
 
     @Override
-    public Object applyCumulativeOrStandardStep(int totalSteps,
-                                                   int currentStep,
-                                                   Function<Object, Object> stepFunction,
-                                                   Object[] seedsOrExamples,
-                                                   Object previousValue) {
+    public Object applyStep(int totalSteps,
+                            int currentStep,
+                            Function<Object, Object> stepFunction,
+                            Object[] seedsOrExamples,
+                            Object previousValue) {
         return seedsOrExamples[0];
     }
 

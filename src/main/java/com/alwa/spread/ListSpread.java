@@ -19,11 +19,11 @@ public class ListSpread<T> extends Spread<T> {
     }
 
     @Override
-    protected Object applyCumulativeOrStandardStep(int totalSteps,
-                                                   int currentStep,
-                                                   Function<Object, Object> stepFunction,
-                                                   Object[] seedsOrExamples,
-                                                   Object previousValue) {
+    protected Object applyStep(int totalSteps,
+                               int currentStep,
+                               Function<Object, Object> stepFunction,
+                               Object[] seedsOrExamples,
+                               Object previousValue) {
 
         Spread<T> targetSpread = ((Spread<T>) seedsOrExamples[0]);
 
