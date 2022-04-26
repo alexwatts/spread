@@ -142,3 +142,20 @@ You can define a spread that is based on the values of another spread. For insta
         SpreadUtil.
             related(threeLetterSpread)
             .step(relatedValue -> relatedValue.startsWith("a"));
+
+### Nesting Collection types
+If you need to inject collection types into a Test Object, you can wrap a <code>Spread</code> using a collection helper from <code>SpreadUtil</code>. You need to specify a nested number of steps, and <code>Spreader</code> will nest as many elements as specified steps into each test generated test object. For example as below, where a nested <code>List<BigDecimal></code> containing 6 elements is nested in to each of the 168 test Objects
+
+    Spread<List<BigDecimal>> cumulativeReadingsListed =
+            SpreadUtil.list(
+                SpreadUtil.cumulative(BigDecimal.valueOf(70000)),
+                6
+            );
+
+    List<TestDataObject> dataObjects =
+        new Spreader<TestDataObject>()
+                .factory(TestDataObject::new)
+                .mutators(testDataObject -> testDataObject.setListField(Spread.in(cumulativeReadingsListed)))
+                .steps(24 * 7)
+                .spread()
+                .collect(Collectors.toList());

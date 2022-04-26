@@ -2,6 +2,7 @@ package com.alwa.spread;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.function.Function;
 
 import static com.alwa.spread.SpreadValidator.validateCumulativeSpread;
@@ -59,5 +60,9 @@ public class SpreadUtil {
 
     public static  <T> Spread<T> related(Spread<T> related) {
         return new RelatedSpread<>(null, null, related);
+    }
+
+    public static <T> Spread<List<T>> list(Spread<T> spread, int steps) {
+        return new ListSpread<>(null, null, steps, spread);
     }
 }

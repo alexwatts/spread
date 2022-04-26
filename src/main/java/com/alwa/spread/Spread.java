@@ -1,8 +1,10 @@
 package com.alwa.spread;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.function.Consumer;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Spread<T> extends BaseSpread {
@@ -56,6 +58,8 @@ public class Spread<T> extends BaseSpread {
             return new SequenceSpread<>(stepFunction, mapFunction, seedsOrExamples);
         } else if (this instanceof CallSpread) {
             return new CallSpread<>(stepFunction, mapFunction, seedsOrExamples);
+        } else if (this instanceof ListSpread) {
+            return new ListSpread<>(stepFunction, mapFunction, ((ListSpread<T>) this).getSteps(), seedsOrExamples);
         } else {
             return new Spread<>(stepFunction, mapFunction, seedsOrExamples);
         }
@@ -138,7 +142,16 @@ public class Spread<T> extends BaseSpread {
         } else if (this instanceof CallSpread) {
             return stepFunction.apply(seedsOrExamples[0]);
         } else if (this instanceof RelatedSpread) {
-            return stepFunction.apply(((Spread)this.seedsOrExamples[0]).previousValue(currentStep , ((Spread)this.seedsOrExamples[0]).values));
+            return stepFunction.apply(((Spread) this.seedsOrExamples[0]).previousValue(currentStep, ((Spread) this.seedsOrExamples[0]).values));
+        } else if (this instanceof ListSpread) {
+           Spread<T> targetSpread = ((Spread<T>)this.seedsOrExamples[0]);
+           return new Spreader<List<T>>()
+                   .factory(ArrayList::new)
+                   .mutators(list -> list.add(Spread.in(targetSpread)))
+                   .steps(((ListSpread)this).getSteps())
+                   .debug()
+                   .spread()
+                   .collect(Collectors.toList());
         } else {
             return stepFunction.apply(previousValue);
         }
@@ -151,7 +164,6 @@ public class Spread<T> extends BaseSpread {
             return values[i - 1];
         }
     }
-
 
     @Override
     public String toString() {

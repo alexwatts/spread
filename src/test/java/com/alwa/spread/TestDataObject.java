@@ -3,6 +3,7 @@ package com.alwa.spread;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
+import java.util.List;
 
 public class TestDataObject {
 
@@ -11,6 +12,7 @@ public class TestDataObject {
     private BigDecimal bigDecimalField;
     private BigInteger bigInteger;
     private Boolean booleanField;
+    private List<BigDecimal> listField;
 
     public TestDataObject() {
     }
@@ -62,5 +64,13 @@ public class TestDataObject {
 
     public void setBooleanField(Boolean booleanField) {
         this.booleanField = booleanField;
+    }
+
+    public List<BigDecimal> getListField() {
+        return listField;
+    }
+
+    public void setListField(List<BigDecimal> listField) {
+        this.listField = listField;
     }
 }
