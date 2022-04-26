@@ -1,10 +1,7 @@
 package com.alwa.spread;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Spread<T> extends BaseSpread {
@@ -124,40 +121,16 @@ public class Spread<T> extends BaseSpread {
             return applyCumulativeOrStandardStep(totalSteps, currentStep, stepFunction, seedsOrExamples, previousValue);
     }
 
-    private Object applyCumulativeOrStandardStep(int totalSteps,
+    protected Object applyCumulativeOrStandardStep(int totalSteps,
                                                  int currentStep,
                                                  Function<Object, Object> stepFunction,
                                                  Object[] seedsOrExamples,
                                                  Object previousValue) {
-        if (this instanceof FixedSpread) {
-            return seedsOrExamples[0];
-        } else if (this instanceof SequenceSpread) {
-            return seedsOrExamples[(currentStep - 1) % seedsOrExamples.length];
-        }
-        else if (this instanceof CumulativeSpread) {
-            RangeResolver rangeResolver = new RangeResolver(seedsOrExamples[0]);
-            Function<Object, Object> cumulativeStepFunction =
-                rangeResolver.resolveStepFunction(totalSteps, currentStep, ((CumulativeSpread) this).getRoundingMode(), ((CumulativeSpread) this).getFractionalAtom());
-            return cumulativeStepFunction.apply(seedsOrExamples[0]);
-        } else if (this instanceof CallSpread) {
-            return stepFunction.apply(seedsOrExamples[0]);
-        } else if (this instanceof RelatedSpread) {
-            return stepFunction.apply(((Spread) this.seedsOrExamples[0]).previousValue(currentStep, ((Spread) this.seedsOrExamples[0]).values));
-        } else if (this instanceof ListSpread) {
-           Spread<T> targetSpread = ((Spread<T>)this.seedsOrExamples[0]);
-           return new Spreader<List<T>>()
-                   .factory(ArrayList::new)
-                   .mutators(list -> list.add(Spread.in(targetSpread)))
-                   .steps(((ListSpread)this).getSteps())
-                   .debug()
-                   .spread()
-                   .collect(Collectors.toList());
-        } else {
+
             return stepFunction.apply(previousValue);
-        }
     }
 
-    private Object previousValue(int i, Object[] values) {
+    protected Object previousValue(int i, Object[] values) {
         if (i == 0) {
             return seedsOrExamples[0];
         } else {

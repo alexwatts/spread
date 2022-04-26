@@ -20,6 +20,19 @@ public class CumulativeSpread<T> extends Spread<T> {
         this.fractionalAtom = fractionalAtom;
     }
 
+    @Override
+    protected Object applyCumulativeOrStandardStep(int totalSteps,
+                                                   int currentStep,
+                                                   Function<Object, Object> stepFunction,
+                                                   Object[] seedsOrExamples,
+                                                   Object previousValue) {
+
+            RangeResolver rangeResolver = new RangeResolver(seedsOrExamples[0]);
+            Function<Object, Object> cumulativeStepFunction =
+                rangeResolver.resolveStepFunction(totalSteps, currentStep, ((CumulativeSpread) this).getRoundingMode(), this.getFractionalAtom());
+            return cumulativeStepFunction.apply(seedsOrExamples[0]);
+    }
+
     public RoundingMode getRoundingMode() {
         return roundingMode;
     }
