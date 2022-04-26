@@ -42,11 +42,6 @@ public class Spread<T> extends BaseSpread {
     }
 
     protected void init(int steps) {
-        if (this instanceof RelatedSpread) {
-            if (!((Spread)this.seedsOrExamples[0]).isInitialised()) {
-                ((Spread)this.seedsOrExamples[0]).init(steps);
-            }
-        }
         values = new Object[steps];
         IntStream.range(0, steps)
             .forEach(i ->

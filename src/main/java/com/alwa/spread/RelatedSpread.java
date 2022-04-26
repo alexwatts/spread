@@ -21,6 +21,14 @@ public class RelatedSpread<T> extends Spread<T> {
     }
 
     @Override
+    public void init(int steps) {
+        if (!((Spread<?>)this.seedsOrExamples[0]).isInitialised()) {
+            ((Spread<?>)this.seedsOrExamples[0]).init(steps);
+        }
+        super.init(steps);
+    }
+
+    @Override
     protected <R> Spread<R> step(Function<? super T, ? extends R> stepFunction) {
         this.stepFunction = stepFunction;
         return new RelatedSpread<>(stepFunction, mapFunction, seedsOrExamples);
