@@ -9,13 +9,13 @@ public class ListSpread<T> extends Spread<T> {
 
     private final int steps;
 
-    public ListSpread(Function<?, ?> stepFunction,
-                      Function<?, ?> mapFunction,
-                      int steps,
-                      Object... seedsOrExamples
-                      ) {
-        super(stepFunction, mapFunction, seedsOrExamples);
-        this.steps = steps;
+    public ListSpread(
+        Function<?, ?> stepFunction,
+        Function<?, ?> mapFunction,
+        int steps,
+        Object... seedsOrExamples) {
+            super(stepFunction, mapFunction, seedsOrExamples);
+            this.steps = steps;
     }
 
     @Override
@@ -25,12 +25,11 @@ public class ListSpread<T> extends Spread<T> {
                                Object[] seedsOrExamples,
                                Object previousValue) {
 
-        Spread<T> targetSpread = ((Spread<T>) seedsOrExamples[0]);
-
+        Spread<T> targetSpread = (Spread<T>) seedsOrExamples[0];
         return new Spreader<List<T>>()
             .factory(ArrayList::new)
             .mutators(list -> list.add(Spread.in(targetSpread)))
-            .steps(((ListSpread) this).getSteps())
+            .steps(this.getSteps())
             .debug()
             .spread()
             .collect(Collectors.toList());

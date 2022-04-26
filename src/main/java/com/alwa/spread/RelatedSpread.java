@@ -17,7 +17,9 @@ public class RelatedSpread<T> extends Spread<T> {
                                Object[] seedsOrExamples,
                                Object previousValue) {
 
-        return stepFunction.apply(((Spread) seedsOrExamples[0]).previousValue(currentStep, ((Spread) seedsOrExamples[0]).values));
+        return stepFunction
+            .apply(((Spread<?>) seedsOrExamples[0])
+            .previousValue(currentStep, ((Spread<?>) seedsOrExamples[0]).values));
     }
 
     @Override

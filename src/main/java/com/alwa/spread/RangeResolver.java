@@ -12,7 +12,7 @@ public class RangeResolver {
         this.example = example;
     }
 
-    public Function resolveStepFunction(int totalSteps, int currentStep, RoundingMode roundingMode, BigDecimal fractionalAtom) {
+    public Function<Object, Object> resolveStepFunction(int totalSteps, int currentStep, RoundingMode roundingMode, BigDecimal fractionalAtom) {
         return SupportedFunctionResolvers.supportedFunctionResolvers().get(example.getClass()).getStepFunction(totalSteps, currentStep, example, roundingMode, fractionalAtom);
     }
 

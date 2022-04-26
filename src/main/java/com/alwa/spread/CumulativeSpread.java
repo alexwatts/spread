@@ -6,8 +6,8 @@ import java.util.function.Function;
 
 public class CumulativeSpread<T> extends Spread<T> {
 
-    private RoundingMode roundingMode;
-    private BigDecimal fractionalAtom;
+    private final RoundingMode roundingMode;
+    private final BigDecimal fractionalAtom;
 
     public CumulativeSpread(
         Function<?, ?> stepFunction,

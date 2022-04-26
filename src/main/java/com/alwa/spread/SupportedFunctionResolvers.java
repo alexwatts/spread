@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class SupportedFunctionResolvers {
 
-    public static Map<Class, StepFunctionResolver> supportedFunctionResolvers() {
-        Map<Class, StepFunctionResolver> resolverMap = new HashMap<>();
+    public static Map<Class<?>, StepFunctionResolver> supportedFunctionResolvers() {
+        Map<Class<?>, StepFunctionResolver> resolverMap = new HashMap<>();
         resolverMap.put(BigDecimal.class, new BigDecimalFunctionResolver());
         resolverMap.put(BigInteger.class, new BigIntegerFunctionResolver());
         resolverMap.put(Double.class, new DoubleFunctionResolver());

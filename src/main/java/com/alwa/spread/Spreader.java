@@ -17,8 +17,8 @@ public class Spreader<T> {
 
     private Integer steps;
     private Callable<T> factoryTemplate;
-    private List<MutatorTemplateAndParameters> mutatorTemplateAndParameters;
-    private Spread[] factoryParameters;
+    private List<MutatorTemplateAndParameters<T>> mutatorTemplateAndParameters;
+    private Spread<T>[] factoryParameters;
     private Boolean debug;
 
     public Spreader() {
@@ -67,12 +67,12 @@ public class Spreader<T> {
         LOGGER.info("\n");
         LOGGER.info(String.format("Factory template :[%s]\n", factoryTemplate));
         if (factoryParameters == null || factoryParameters.length == 0) {
-            LOGGER.info(String.format("No Factory injector.s\n"));
+            LOGGER.info("No Factory injector.s\n");
         } else {
             LOGGER.info(String.format("Factory injectors :[\n%s\n]\n", Arrays.stream(factoryParameters).map(Spread::toString).collect(Collectors.joining(" \n"))));
         }
         if (mutatorTemplateAndParameters == null) {
-            LOGGER.info(String.format("No Mutator injectors.\n"));
+            LOGGER.info("No Mutator injectors.\n");
         } else {
             LOGGER.info(String.format("Mutator injectors :[\n%s\n]\n", mutatorTemplateAndParameters.stream().map(MutatorTemplateAndParameters::toString).collect(Collectors.joining(" \n"))));
         }
@@ -112,7 +112,7 @@ public class Spreader<T> {
         }
     }
 
-    private String centeredRow(Spread[] factoryParameters, int rowNumber) {
+    private String centeredRow(Spread<T>[] factoryParameters, int rowNumber) {
         String centeredRow = Arrays.stream(factoryParameters)
             .map(spread -> centerString(40, spread.getValues()[rowNumber].toString()))
             .collect(Collectors.joining(" "));
@@ -143,9 +143,9 @@ public class Spreader<T> {
     }
 
     private Object createNextObject() {
-        Callable factoryTemplate = this.factoryTemplate;
+        Callable<T> factoryTemplate = this.factoryTemplate;
         try {
-            T nextObject = (T)factoryTemplate.call();
+            T nextObject = factoryTemplate.call();
             return applyMutators(nextObject);
         } catch (Exception e) {
             throw new SpreaderException("Exception thrown whilst creating next object", e);
@@ -166,7 +166,7 @@ public class Spreader<T> {
     }
 
     private void captureFactoryParameters(Field[] factoryArguments, Callable<T> factoryTemplate) {
-        Spread[] factoryParameters = new Spread[factoryArguments.length];
+        Spread<T>[] factoryParameters = new Spread[factoryArguments.length];
         for (int i = 0; i < factoryArguments.length; i++) {
             factoryArguments[i].setAccessible(true);
             try {
@@ -188,7 +188,7 @@ public class Spreader<T> {
     }
 
     private void captureMutatorTemplateAndParameters(Field[] mutatorArguments, Consumer<T> mutatorTemplate) {
-        Spread[] mutatorParameters = new Spread[mutatorArguments.length];
+        Spread<T>[] mutatorParameters = new Spread[mutatorArguments.length];
         for (int i = 0; i < mutatorArguments.length; i++) {
             mutatorArguments[0].setAccessible(true);
             try {
@@ -201,7 +201,7 @@ public class Spreader<T> {
         if (mutatorTemplateAndParameters == null) {
             mutatorTemplateAndParameters = new ArrayList<>();
         }
-        mutatorTemplateAndParameters.add(new MutatorTemplateAndParameters(mutatorTemplate, mutatorParameters));
+        mutatorTemplateAndParameters.add(new MutatorTemplateAndParameters<>(mutatorTemplate, mutatorParameters));
     }
 
     private void initialiseFactorySpreads() {
@@ -213,18 +213,18 @@ public class Spreader<T> {
         if (mutatorTemplateAndParameters != null) {
             mutatorTemplateAndParameters.stream()
                     .map(MutatorTemplateAndParameters::getParameters)
-                    .forEach(mutatorParams -> initialiseMutatorParams(mutatorParams));
+                    .forEach(this::initialiseMutatorParams);
         }
     }
 
-    private void initialiseMutatorParams(Spread[] mutatorParams) {
+    private void initialiseMutatorParams(Spread<T>[] mutatorParams) {
         Arrays.stream(mutatorParams)
                 .forEach(spread -> spread.init(steps));
     }
 
     private Object applyMutators(T nextObject) {
         if (mutatorTemplateAndParameters != null) {
-            for (MutatorTemplateAndParameters mutatorTemplateAndParameters: this.mutatorTemplateAndParameters) {
+            for (MutatorTemplateAndParameters<T> mutatorTemplateAndParameters: this.mutatorTemplateAndParameters) {
                 mutatorTemplateAndParameters.getMutatorTemplate().accept(nextObject);
             }
         }

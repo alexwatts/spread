@@ -4,8 +4,6 @@ import java.util.stream.Collectors;
 
 public class SpreadValidator {
 
-
-
     public static void validateCumulativeSpread(Object cumulativeObject) {
         validateCumulativeObjectType(cumulativeObject);
         validateCumulativeObjectValue(cumulativeObject);
