@@ -1,5 +1,5 @@
 # Spread
-Spread is a ergonomic helper library for building test objects quickly and fluently without needing to write or generate builders.
+Spread is an ergonomic helper library for building test objects quickly and fluently without needing to write or generate builders.
 Spread tries to preserve full control of the generated objects whilst also doing what you would expect where things are unspecified.
 
 You can use it in tests to generate objects with dynamic values into Java collection types (<code>List</code>, <code>Set</code>, <code>Map</code>, etc)
@@ -19,7 +19,7 @@ You can find <code>Spread</code> on Maven central and import it into a Maven or 
     testImplementation 'io.github.alexwatts:spread:1.0.1'
 
 #### Usage
-You can define a spread of values to be injected into test objects via constructor/factory method/mutatator methods.
+You can define a spread of values to be injected into test objects via constructor/factory method/mutatator methods or public fields.
 
 For example, for a range of <code>LocalDateTime</code> values incrementing by hour:
 
@@ -83,8 +83,21 @@ This works in a similar way for factory methods:
                 .steps(24 * 7)
                 .spread()
                 .collect(Collectors.toList());
+
+You can inject via public fields as below
+
+     Spread<BigDecimal> cumulativeReadings =
+            SpreadUtil.cumulative(BigDecimal.valueOf(70000));
+
+     List<TestDataObject> dataObjects =
+         new Spreader<TestDataObject>()
+             .factory(TestDataObject::new)
+             .mutators(testDataObject -> testDataObject.publicBigDecimalField = Spread.in(cumulativeReadings))
+             .steps(24 * 7)
+             .spread()
+             .collect(Collectors.toList());
                 
- The <code>spread()</code> method of the <code>Spreader</code> class returns a <code>Stream</code> of the target object type, meaning that we are free to collect the resultant stream into any desired groupings or collection types available to us via the Java stream API features, eg. <code>Map</code> <code>Set</code> etc.             
+The <code>spread()</code> method of the <code>Spreader</code> class returns a <code>Stream</code> of the target object type, meaning that we are free to collect the resultant stream into any desired groupings or collection types available to us via the Java stream API features, eg. <code>Map</code> <code>Set</code> etc.             
 
 ## Other Features
 

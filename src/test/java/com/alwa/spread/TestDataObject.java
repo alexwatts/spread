@@ -7,6 +7,8 @@ import java.util.List;
 
 public class TestDataObject {
 
+    public BigDecimal publicBigDecimalField;
+
     private String stringField;
     private Instant timeField;
     private BigDecimal bigDecimalField;

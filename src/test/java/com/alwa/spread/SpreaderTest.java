@@ -404,4 +404,20 @@ public class SpreaderTest {
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
     }
 
+    @Test
+    public void publicMethodsTest() {
+        Spread<BigDecimal> cumulativeReadings =
+            SpreadUtil.cumulative(BigDecimal.valueOf(70000));
+
+        List<TestDataObject> dataObjects =
+            new Spreader<TestDataObject>()
+                .factory(TestDataObject::new)
+                .mutators(testDataObject -> testDataObject.publicBigDecimalField = Spread.in(cumulativeReadings))
+                .steps(24 * 7)
+                .spread()
+                .collect(Collectors.toList());
+
+        assertThat(dataObjects.size()).isEqualTo(24 * 7);
+    }
+
 }
