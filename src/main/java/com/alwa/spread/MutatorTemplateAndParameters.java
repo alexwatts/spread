@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 
 public class MutatorTemplateAndParameters<T> {
 
-    private Consumer<T> mutatorTemplate;
-    private Spread[] parameters;
+    private final Consumer<T> mutatorTemplate;
+    private final Spread<T>[] parameters;
 
-    public MutatorTemplateAndParameters(Consumer<T> mutatorTemplate, Spread[] parameters) {
+    public MutatorTemplateAndParameters(Consumer<T> mutatorTemplate, Spread<T>[] parameters) {
         this.mutatorTemplate = mutatorTemplate;
         this.parameters = parameters;
     }
@@ -18,7 +18,7 @@ public class MutatorTemplateAndParameters<T> {
         return mutatorTemplate;
     }
 
-    public Spread[] getParameters() {
+    public Spread<T>[] getParameters() {
         return parameters;
     }
 

@@ -7,9 +7,7 @@ import java.util.stream.IntStream;
 public class Spread<T> extends BaseSpread {
 
     private boolean initialised;
-
     private Integer current;
-
     protected final Object[] seedsOrExamples;
     protected Function<?, ?> stepFunction;
     protected Function<?, ?> mapFunction;
@@ -64,22 +62,6 @@ public class Spread<T> extends BaseSpread {
         }
         current++;
         return value;
-    }
-
-    public Object[] getSeedOrExamples() {
-        return seedsOrExamples;
-    }
-
-    public Function<?, ?> getStepFunction() {
-        return stepFunction;
-    }
-
-    public void setStepFunction(Function<?, ?> stepFunction) {
-        this.stepFunction = stepFunction;
-    }
-
-    public Function<? , ?> getMapFunction() {
-        return mapFunction;
     }
 
     private Object nextValue(

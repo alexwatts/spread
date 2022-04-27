@@ -30,7 +30,6 @@ public class ListSpread<T> extends Spread<T> {
             .factory(ArrayList::new)
             .mutators(list -> list.add(Spread.in(targetSpread)))
             .steps(this.getSteps())
-            .debug()
             .spread()
             .collect(Collectors.toList());
     }

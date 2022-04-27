@@ -26,11 +26,10 @@ public class CumulativeSpread<T> extends Spread<T> {
                                Function<Object, Object> stepFunction,
                                Object[] seedsOrExamples,
                                Object previousValue) {
-
-            RangeResolver rangeResolver = new RangeResolver(seedsOrExamples[0]);
-            Function<Object, Object> cumulativeStepFunction =
-                rangeResolver.resolveStepFunction(totalSteps, currentStep, this.getRoundingMode(), this.getFractionalAtom());
-            return cumulativeStepFunction.apply(seedsOrExamples[0]);
+        RangeResolver rangeResolver = new RangeResolver(seedsOrExamples[0]);
+        Function<Object, Object> cumulativeStepFunction =
+            rangeResolver.resolveStepFunction(totalSteps, currentStep, this.getRoundingMode(), this.getFractionalAtom());
+        return cumulativeStepFunction.apply(seedsOrExamples[0]);
     }
 
     @Override
