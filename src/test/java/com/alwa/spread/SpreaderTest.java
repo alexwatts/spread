@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -467,6 +468,26 @@ public class SpreaderTest {
                 .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
+    }
+
+    @Test
+    public void testDynamicSequence() {
+        Spread<Integer> rangeOfIntegers =
+            SpreadUtil.sequence(
+                IntStream.range(0, 1000)
+                    .boxed()
+                    .toArray(Integer[]::new)
+            );
+
+        List<TestDataObject> dataObjects =
+            new Spreader<TestDataObject>()
+                .factory(TestDataObject::new)
+                .mutators(testDataObject -> testDataObject.setIntegerField(Spread.in(rangeOfIntegers)))
+                .steps(1000)
+                .spread()
+                .collect(Collectors.toList());
+
+        assertThat(dataObjects.size()).isEqualTo(1000);
     }
 
 }

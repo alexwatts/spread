@@ -15,6 +15,7 @@ public class TestDataObject {
     private Instant timeField;
     private BigDecimal bigDecimalField;
     private BigInteger bigInteger;
+    private Integer integerField;
     private Boolean booleanField;
     private List<BigDecimal> listField;
     private Set<Integer> setField;
@@ -95,5 +96,13 @@ public class TestDataObject {
 
     public void setMapField(Map<String, Integer> mapField) {
         this.mapField = mapField;
+    }
+
+    public Integer getIntegerField() {
+        return integerField;
+    }
+
+    public void setIntegerField(Integer integerField) {
+        this.integerField = integerField;
     }
 }

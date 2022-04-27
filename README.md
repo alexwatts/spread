@@ -111,6 +111,15 @@ You can define a sequence of values in a <code>Spread</code> which will feed in 
                 "Sophie"
             );
 
+The argument list for <code>sequence()</code> is a <code>varargs</code> so it's simple to specify dynamic ranges, eg. below, a range of 1000 <code>Integer</code>:
+
+    Spread<Integer> rangeOfIntegers =
+        SpreadUtil.sequence(
+            IntStream.range(0, 1000)
+                .boxed()
+                .toArray(Integer[]::new)
+        );
+
 ### Fixed
 You can define fixed values which will fill as specified, for as many steps as specified eg:
 
