@@ -323,7 +323,11 @@ public class SpreaderTest {
 
         List<PrimativeTestDataObject> dataObjects =
             new Spreader<PrimativeTestDataObject>()
-                .factory(() -> new PrimativeTestDataObject(Spread.in(integerValues), Spread.in(doubleValues)))
+                .factory(
+                    () -> new PrimativeTestDataObject(
+                        Spread.in(integerValues),
+                        Spread.in(doubleValues))
+                )
                 .steps(24 * 7)
                 .spread()
                 .collect(Collectors.toList());

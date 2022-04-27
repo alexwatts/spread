@@ -11,7 +11,7 @@ signing {
 }
 
 group 'io.github.alexwatts'
-version '1.0.2'
+version '1.0.3'
 
 repositories {
     mavenCentral()
@@ -45,7 +45,7 @@ publishing {
         mavenJava(MavenPublication) {
             from(components.java)
             pom {
-                name = 'Spread'
+                name = 'publish-java'
                 description = 'Spread. Its an ergonomic helper library for building Java Test Objects'
                 url = 'https://github.com/alexwatts/spread'
                 licenses {
