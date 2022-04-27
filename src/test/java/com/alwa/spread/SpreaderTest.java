@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -400,6 +401,25 @@ public class SpreaderTest {
                     .steps(24 * 7)
                     .spread()
                     .collect(Collectors.toList());
+
+        assertThat(dataObjects.size()).isEqualTo(24 * 7);
+    }
+
+    @Test
+    public void testSetField() {
+        Spread<Set<Integer>> cumulativeReadingsSetted =
+            SpreadUtil.set(
+                SpreadUtil.cumulative(70000),
+                6
+            );
+
+        List<TestDataObject> dataObjects =
+            new Spreader<TestDataObject>()
+                .factory(TestDataObject::new)
+                .mutators(testDataObject -> testDataObject.setSetField(Spread.in(cumulativeReadingsSetted)))
+                .steps(24 * 7)
+                .spread()
+                .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
     }

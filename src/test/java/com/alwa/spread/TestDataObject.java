@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 public class TestDataObject {
 
@@ -15,6 +16,7 @@ public class TestDataObject {
     private BigInteger bigInteger;
     private Boolean booleanField;
     private List<BigDecimal> listField;
+    private Set<Integer> setField;
 
     public TestDataObject() {
     }
@@ -74,5 +76,13 @@ public class TestDataObject {
 
     public void setListField(List<BigDecimal> listField) {
         this.listField = listField;
+    }
+
+    public Set<Integer> getSetField() {
+        return setField;
+    }
+
+    public void setSetField(Set<Integer> setField) {
+        this.setField = setField;
     }
 }
