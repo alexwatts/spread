@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class TestDataObject {
@@ -17,6 +18,8 @@ public class TestDataObject {
     private Boolean booleanField;
     private List<BigDecimal> listField;
     private Set<Integer> setField;
+
+    private Map<String, Integer> mapField;
 
     public TestDataObject() {
     }
@@ -84,5 +87,13 @@ public class TestDataObject {
 
     public void setSetField(Set<Integer> setField) {
         this.setField = setField;
+    }
+
+    public Map<String, Integer> getMapField() {
+        return mapField;
+    }
+
+    public void setMapField(Map<String, Integer> mapField) {
+        this.mapField = mapField;
     }
 }

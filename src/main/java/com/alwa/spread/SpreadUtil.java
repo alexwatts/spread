@@ -3,6 +3,7 @@ package com.alwa.spread;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -73,5 +74,9 @@ public class SpreadUtil {
 
     public static <T> Spread<Set<T>> set(Spread<T> spread, int steps) {
         return new SetSpread<>(null, null, steps, spread);
+    }
+
+    public static <K, V> Spread<Map<K, V>> map(Spread<K> keySpread, Spread<V> valueSpread, int steps) {
+        return new MapSpread<>(null, null, steps, keySpread, valueSpread);
     }
 }

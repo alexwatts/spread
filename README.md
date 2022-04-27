@@ -157,7 +157,10 @@ You can define a <code>Spread</code> that is based on the values of another 'rel
             .step(relatedValue -> relatedValue.startsWith("a"));
 
 ### Nesting Collection types
-If you need to inject collection types into a Test Object, you can wrap a <code>Spread</code> using a collection helper from <code>SpreadUtil</code>. You need to specify a nested number of steps, and <code>Spreader</code> will nest as many elements as specified steps into each generated test object. For example as below, where a nested <code>List<BigDecimal></code> containing 6 elements is nested in to each of the 168 test Objects
+If you need to inject collection, or map types into a Test Object, you can wrap a <code>Spread</code> using a collection helper from <code>SpreadUtil</code>. You need to specify a nested number of steps, and <code>Spreader</code> will nest as many elements as specified steps into each generated test object
+
+#### Lists
+For example as below, where a nested <code>List<BigDecimal></code> containing 6 elements is nested in to each of the 168 test Objects
 
     Spread<List<BigDecimal>> cumulativeReadingsListed =
             SpreadUtil.list(
@@ -173,3 +176,40 @@ If you need to inject collection types into a Test Object, you can wrap a <code>
                 .spread()
                 .collect(Collectors.toList());
 
+#### Sets
+For example as below, where a nested <code>Set<BigDecimal></code> containing 6 elements is nested in to each of the 168 test Objects
+
+    Spread<Set<Integer>> cumulativeReadingsSetted =
+            SpreadUtil.set(
+                SpreadUtil.cumulative(6),
+                6
+            );
+
+        List<TestDataObject> dataObjects =
+            new Spreader<TestDataObject>()
+                .factory(TestDataObject::new)
+                .mutators(testDataObject -> testDataObject.setSetField(Spread.in(cumulativeReadingsSetted)))
+                .steps(24 * 7)
+                .spread()
+                .collect(Collectors.toList());
+
+#### Maps
+For example as below, where a nested <code>Map<String, Integer></code> containing 6 entries is nested in to each of the 168 test Objects
+
+    Spread<String> randomMapKey =
+        SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
+
+    Spread<Map<String, Integer>> readingsInMap =
+        SpreadUtil.map(
+            randomMapKey,
+            SpreadUtil.cumulative(70000),
+            6
+        );
+
+    List<TestDataObject> dataObjects =
+        new Spreader<TestDataObject>()
+            .factory(TestDataObject::new)
+            .mutators(testDataObject -> testDataObject.setMapField(Spread.in(readingsInMap)))
+            .steps(24 * 7)
+            .spread()
+            .collect(Collectors.toList());

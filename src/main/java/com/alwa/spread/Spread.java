@@ -2,6 +2,7 @@ package com.alwa.spread;
 
 import java.util.Arrays;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Spread<T> extends BaseSpread {
@@ -94,7 +95,7 @@ public class Spread<T> extends BaseSpread {
     public String toString() {
         return String.format("Spread<%s>{" +
             "current=" + current +
-            ", seedOrExamples=" + seedsOrExamples[0] +
+            ", seedOrExamples=[" + Arrays.stream(seedsOrExamples).map(Object::toString).collect(Collectors.joining(", ")) + "]" +
             ", stepFunction=" + stepFunction +
             ", mapFunction=" + mapFunction +
             '}', this.getClass());

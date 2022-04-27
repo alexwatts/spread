@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -401,7 +402,8 @@ public class SpreaderTest {
         List<TestDataObject> dataObjects =
             new Spreader<TestDataObject>()
                     .factory(TestDataObject::new)
-                    .mutators(testDataObject -> testDataObject.setListField(Spread.in(cumulativeReadingsListed)))
+                    .mutators(testDataObject ->
+                        testDataObject.setListField(Spread.in(cumulativeReadingsListed)))
                     .steps(24 * 7)
                     .spread()
                     .collect(Collectors.toList());
@@ -421,6 +423,29 @@ public class SpreaderTest {
             new Spreader<TestDataObject>()
                 .factory(TestDataObject::new)
                 .mutators(testDataObject -> testDataObject.setSetField(Spread.in(cumulativeReadingsSetted)))
+                .steps(24 * 7)
+                .spread()
+                .collect(Collectors.toList());
+
+        assertThat(dataObjects.size()).isEqualTo(24 * 7);
+    }
+
+    @Test
+    public void testMapField() {
+        Spread<String> randomMapKey =
+            SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
+
+        Spread<Map<String, Integer>> readingsInMap =
+            SpreadUtil.map(
+                randomMapKey,
+                SpreadUtil.cumulative(70000),
+                6
+            );
+
+        List<TestDataObject> dataObjects =
+            new Spreader<TestDataObject>()
+                .factory(TestDataObject::new)
+                .mutators(testDataObject -> testDataObject.setMapField(Spread.in(readingsInMap)))
                 .steps(24 * 7)
                 .spread()
                 .collect(Collectors.toList());
