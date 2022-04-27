@@ -30,7 +30,6 @@ public class MapSpread<K, V> extends Spread<Map<K, V>> {
             .factory(HashMap::new)
             .mutators(map -> map.put(Spread.in(mapKeySpread), Spread.in(mapValueSpread)))
             .steps(this.getSteps())
-            .debug()
             .spread()
             .collect(Collectors.toList())
             .get(0);
