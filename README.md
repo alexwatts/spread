@@ -2,6 +2,8 @@
 Spread is an ergonomic helper library for building test objects quickly and fluently without needing to write or generate builders.
 Spread tries to preserve full control of the generated objects whilst also doing what you would expect where things are unspecified.
 
+Spread can make very readable tests quickly, because it allows for isolated named definitions that can be reused and shared and injected into test objects without writing methods to handle sequence and binding
+
 You can use it in tests to generate objects with dynamic values into Java collection types (<code>List</code>, <code>Set</code>, <code>Map</code>, etc)
 
 ## Getting Started
@@ -29,7 +31,7 @@ For example, for a range of <code>LocalDateTime</code> values incrementing by ho
             .step(previousDate -> previousDate.plusHours(1));
  
 
-You can also define 'cumulative' Spreads, for example, a series of <code>BigDecimal</code> values with a cumulative total of 10000:
+You can also define 'cumulative' Spreads. The majority of Java number types are supported. for example, you can define a series of <code>BigDecimal</code> values with a cumulative total of 10000:
 
     Spread<BigDecimal> cumulativeReadings = SpreadUtil.cumulative(BigDecimal.valueOf(10000));
     
@@ -208,10 +210,12 @@ For example as below, where a nested <code>Map<String, Integer></code> containin
     Spread<String> randomMapKey =
         SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
 
+    Spread<Integer> cumulativeReadings = SpreadUtil.cumulative(70000);
+
     Spread<Map<String, Integer>> readingsInMap =
         SpreadUtil.map(
             randomMapKey,
-            SpreadUtil.cumulative(70000),
+            cumulativeReadings,
             6
         );
 
