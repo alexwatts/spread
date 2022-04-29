@@ -490,4 +490,41 @@ public class SpreaderTest {
         assertThat(dataObjects.size()).isEqualTo(1000);
     }
 
+    @Test
+    public void testNestedSpreader() {
+
+        Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
+
+        Spreader<AnotherTestDataObject> nestedObjectSpreader =
+            new Spreader<AnotherTestDataObject>()
+                .factory(AnotherTestDataObject::new)
+                .mutator(anotherTestDataObject -> anotherTestDataObject.setStringField(Spread.in(someStrings)))
+                .steps(3);
+
+        Spread<String> mapKeysSpread =
+            SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
+
+        Spreader<String> nestedMapKeySpreader =
+            new Spreader<String>()
+                .factory(() -> String.valueOf(Spread.in(mapKeysSpread)))
+                .steps(3);
+
+        Spread<Map<String, AnotherTestDataObject>> nestedObjectsMap =
+            SpreadUtil.map(
+                nestedMapKeySpreader,
+                nestedObjectSpreader
+            );
+
+        List<TestDataObject> dataObjects =
+            new Spreader<TestDataObject>()
+                .factory(TestDataObject::new)
+                .mutators(testDataObject -> testDataObject.setNestedObjectMapField(Spread.in(nestedObjectsMap)))
+                .steps(1000)
+                .spread()
+                .collect(Collectors.toList());
+
+        assertThat(dataObjects.size()).isEqualTo(1000);
+
+    }
+
 }

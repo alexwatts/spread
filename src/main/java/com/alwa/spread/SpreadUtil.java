@@ -12,7 +12,7 @@ import static com.alwa.spread.SpreadValidator.validateCumulativeSpread;
 public class SpreadUtil {
 
     private static <T> Spread<T> spread(T seedOrExamples) {
-        return new Spread<T>(null, null, seedOrExamples);
+        return new Spread<>(null, null, seedOrExamples);
     }
 
     public static <T> Spread<T> initial(T seed) {
@@ -79,4 +79,9 @@ public class SpreadUtil {
     public static <K, V> Spread<Map<K, V>> map(Spread<K> keySpread, Spread<V> valueSpread, int steps) {
         return new MapSpread<>(null, null, steps, keySpread, valueSpread);
     }
+
+    public static <K, V> Spread<Map<K, V>> map(Spreader<K> keySpread, Spreader<V> valueSpread) {
+        return new MapSpread<>(null, null, valueSpread.getSteps(), keySpread, valueSpread);
+    }
+
 }

@@ -52,9 +52,14 @@ public class Spreader<T> {
         return (Stream<T>)Arrays.stream(dataObjects);
     }
 
+    public Integer getSteps() {
+        return steps;
+    }
+
     private boolean isCollection() {
         String factoryTemplateClassName = factoryTemplate.getClass().getName();
-        return factoryTemplateClassName.startsWith("com.alwa.spread.ListSpread") || factoryTemplateClassName.startsWith("com.alwa.spread.SetSpread");
+        return factoryTemplateClassName.startsWith("com.alwa.spread.ListSpread") ||
+            factoryTemplateClassName.startsWith("com.alwa.spread.SetSpread");
     }
 
     private boolean isMap() {

@@ -26,6 +26,7 @@ public class SetSpread<T> extends Spread<T> {
                                Object previousValue) {
 
         Spread<T> targetSpread = (Spread<T>) seedsOrExamples[0];
+
         return new Spreader<Set<T>>()
             .factory(HashSet::new)
             .mutators(set -> set.add(Spread.in(targetSpread)))

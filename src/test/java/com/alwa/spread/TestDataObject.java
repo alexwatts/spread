@@ -19,8 +19,9 @@ public class TestDataObject {
     private Boolean booleanField;
     private List<BigDecimal> listField;
     private Set<Integer> setField;
-
     private Map<String, Integer> mapField;
+    private AnotherTestDataObject nestedObjectField;
+    private Map<String, AnotherTestDataObject> nestedObjectMapField;
 
     public TestDataObject() {
     }
@@ -104,5 +105,21 @@ public class TestDataObject {
 
     public void setIntegerField(Integer integerField) {
         this.integerField = integerField;
+    }
+
+    public AnotherTestDataObject getNestedObjectField() {
+        return nestedObjectField;
+    }
+
+    public void setNestedObjectField(AnotherTestDataObject nestedObjectField) {
+        this.nestedObjectField = nestedObjectField;
+    }
+
+    public Map<String, AnotherTestDataObject> getNestedObjectMapField() {
+        return nestedObjectMapField;
+    }
+
+    public void setNestedObjectMapField(Map<String, AnotherTestDataObject> nestedObjectMapField) {
+        this.nestedObjectMapField = nestedObjectMapField;
     }
 }

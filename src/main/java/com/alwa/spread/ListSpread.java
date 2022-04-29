@@ -26,6 +26,7 @@ public class ListSpread<T> extends Spread<T> {
                                Object previousValue) {
 
         Spread<T> targetSpread = (Spread<T>) seedsOrExamples[0];
+
         return new Spreader<List<T>>()
             .factory(ArrayList::new)
             .mutators(list -> list.add(Spread.in(targetSpread)))
