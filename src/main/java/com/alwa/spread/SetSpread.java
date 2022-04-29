@@ -1,6 +1,8 @@
 package com.alwa.spread;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -25,14 +27,25 @@ public class SetSpread<T> extends Spread<T> {
                                Object[] seedsOrExamples,
                                Object previousValue) {
 
-        Spread<T> targetSpread = (Spread<T>) seedsOrExamples[0];
+        if (seedsOrExamples[0] instanceof Spreader) {
 
-        return new Spreader<Set<T>>()
-            .factory(HashSet::new)
-            .mutators(set -> set.add(Spread.in(targetSpread)))
-            .steps(this.getSteps())
-            .spread()
-            .collect(Collectors.toSet());
+            Spreader<T> targetSpread = (Spreader<T>) seedsOrExamples[0];
+            return targetSpread.spread().collect(Collectors.toSet());
+
+        } else {
+
+            Spread<T> targetSpread = (Spread<T>) seedsOrExamples[0];
+
+            return new Spreader<Set<T>>()
+                .factory(HashSet::new)
+                .mutators(set -> set.add(Spread.in(targetSpread)))
+                .steps(this.getSteps())
+                .spread()
+                .collect(Collectors.toSet());
+
+        }
+
+
     }
 
     @Override

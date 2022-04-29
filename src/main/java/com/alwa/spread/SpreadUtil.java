@@ -72,8 +72,16 @@ public class SpreadUtil {
         return new ListSpread<>(null, null, steps, spread);
     }
 
+    public static <T> Spread<List<T>> list(Spreader<T> spreader) {
+        return new ListSpread<>(null, null, spreader.getSteps(), spreader);
+    }
+
     public static <T> Spread<Set<T>> set(Spread<T> spread, int steps) {
         return new SetSpread<>(null, null, steps, spread);
+    }
+
+    public static <T> Spread<Set<T>> set(Spreader<T> spreader) {
+        return new SetSpread<>(null, null, spreader.getSteps(), spreader);
     }
 
     public static <K, V> Spread<Map<K, V>> map(Spread<K> keySpread, Spread<V> valueSpread, int steps) {

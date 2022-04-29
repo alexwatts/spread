@@ -226,3 +226,86 @@ For example as below, where a nested <code>Map<String, Integer></code> containin
             .steps(24 * 7)
             .spread()
             .collect(Collectors.toList());
+
+### Nesting Collection Types with Spreader
+As well as nesting simple types into nested collections, you can also nest complex types into nested collections, with <code>Spreader</code>.
+For instance, as below, we can create a <code>Spreader</code> in the normal way, but instead of invoking <code>spread()</code> and collecting the target objects into a <code>List</code> or a <code>Map</code>, instead we can pass the Spreader instance to <code>SpreadUtil</code> to obtain a collection <code>Spread</code> that we can then use to nest a complex collection type in another object. This example gives us 1000 <code>TestDataObjects</code> each with a nested List field, with three values in it. The three Strings, "a", "b", "c":
+
+#### Lists
+    Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
+
+    Spreader<AnotherTestDataObject> nestedObjectSpreader =
+        new Spreader<AnotherTestDataObject>()
+            .factory(AnotherTestDataObject::new)
+            .mutator(anotherTestDataObject -> anotherTestDataObject.setStringField(Spread.in(someStrings)))
+            .steps(3);
+
+    Spread<List<AnotherTestDataObject>> nestedObjectsMap =
+        SpreadUtil.list(
+            nestedObjectSpreader
+        );
+
+    List<TestDataObject> dataObjects =
+        new Spreader<TestDataObject>()
+            .factory(TestDataObject::new)
+            .mutators(testDataObject -> testDataObject.setNestedObjectListField(Spread.in(nestedObjectsMap)))
+            .steps(1000)
+            .spread()
+            .collect(Collectors.toList());
+
+#### Sets
+Sets can be nested in almost the same way as lists:
+
+    Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
+
+    Spreader<AnotherTestDataObject> nestedObjectSpreader =
+        new Spreader<AnotherTestDataObject>()
+            .factory(AnotherTestDataObject::new)
+            .mutator(anotherTestDataObject -> anotherTestDataObject.setStringField(Spread.in(someStrings)))
+            .steps(3);
+
+    Spread<Set<AnotherTestDataObject>> nestedObjectsMap =
+        SpreadUtil.set(
+            nestedObjectSpreader
+        );
+
+    List<TestDataObject> dataObjects =
+        new Spreader<TestDataObject>()
+            .factory(TestDataObject::new)
+            .mutators(testDataObject -> testDataObject.setNestedObjectSetField(Spread.in(nestedObjectsMap)))
+            .steps(1000)
+            .spread()
+            .collect(Collectors.toList());
+
+#### Maps
+You can do almost exact the same thing with Maps, but you need to supply one additional <code>Spreader</code> for the map key:
+
+        Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
+
+        Spreader<AnotherTestDataObject> nestedObjectSpreader =
+            new Spreader<AnotherTestDataObject>()
+                .factory(AnotherTestDataObject::new)
+                .mutator(anotherTestDataObject -> anotherTestDataObject.setStringField(Spread.in(someStrings)))
+                .steps(3);
+
+        Spread<String> mapKeysSpread =
+            SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
+
+        Spreader<String> nestedMapKeySpreader =
+            new Spreader<String>()
+                .factory(() -> String.valueOf(Spread.in(mapKeysSpread)))
+                .steps(3);
+
+        Spread<Map<String, AnotherTestDataObject>> nestedObjectsMap =
+            SpreadUtil.map(
+                nestedMapKeySpreader,
+                nestedObjectSpreader
+            );
+
+        List<TestDataObject> dataObjects =
+            new Spreader<TestDataObject>()
+                .factory(TestDataObject::new)
+                .mutators(testDataObject -> testDataObject.setNestedObjectMapField(Spread.in(nestedObjectsMap)))
+                .steps(1000)
+                .spread()
+                .collect(Collectors.toList());

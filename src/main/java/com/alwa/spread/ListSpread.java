@@ -25,14 +25,24 @@ public class ListSpread<T> extends Spread<T> {
                                Object[] seedsOrExamples,
                                Object previousValue) {
 
-        Spread<T> targetSpread = (Spread<T>) seedsOrExamples[0];
+        if (seedsOrExamples[0] instanceof Spreader) {
 
-        return new Spreader<List<T>>()
-            .factory(ArrayList::new)
-            .mutators(list -> list.add(Spread.in(targetSpread)))
-            .steps(this.getSteps())
-            .spread()
-            .collect(Collectors.toList());
+            Spreader<T> targetSpread = (Spreader<T>) seedsOrExamples[0];
+            return targetSpread.spread().collect(Collectors.toList());
+
+        } else {
+
+            Spread<T> targetSpread = (Spread<T>) seedsOrExamples[0];
+
+            return new Spreader<List<T>>()
+                .factory(ArrayList::new)
+                .mutators(list -> list.add(Spread.in(targetSpread)))
+                .steps(this.getSteps())
+                .spread()
+                .collect(Collectors.toList());
+
+        }
+
     }
 
     @Override

@@ -22,6 +22,8 @@ public class TestDataObject {
     private Map<String, Integer> mapField;
     private AnotherTestDataObject nestedObjectField;
     private Map<String, AnotherTestDataObject> nestedObjectMapField;
+    private List<AnotherTestDataObject> nestedObjectListField;
+    private Set<AnotherTestDataObject> nestedObjectSetField;
 
     public TestDataObject() {
     }
@@ -121,5 +123,21 @@ public class TestDataObject {
 
     public void setNestedObjectMapField(Map<String, AnotherTestDataObject> nestedObjectMapField) {
         this.nestedObjectMapField = nestedObjectMapField;
+    }
+
+    public List<AnotherTestDataObject> getNestedObjectListField() {
+        return nestedObjectListField;
+    }
+
+    public void setNestedObjectListField(List<AnotherTestDataObject> nestedObjectListField) {
+        this.nestedObjectListField = nestedObjectListField;
+    }
+
+    public Set<AnotherTestDataObject> getNestedObjectSetField() {
+        return nestedObjectSetField;
+    }
+
+    public void setNestedObjectSetField(Set<AnotherTestDataObject> nestedObjectSetField) {
+        this.nestedObjectSetField = nestedObjectSetField;
     }
 }

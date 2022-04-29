@@ -491,7 +491,7 @@ public class SpreaderTest {
     }
 
     @Test
-    public void testNestedSpreader() {
+    public void testNestedMapWithSpreader() {
 
         Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
 
@@ -519,6 +519,62 @@ public class SpreaderTest {
             new Spreader<TestDataObject>()
                 .factory(TestDataObject::new)
                 .mutators(testDataObject -> testDataObject.setNestedObjectMapField(Spread.in(nestedObjectsMap)))
+                .steps(1000)
+                .spread()
+                .collect(Collectors.toList());
+
+        assertThat(dataObjects.size()).isEqualTo(1000);
+
+    }
+
+    @Test
+    public void testNestedListWithSpreader() {
+
+        Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
+
+        Spreader<AnotherTestDataObject> nestedObjectSpreader =
+            new Spreader<AnotherTestDataObject>()
+                .factory(AnotherTestDataObject::new)
+                .mutator(anotherTestDataObject -> anotherTestDataObject.setStringField(Spread.in(someStrings)))
+                .steps(3);
+
+        Spread<List<AnotherTestDataObject>> nestedObjectsMap =
+            SpreadUtil.list(
+                nestedObjectSpreader
+            );
+
+        List<TestDataObject> dataObjects =
+            new Spreader<TestDataObject>()
+                .factory(TestDataObject::new)
+                .mutators(testDataObject -> testDataObject.setNestedObjectListField(Spread.in(nestedObjectsMap)))
+                .steps(1000)
+                .spread()
+                .collect(Collectors.toList());
+
+        assertThat(dataObjects.size()).isEqualTo(1000);
+
+    }
+
+    @Test
+    public void testNestedSetWithSpreader() {
+
+        Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
+
+        Spreader<AnotherTestDataObject> nestedObjectSpreader =
+            new Spreader<AnotherTestDataObject>()
+                .factory(AnotherTestDataObject::new)
+                .mutator(anotherTestDataObject -> anotherTestDataObject.setStringField(Spread.in(someStrings)))
+                .steps(3);
+
+        Spread<Set<AnotherTestDataObject>> nestedObjectsMap =
+            SpreadUtil.set(
+                nestedObjectSpreader
+            );
+
+        List<TestDataObject> dataObjects =
+            new Spreader<TestDataObject>()
+                .factory(TestDataObject::new)
+                .mutators(testDataObject -> testDataObject.setNestedObjectSetField(Spread.in(nestedObjectsMap)))
                 .steps(1000)
                 .spread()
                 .collect(Collectors.toList());
