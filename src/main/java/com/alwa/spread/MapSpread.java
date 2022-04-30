@@ -52,13 +52,13 @@ public class MapSpread<K, V> extends Spread<Map<K, V>> {
     }
 
     @Override
-    protected <R> Spread<R> step(Function<? super Map<K, V>, ? extends R> stepFunction) {
+    public <R> Spread<R> step(Function<? super Map<K, V>, ? extends R> stepFunction) {
         this.stepFunction = stepFunction;
         return (Spread<R>) new MapSpread<>(stepFunction, mapFunction, this.getSteps(), seedsOrExamples);
     }
 
     @Override
-    protected <R> Spread<R> map(Function<? super Map<K, V>, ? extends R> mapFunction) {
+    public <R> Spread<R> map(Function<? super Map<K, V>, ? extends R> mapFunction) {
         this.mapFunction = mapFunction;
         return (Spread<R>) new MapSpread<>(stepFunction, mapFunction, this.getSteps(), seedsOrExamples);
     }

@@ -21,13 +21,13 @@ public class SequenceSpread<T> extends Spread<T> {
     }
 
     @Override
-    protected <R> Spread<R> step(Function<? super T, ? extends R> stepFunction) {
+    public <R> Spread<R> step(Function<? super T, ? extends R> stepFunction) {
         this.stepFunction = stepFunction;
         return new SequenceSpread<>(stepFunction, mapFunction, seedsOrExamples);
     }
 
     @Override
-    protected <R> Spread<R> map(Function<? super T, ? extends R> mapFunction) {
+    public <R> Spread<R> map(Function<? super T, ? extends R> mapFunction) {
         this.mapFunction = mapFunction;
         return new SequenceSpread<>(stepFunction, mapFunction, seedsOrExamples);
     }
