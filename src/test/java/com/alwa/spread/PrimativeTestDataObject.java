@@ -12,6 +12,10 @@ public class PrimativeTestDataObject {
     public PrimativeTestDataObject() {
     }
 
+    public PrimativeTestDataObject(int intField) {
+        this.intField = intField;
+    }
+
     public PrimativeTestDataObject(int intField, double doubleField) {
         this.intField = intField;
         this.doubleField = doubleField;

@@ -2,12 +2,14 @@ package com.alwa.spread;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +47,19 @@ public class SpreaderTest {
                 .collect(Collectors.toList());
 
         assertThat(readings.size()).isEqualTo(24 * 7);
+
+        assertThat(
+            readings
+                .stream()
+                .map(TestDataObject::getBigDecimalField)
+                .reduce(BigDecimal.ZERO, BigDecimal::add))
+            .isEqualTo(BigDecimal.valueOf(10000));
+
+        readings
+            .stream()
+            .map(TestDataObject::getTimeField)
+            .forEach(date -> assertDateInRange(date, LocalDateTime.MIN, LocalDateTime.MIN.plusHours(169)));
+
     }
 
     @Test
@@ -71,6 +86,19 @@ public class SpreaderTest {
                         .collect(Collectors.toList());
 
         assertThat(readings.size()).isEqualTo(24 * 7);
+
+        assertThat(
+            readings
+                .stream()
+                .map(TestDataObject::getBigDecimalField)
+                .reduce(BigDecimal.ZERO, BigDecimal::add))
+            .isEqualTo(BigDecimal.valueOf(10000));
+
+        readings
+            .stream()
+            .map(TestDataObject::getTimeField)
+            .forEach(date -> assertDateInRange(date, LocalDateTime.MIN, LocalDateTime.MIN.plusHours(169)));
+
     }
 
     @Test
@@ -96,6 +124,19 @@ public class SpreaderTest {
                 .collect(Collectors.toList());
 
         assertThat(readings.size()).isEqualTo(24 * 7);
+
+        assertThat(
+            readings
+                .stream()
+                .map(TestDataObject::getBigDecimalField)
+                .reduce(BigDecimal.ZERO, BigDecimal::add))
+            .isEqualTo(BigDecimal.valueOf(10000));
+
+        readings
+            .stream()
+            .map(TestDataObject::getTimeField)
+            .forEach(date -> assertDateInRange(date, LocalDateTime.MIN, LocalDateTime.MIN.plusHours(169)));
+
     }
 
     @Test
@@ -133,6 +174,24 @@ public class SpreaderTest {
                     .collect(Collectors.toList());
 
         assertThat(readings.size()).isEqualTo(24 * 7);
+
+        assertThat(
+            readings
+                .stream()
+                .map(TestDataObject::getBigDecimalField)
+                .reduce(BigDecimal.ZERO, BigDecimal::add))
+            .isEqualTo(BigDecimal.valueOf(10000));
+
+        readings
+            .stream()
+            .map(TestDataObject::getTimeField)
+            .forEach(date -> assertDateInRange(date, LocalDateTime.MIN, LocalDateTime.MIN.plusHours(169)));
+
+        readings
+            .stream()
+            .map(TestDataObject::getStringField)
+            .forEach(value -> assertThat(value).isEqualTo("bananna"));
+
     }
 
     @Test
@@ -160,6 +219,16 @@ public class SpreaderTest {
                         .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
+
+        dataObjects
+            .stream()
+            .map(PrimativeTestDataObject::getIntField)
+                .forEach(i -> assertThat(i).isGreaterThan(1).isLessThan(170));
+
+        dataObjects
+            .stream()
+            .map(PrimativeTestDataObject::getDoubleField)
+            .forEach(i -> assertThat(i).isGreaterThan(1d).isLessThan(170d));
     }
 
     @Test
@@ -186,6 +255,16 @@ public class SpreaderTest {
                         .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
+
+        dataObjects
+            .stream()
+            .map(PrimativeTestDataObject::getIntField)
+            .forEach(i -> assertThat(i).isGreaterThan(1).isLessThan(170));
+
+        dataObjects
+            .stream()
+            .map(PrimativeTestDataObject::getDoubleField)
+            .forEach(i -> assertThat(i).isGreaterThan(1d).isLessThan(170d));
     }
 
     @Test
@@ -263,6 +342,7 @@ public class SpreaderTest {
 
     @Test
     public void testSequencedSpreadViaConstructor() {
+
         Spread<Instant> threeDates =
             SpreadUtil.sequence(
                 LocalDateTime.of(2020, 1, 1, 1, 1),
@@ -270,54 +350,52 @@ public class SpreaderTest {
                 LocalDateTime.of(2020, 1, 3, 1, 1)
             ).map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
 
-        Spread<BigDecimal> cumulativeReadings =
-            SpreadUtil.cumulative(
-                BigDecimal.valueOf(10000),
-                RoundingMode.DOWN
-            );
-
         List<TestDataObject> dataObjects =
             new Spreader<TestDataObject>()
-                .factory(() -> new TestDataObject(Spread.in(threeDates), Spread.in(cumulativeReadings)))
+                .factory(() -> new TestDataObject(Spread.in(threeDates)))
                 .steps(24 * 7)
                 .spread()
                 .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
+
+        dataObjects
+            .stream()
+            .map(TestDataObject::getTimeField)
+            .forEach(date ->
+                assertIsOneOf(
+                    date,
+                    LocalDateTime.of(2020, 1, 1, 1, 1),
+                    LocalDateTime.of(2020, 1, 2, 1, 1),
+                    LocalDateTime.of(2020, 1, 3, 1, 1)
+                )
+            );
+
     }
 
     @Test
     public void randomStringTest() {
-        Spread<Instant> fixedDate =
-            SpreadUtil.fixed(LocalDateTime.MIN)
-                .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
-
-        Spread<BigDecimal> cumulativeReadings =
-            SpreadUtil.cumulative(
-                BigDecimal.valueOf(10000)
-            );
-
         Spread<String> callRandomString =
             SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
 
         List<TestDataObject> dataObjects =
             new Spreader<TestDataObject>()
-                .factory(() -> new TestDataObject(Spread.in(fixedDate), Spread.in(cumulativeReadings)))
+                .factory(TestDataObject::new)
                 .mutator(testDataObject -> testDataObject.setStringField(Spread.in(callRandomString)))
                 .steps(24 * 7)
                 .spread()
                 .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
+
+        dataObjects
+            .stream()
+            .map(TestDataObject::getStringField)
+            .forEach(s -> assertThat(s.length()).isEqualTo(7));
     }
 
     @Test
-    public void longTest() {
-        Spread<Double> doubleValues =
-            SpreadUtil.cumulative(
-                10000d
-            );
-
+    public void primativeIntTest() {
         Spread<Integer> integerValues =
             SpreadUtil.cumulative(
                 10000
@@ -327,29 +405,25 @@ public class SpreaderTest {
             new Spreader<PrimativeTestDataObject>()
                 .factory(
                     () -> new PrimativeTestDataObject(
-                        Spread.in(integerValues),
-                        Spread.in(doubleValues))
+                        Spread.in(integerValues)
+                    )
                 )
                 .steps(24 * 7)
                 .spread()
                 .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
+
+        assertThat(
+            dataObjects
+                .stream()
+                .map(PrimativeTestDataObject::getIntField)
+                .reduce(0, Integer::sum))
+            .isEqualTo(Integer.valueOf(10000));
     }
 
     @Test
     public void bigIntegerTest() {
-        Spread<Instant> everyHour =
-            SpreadUtil
-                .initial(LocalDateTime.MIN)
-                .step(previousDate -> previousDate.plusHours(1))
-                .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
-
-        Spread<BigDecimal> bigDecimalValues =
-            SpreadUtil.cumulative(
-                BigDecimal.valueOf(70000)
-            );
-
         Spread<BigInteger> bigIntegerValues =
             SpreadUtil.cumulative(
                 BigInteger.valueOf(70000)
@@ -357,7 +431,7 @@ public class SpreaderTest {
 
         List<TestDataObject> dataObjects =
             new Spreader<TestDataObject>()
-                .factory(() -> new TestDataObject(Spread.in(everyHour), Spread.in(bigDecimalValues)))
+                .factory(TestDataObject::new)
                 .mutator(
                     testDataObject -> testDataObject.setBigInteger(Spread.in(bigIntegerValues))
                 )
@@ -366,6 +440,13 @@ public class SpreaderTest {
                 .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
+
+        assertThat(
+            dataObjects
+                .stream()
+                .map(TestDataObject::getBigInteger)
+                .reduce(BigInteger.ZERO, BigInteger::add))
+            .isEqualTo(BigInteger.valueOf(70000));
     }
 
     @Test
@@ -390,10 +471,19 @@ public class SpreaderTest {
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
 
+        IntStream.range(0, dataObjects.size())
+            .forEach(
+                i ->
+                    assertThat(dataObjects.get(i).getBooleanField()).isEqualTo(shouldBeAnA(i + 1))
+            );
+    }
+
+    private boolean shouldBeAnA(int step) {
+        return step % 3 == 1;
     }
 
     @Test
-    public void testListField() {
+    public void testNestedListField() {
         Spread<List<BigDecimal>> cumulativeReadingsListed =
             SpreadUtil.list(
                 SpreadUtil.cumulative(BigDecimal.valueOf(70000)),
@@ -410,14 +500,21 @@ public class SpreaderTest {
                     .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
+
+        assertThat(dataObjects
+                    .stream()
+                    .map(TestDataObject::getListField)
+                    .flatMap(Collection::stream)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add))
+            .isEqualTo(BigDecimal.valueOf(70000 * 168));
     }
 
     @Test
-    public void testSetField() {
+    public void testNestedSetField() {
         Spread<Set<Integer>> cumulativeReadingsSetted =
             SpreadUtil.set(
-                SpreadUtil.cumulative(70000),
-                6
+                SpreadUtil.cumulative(6),
+                1
             );
 
         List<TestDataObject> dataObjects =
@@ -429,10 +526,17 @@ public class SpreaderTest {
                 .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
+
+        assertThat(dataObjects
+            .stream()
+            .map(TestDataObject::getSetField)
+            .flatMap(Collection::stream)
+            .reduce(0, Integer::sum))
+            .isEqualTo(Integer.valueOf(6 * 168));
     }
 
     @Test
-    public void testMapField() {
+    public void testNestedMapField() {
         Spread<String> randomMapKey =
             SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
 
@@ -452,6 +556,14 @@ public class SpreaderTest {
                 .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
+
+        assertThat(dataObjects
+            .stream()
+            .map(TestDataObject::getMapField)
+            .map(Map::values)
+            .flatMap(Collection::stream)
+            .reduce(0, Integer::sum))
+            .isEqualTo(Integer.valueOf(70000 * 168));
     }
 
     @Test
@@ -468,6 +580,12 @@ public class SpreaderTest {
                 .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(24 * 7);
+
+        assertThat(dataObjects
+            .stream()
+            .map(testDataObject -> testDataObject.publicBigDecimalField)
+            .reduce(BigDecimal.ZERO, BigDecimal::add))
+            .isEqualTo(BigDecimal.valueOf(70000));
     }
 
     @Test
@@ -488,17 +606,23 @@ public class SpreaderTest {
                 .collect(Collectors.toList());
 
         assertThat(dataObjects.size()).isEqualTo(1000);
+
+        assertThat(dataObjects
+            .stream()
+            .map(TestDataObject::getIntegerField)
+            .reduce(0, Integer::sum))
+            .isEqualTo(Integer.valueOf(499500));
     }
 
     @Test
     public void testNestedMapWithSpreader() {
 
-        Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
+        Spread<Integer> someIntegers = SpreadUtil.cumulative(70000);
 
         Spreader<AnotherTestDataObject> nestedObjectSpreader =
             new Spreader<AnotherTestDataObject>()
                 .factory(AnotherTestDataObject::new)
-                .mutator(anotherTestDataObject -> anotherTestDataObject.setStringField(Spread.in(someStrings)))
+                .mutator(anotherTestDataObject -> anotherTestDataObject.setIntField(Spread.in(someIntegers)))
                 .steps(3);
 
         Spread<String> mapKeysSpread =
@@ -525,17 +649,26 @@ public class SpreaderTest {
 
         assertThat(dataObjects.size()).isEqualTo(1000);
 
+        assertThat(dataObjects
+            .stream()
+            .map(TestDataObject::getNestedObjectMapField)
+            .map(Map::values)
+            .flatMap(Collection::stream)
+            .map(AnotherTestDataObject::getIntField)
+            .reduce(0, Integer::sum))
+            .isEqualTo(Integer.valueOf(70000 * 1000));
+
     }
 
     @Test
     public void testNestedListWithSpreader() {
 
-        Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
+        Spread<Integer> someInts = SpreadUtil.cumulative(70000);
 
         Spreader<AnotherTestDataObject> nestedObjectSpreader =
             new Spreader<AnotherTestDataObject>()
                 .factory(AnotherTestDataObject::new)
-                .mutator(anotherTestDataObject -> anotherTestDataObject.setStringField(Spread.in(someStrings)))
+                .mutator(anotherTestDataObject -> anotherTestDataObject.setIntField(Spread.in(someInts)))
                 .steps(3);
 
         Spread<List<AnotherTestDataObject>> nestedObjectsMap =
@@ -553,18 +686,26 @@ public class SpreaderTest {
 
         assertThat(dataObjects.size()).isEqualTo(1000);
 
+        assertThat(dataObjects
+            .stream()
+            .map(TestDataObject::getNestedObjectListField)
+            .flatMap(List::stream)
+            .map(AnotherTestDataObject::getIntField)
+            .reduce(0, Integer::sum))
+            .isEqualTo(Integer.valueOf(70000 * 1000));
+
     }
 
     @Test
     public void testNestedSetWithSpreader() {
 
-        Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
+        Spread<Integer> someIntegers = SpreadUtil.cumulative(70000);
 
         Spreader<AnotherTestDataObject> nestedObjectSpreader =
             new Spreader<AnotherTestDataObject>()
                 .factory(AnotherTestDataObject::new)
-                .mutator(anotherTestDataObject -> anotherTestDataObject.setStringField(Spread.in(someStrings)))
-                .steps(3);
+                .mutator(anotherTestDataObject -> anotherTestDataObject.setIntField(Spread.in(someIntegers)))
+                .steps(1);
 
         Spread<Set<AnotherTestDataObject>> nestedObjectsMap =
             SpreadUtil.set(
@@ -581,6 +722,23 @@ public class SpreaderTest {
 
         assertThat(dataObjects.size()).isEqualTo(1000);
 
+        assertThat(dataObjects
+            .stream()
+            .map(TestDataObject::getNestedObjectSetField)
+            .flatMap(Set::stream)
+            .map(AnotherTestDataObject::getIntField)
+            .reduce(0, Integer::sum))
+            .isEqualTo(Integer.valueOf(70000 * 1000));
+
+    }
+
+    private void assertDateInRange(Instant instant, LocalDateTime lowerBound, LocalDateTime upperBound) {
+        assertThat(LocalDateTime.ofInstant(instant, ZoneId.systemDefault())).isAfterOrEqualTo(lowerBound);
+        assertThat(LocalDateTime.ofInstant(instant, ZoneId.systemDefault())).isBefore(upperBound);
+    }
+
+    private void assertIsOneOf(Instant date, LocalDateTime... examples) {
+        assertThat(examples).contains(LocalDateTime.ofInstant(date, ZoneId.systemDefault()));
     }
 
 }

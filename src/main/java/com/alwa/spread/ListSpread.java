@@ -39,7 +39,7 @@ public class ListSpread<T> extends Spread<T> {
                 .mutators(list -> list.add(Spread.in(targetSpread)))
                 .steps(this.getSteps())
                 .spread()
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()).get(0);
 
         }
 

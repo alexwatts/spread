@@ -41,7 +41,9 @@ public class SetSpread<T> extends Spread<T> {
                 .mutators(set -> set.add(Spread.in(targetSpread)))
                 .steps(this.getSteps())
                 .spread()
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet())
+                .stream().findFirst()
+                .get();
 
         }
 

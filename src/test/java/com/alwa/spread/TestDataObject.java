@@ -32,6 +32,10 @@ public class TestDataObject {
         return new TestDataObject(timeField, bigDecimalField);
     }
 
+    public TestDataObject(Instant timeField) {
+        this.timeField = timeField;
+    }
+
     public TestDataObject(Instant timeField, BigDecimal bigDecimalField) {
         this.timeField = timeField;
         this.bigDecimalField = bigDecimalField;
@@ -139,5 +143,9 @@ public class TestDataObject {
 
     public void setNestedObjectSetField(Set<AnotherTestDataObject> nestedObjectSetField) {
         this.nestedObjectSetField = nestedObjectSetField;
+    }
+
+    public BigInteger getBigInteger() {
+        return bigInteger;
     }
 }
