@@ -754,6 +754,7 @@ public class SpreaderTest {
             new Spreader<TestDataObject>()
                 .factory(() -> new TestDataObject(Spread.in(EVERY_HOUR), Spread.in(tenThousandKws)))
                 .steps(168)
+                .debug()
                 .spread()
                 .collect(Collectors.toList());
 
@@ -770,7 +771,6 @@ public class SpreaderTest {
             .stream()
             .map(TestDataObject::getTimeField)
             .forEach(date -> assertDateInRange(date, WEEK_START, WEEK_START.plusHours(169)));
-
     }
 
 }

@@ -151,7 +151,7 @@ public class Spreader<T> {
 
     private String centeredRow(List<Spread<T>> factoryParameters, int rowNumber) {
         String centeredRow = factoryParameters.stream()
-            .map(spread -> centerString(40, spread.toString()))
+            .map(spread -> centerString(40, spread.getValues()[rowNumber].toString()))
             .collect(Collectors.joining(" "));
         return centeredRow + "\n";
     }
