@@ -5,10 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +17,16 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpreaderTest {
+
+    private LocalDateTime WEEK_START = LocalDateTime.MIN;
+
+    private Spread<Instant> EVERY_HOUR =
+        SpreadUtil
+            .initial(WEEK_START)
+            .step(dateTime -> dateTime.plusHours(1))
+            .map(dateTime -> dateTime.toInstant(ZoneOffset.UTC));
+
+    private Spread<BigDecimal> tenThousandKws = SpreadUtil.cumulative(BigDecimal.valueOf(10000));
 
     @Test
     public void viaConstructor() {
@@ -739,6 +746,31 @@ public class SpreaderTest {
 
     private void assertIsOneOf(Instant date, LocalDateTime... examples) {
         assertThat(examples).contains(LocalDateTime.ofInstant(date, ZoneId.systemDefault()));
+    }
+
+    @Test
+    public void testSpreadsDefinedInClasLevelConstants() {
+        List<TestDataObject> READINGS_ACROSS_WEEK =
+            new Spreader<TestDataObject>()
+                .factory(() -> new TestDataObject(Spread.in(EVERY_HOUR), Spread.in(tenThousandKws)))
+                .steps(168)
+                .spread()
+                .collect(Collectors.toList());
+
+        assertThat(READINGS_ACROSS_WEEK.size()).isEqualTo(168);
+
+        assertThat(
+            READINGS_ACROSS_WEEK
+                .stream()
+                .map(TestDataObject::getBigDecimalField)
+                .reduce(BigDecimal.ZERO, BigDecimal::add))
+            .isEqualTo(BigDecimal.valueOf(10000));
+
+        READINGS_ACROSS_WEEK
+            .stream()
+            .map(TestDataObject::getTimeField)
+            .forEach(date -> assertDateInRange(date, WEEK_START, WEEK_START.plusHours(169)));
+
     }
 
 }

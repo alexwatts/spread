@@ -16,7 +16,7 @@ public class Spreader<T> {
     private Integer steps;
     private Callable<T> factoryTemplate;
     private List<MutatorTemplateAndParameters<T>> mutatorTemplateAndParameters;
-    private Spread<T>[] factoryParameters;
+    private List<Spread<T>> factoryParameters;
     private Boolean debug;
 
     public Spreader() {
@@ -103,10 +103,10 @@ public class Spreader<T> {
     private void printSummary() {
         LOGGER.info("\n");
         LOGGER.info(String.format("Factory template :[%s]\n", factoryTemplate));
-        if (factoryParameters == null || factoryParameters.length == 0) {
+        if (factoryParameters == null || factoryParameters.size() == 0) {
             LOGGER.info("No Factory injector.s\n");
         } else {
-            LOGGER.info(String.format("Factory injectors :[\n%s\n]\n", Arrays.stream(factoryParameters).map(Spread::toString).collect(Collectors.joining(" \n"))));
+            LOGGER.info(String.format("Factory injectors :[\n%s\n]\n", factoryParameters.stream().map(Spread::toString).collect(Collectors.joining(" \n"))));
         }
         if (mutatorTemplateAndParameters == null) {
             LOGGER.info("No Mutator injectors.\n");
@@ -120,9 +120,9 @@ public class Spreader<T> {
         LOGGER.info("Spread will use these data arrays to feed though factory injectors....\n");
         StringBuilder factoryValueMatrix = new StringBuilder();
         factoryValueMatrix.append("\n");
-        if (factoryParameters.length > 0) {
+        if (factoryParameters.size() > 0) {
             factoryValueMatrix.append(
-                Arrays.stream(factoryParameters).map(param -> " |----------------Spread----------------| ").collect(Collectors.joining())
+                factoryParameters.stream().map(param -> " |----------------Spread----------------| ").collect(Collectors.joining())
             );
             factoryValueMatrix.append("\n");
             IntStream.range(0, steps).forEach(i -> factoryValueMatrix.append(centeredRow(factoryParameters, i)));
@@ -140,7 +140,7 @@ public class Spreader<T> {
             mutatorTemplateAndParameters.forEach(mutatorTemplateAndParameter -> {
                 LOGGER.info(String.format("Mutator....[{%s}]\n", mutatorTemplateAndParameter.getMutatorTemplate()));
                 mutatorValueMatrix.append(
-                    Arrays.stream(mutatorTemplateAndParameter.getParameters()).map(param -> " |----------------Spread----------------| ").collect(Collectors.joining())
+                    mutatorTemplateAndParameter.getParameters().stream().map(param -> " |----------------Spread----------------| ").collect(Collectors.joining())
                 );
                 mutatorValueMatrix.append("\n");
                 IntStream.range(0, steps).forEach(i -> mutatorValueMatrix.append(centeredRow(mutatorTemplateAndParameter.getParameters(), i)));
@@ -149,9 +149,9 @@ public class Spreader<T> {
         }
     }
 
-    private String centeredRow(Spread<T>[] factoryParameters, int rowNumber) {
-        String centeredRow = Arrays.stream(factoryParameters)
-            .map(spread -> centerString(40, spread.getValues()[rowNumber].toString()))
+    private String centeredRow(List<Spread<T>> factoryParameters, int rowNumber) {
+        String centeredRow = factoryParameters.stream()
+            .map(spread -> centerString(40, spread.toString()))
             .collect(Collectors.joining(" "));
         return centeredRow + "\n";
     }
@@ -203,12 +203,12 @@ public class Spreader<T> {
     }
 
     private void captureFactoryParameters(Field[] factoryArguments, Callable<T> factoryTemplate) {
-        Spread<T>[] factoryParameters = new Spread[factoryArguments.length];
+        List<Spread<T>> factoryParameters = new ArrayList<>();
         for (int i = 0; i < factoryArguments.length; i++) {
             factoryArguments[i].setAccessible(true);
             try {
                 Object factoryParameter = factoryArguments[i].get(factoryTemplate);
-                factoryParameters[i] = spreadFromParameter(factoryParameter);
+                factoryParameters.addAll(spreadsFromParameter(factoryParameter, factoryTemplate));
             } catch (IllegalAccessException e) {
                 throw new SpreaderException("IllegalAccessException when trying to capture Spread parameters", e);
             }
@@ -216,21 +216,53 @@ public class Spreader<T> {
         this.factoryParameters = factoryParameters;
     }
 
-    private Spread<T> spreadFromParameter(Object parameter) {
+    private List<Spread<T>> spreadsFromParameter(Object parameter, Callable<T> factoryTemplate) {
+        List<Spread<T>> spreadList = new ArrayList<>();
         if (parameter instanceof Spread) {
-            return (Spread<T>)parameter;
+            spreadList.add((Spread<T>)parameter);
         } else {
-            return new FixedSpread<>(null, null, parameter);
+            spreadList.addAll(getNestedSpreads(parameter));
+        }
+        return spreadList;
+    }
+
+    private List<Spread<T>> spreadsFromParameter(Object parameter, Object factoryTemplate) {
+        List<Spread<T>> spreadList = new ArrayList<>();
+        if (parameter instanceof Spread) {
+            spreadList.add((Spread<T>)parameter);
+        } else {
+            getNestedSpreads(parameter);
+        }
+        return spreadList;
+    }
+
+    private List<Spread<T>> getNestedSpreads(Object parameter) {
+        List<Spread<T>> spreadList = new ArrayList<>();
+        Field[] attributes = parameter.getClass().getDeclaredFields();
+        for (Field field: attributes) {
+            if (field.getType().isAssignableFrom(Spread.class)) {
+                spreadList.add(getSpreadField(field, parameter));
+            }
+        }
+        return spreadList;
+    }
+
+    private Spread<T> getSpreadField(Field field, Object parameter) {
+        try {
+            field.setAccessible(true);
+            return (Spread<T>)field.get(parameter);
+        } catch (IllegalAccessException e) {
+            throw new SpreaderException("There was a problem getting a Spread field when capturing params");
         }
     }
 
     private void captureMutatorTemplateAndParameters(Field[] mutatorArguments, Consumer<T> mutatorTemplate) {
-        Spread<T>[] mutatorParameters = new Spread[mutatorArguments.length];
+        List<Spread<T>> mutatorParameters = new ArrayList<>();
         for (int i = 0; i < mutatorArguments.length; i++) {
             mutatorArguments[i].setAccessible(true);
             try {
                 Object factoryParameter = mutatorArguments[i].get(mutatorTemplate);
-                mutatorParameters[i] = spreadFromParameter(factoryParameter);
+                mutatorParameters.addAll(spreadsFromParameter(factoryParameter, mutatorTemplate));
             } catch (IllegalAccessException e) {
                 throw new SpreaderException("IllegalAccessException when trying to capture Spread parameters", e);
             }
@@ -242,7 +274,8 @@ public class Spreader<T> {
     }
 
     private void initialiseFactorySpreads() {
-        Arrays.stream(this.factoryParameters)
+        this.factoryParameters
+            .stream()
                 .forEach(spread -> spread.init(steps));
     }
 
@@ -254,8 +287,9 @@ public class Spreader<T> {
         }
     }
 
-    private void initialiseMutatorParams(Spread<T>[] mutatorParams) {
-        Arrays.stream(mutatorParams)
+    private void initialiseMutatorParams(List<Spread<T>> mutatorParams) {
+        mutatorParams
+            .stream()
                 .forEach(spread -> spread.init(steps));
     }
 
