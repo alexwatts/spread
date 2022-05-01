@@ -4,7 +4,9 @@ Spread tries to preserve full control of the generated objects whilst also doing
 
 Spread can make very readable tests quickly, because it allows for isolated named definitions that can be reused and shared and injected into test objects without writing methods to handle sequence and binding
 
-You can use it in tests to generate objects with dynamic values into Java collection types (<code>List</code>, <code>Set</code>, <code>Map</code>, etc)
+It also has some useful features that allow you to define target values with a cumulative total, and supports nesting of Complex types as well as nested Collection/Map types
+
+You can use it in tests to generate your test objects which can help to make that code a bit more succint/readable/standardised in your Unit or Integeration tests
 
 As well as the below documentation, there is an [examples project](https://github.com/alexwatts/spread-examples) that contains many different more realistic usages of Spread
 
