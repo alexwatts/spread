@@ -25,11 +25,12 @@ You can define a spread of values to be injected into test objects via construct
 
 For example, for a range of <code>LocalDateTime</code> values incrementing by hour:
 
-    Spread<LocalDateTime> everyHour = 
-          SpreadUtil
-            .initial(LocalDateTime.MIN)
-            .step(previousDate -> previousDate.plusHours(1));
- 
+```java
+Spread<LocalDateTime> everyHour = 
+      SpreadUtil
+        .initial(LocalDateTime.MIN)
+        .step(previousDate -> previousDate.plusHours(1));
+``` 
 
 You can also define 'cumulative' Spreads. The majority of Java number types are supported. for example, you can define a series of <code>BigDecimal</code> values with a cumulative total of 10000:
 
@@ -43,7 +44,20 @@ If you need to change the type of the <code>Spread</code> you can map a spread t
             .step(previousDate -> previousDate.plusHours(1))
             .map(localDateTime -> localDateTime.toInstant(ZoneOffset.UTC));
     
-To inject a <code>Spread</code> into some test objects you can use a <code>Spreader</code> object and wrap constructor arguments with <code>Spread.in()</code> to inject <code>Spread</code> instances into your test object. <code>Spreader</code> will generate one object for every step: 
+To inject a <code>Spread</code> into some test objects you can use a <code>Spreader</code> object and wrap constructor arguments with <code>Spread.in()</code> to inject <code>Spread</code> instances into your test object. <code>Spreader</code> will generate one object for every step
+
+For example a simple object representing electricity readings with a constructor:
+
+    ...
+
+    public ElectricityReading(Instant timeField, BigDecimal bigDecimalField) {
+        this.timeField = timeField;
+        this.bigDecimalField = bigDecimalField;
+    }
+
+    ...
+
+Could be populated with data like this:
     
     List<ElectricityReading> readings =
             new Spreader<ElectricityReading>()
@@ -280,32 +294,32 @@ Sets can be nested in almost the same way as lists:
 #### Maps
 You can do almost exact the same thing with Maps, but you need to supply one additional <code>Spreader</code> for the map key:
 
-        Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
+    Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
 
-        Spreader<AnotherTestDataObject> nestedObjectSpreader =
-            new Spreader<AnotherTestDataObject>()
-                .factory(AnotherTestDataObject::new)
-                .mutator(anotherTestDataObject -> anotherTestDataObject.setStringField(Spread.in(someStrings)))
-                .steps(3);
+    Spreader<AnotherTestDataObject> nestedObjectSpreader =
+        new Spreader<AnotherTestDataObject>()
+            .factory(AnotherTestDataObject::new)
+            .mutator(anotherTestDataObject -> anotherTestDataObject.setStringField(Spread.in(someStrings)))
+            .steps(3);
 
-        Spread<String> mapKeysSpread =
-            SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
+    Spread<String> mapKeysSpread =
+        SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
 
-        Spreader<String> nestedMapKeySpreader =
-            new Spreader<String>()
-                .factory(() -> String.valueOf(Spread.in(mapKeysSpread)))
-                .steps(3);
+    Spreader<String> nestedMapKeySpreader =
+        new Spreader<String>()
+            .factory(() -> String.valueOf(Spread.in(mapKeysSpread)))
+            .steps(3);
 
-        Spread<Map<String, AnotherTestDataObject>> nestedObjectsMap =
-            SpreadUtil.map(
-                nestedMapKeySpreader,
-                nestedObjectSpreader
-            );
+    Spread<Map<String, AnotherTestDataObject>> nestedObjectsMap =
+        SpreadUtil.map(
+            nestedMapKeySpreader,
+            nestedObjectSpreader
+        );
 
-        List<TestDataObject> dataObjects =
-            new Spreader<TestDataObject>()
-                .factory(TestDataObject::new)
-                .mutators(testDataObject -> testDataObject.setNestedObjectMapField(Spread.in(nestedObjectsMap)))
-                .steps(1000)
-                .spread()
-                .collect(Collectors.toList());
+    List<TestDataObject> dataObjects =
+        new Spreader<TestDataObject>()
+            .factory(TestDataObject::new)
+            .mutators(testDataObject -> testDataObject.setNestedObjectMapField(Spread.in(nestedObjectsMap)))
+            .steps(1000)
+            .spread()
+            .collect(Collectors.toList());
