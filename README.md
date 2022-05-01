@@ -6,6 +6,8 @@ Spread can make very readable tests quickly, because it allows for isolated name
 
 You can use it in tests to generate objects with dynamic values into Java collection types (<code>List</code>, <code>Set</code>, <code>Map</code>, etc)
 
+As well as the below documentation, there is an [examples project](https://github.com/alexwatts/spread-examples) that contains many different more realistic usages of Spread
+
 ## Getting Started
 You can find <code>Spread</code> on Maven central and import it into a Maven or Gradle project with:
 
