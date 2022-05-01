@@ -13,12 +13,12 @@ You can find <code>Spread</code> on Maven central and import it into a Maven or 
     <dependency>
         <groupId>io.github.alexwatts</groupId>
         <artifactId>spread</artifactId>
-        <version>1.0.5</version>
+        <version>1.0.7</version>
         <scope>test</scope>
     </dependency>
 
 #### Gradle
-    testImplementation 'io.github.alexwatts:spread:1.0.5'
+    testImplementation 'io.github.alexwatts:spread:1.0.7'
 
 #### Usage
 You can define a spread of values to be injected into test objects via constructor/factory method/mutatator methods or public fields.
