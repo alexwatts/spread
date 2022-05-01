@@ -6,7 +6,7 @@ Spread can make very readable tests quickly, because it allows for isolated name
 
 It also has some useful features that allow you to define target values with a cumulative total, and supports nesting of Complex types as well as nested Collection/Map types
 
-You can use it in tests to generate your test objects which can help to make that code a bit more succint/readable/standardised in your Unit or Integeration tests
+You can use to generate your test objects which can help to make that code a bit more succinct/readable/standardised in your Unit or Integeration tests
 
 As well as the below documentation, there is an [examples project](https://github.com/alexwatts/spread-examples) that contains many different more realistic usages of Spread
 
