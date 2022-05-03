@@ -223,7 +223,7 @@ public class Spreader<T> {
         } else {
             spreadList.addAll(getNestedSpreads(parameter));
         }
-        return spreadList;
+        return spreadList.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     private List<Spread<T>> spreadsFromParameter(Object parameter, Object factoryTemplate) {
@@ -276,13 +276,14 @@ public class Spreader<T> {
     private void initialiseFactorySpreads() {
         this.factoryParameters
             .stream()
-                .forEach(spread -> spread.init(steps));
+             .forEach(spread -> spread.init(steps));
     }
 
     private void initialiseMutatorSpreads() {
         if (mutatorTemplateAndParameters != null) {
             mutatorTemplateAndParameters.stream()
                     .map(MutatorTemplateAndParameters::getParameters)
+                    .filter(Objects::nonNull)
                     .forEach(this::initialiseMutatorParams);
         }
     }

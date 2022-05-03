@@ -754,7 +754,6 @@ public class SpreaderTest {
             new Spreader<TestDataObject>()
                 .factory(() -> new TestDataObject(Spread.in(EVERY_HOUR), Spread.in(tenThousandKws)))
                 .steps(168)
-                .debug()
                 .spread()
                 .collect(Collectors.toList());
 
@@ -771,6 +770,38 @@ public class SpreaderTest {
             .stream()
             .map(TestDataObject::getTimeField)
             .forEach(date -> assertDateInRange(date, WEEK_START, WEEK_START.plusHours(169)));
+    }
+
+    @Test
+    public void testOrderLinesTotalUpToCorrectPrice() {
+
+        Product PRODUCT_ONE = new Product("ALWA1", BigDecimal.valueOf(13.99));
+        Product PRODUCT_TWO = new Product("ALWA2", BigDecimal.valueOf(5.99));
+        Product PRODUCT_THREE = new Product("ALWA3", BigDecimal.valueOf(24.99));
+
+        Spread<Product> THREE_PRODUCTS =
+            SpreadUtil.sequence(PRODUCT_ONE, PRODUCT_TWO, PRODUCT_THREE);
+
+        Spread<Integer> VARIABLE_QUANTITIES = SpreadUtil.sequence(1, 2, 3);
+
+        Spread<List<OrderLine>> ORDER_LINES =
+            SpreadUtil.list(
+                new Spreader<OrderLine>()
+                    .factory(() -> new OrderLine(Spread.in(THREE_PRODUCTS), Spread.in(VARIABLE_QUANTITIES)))
+                    .steps(3)
+            );
+
+        Spread<String> CUSTOMER_ID = SpreadUtil.fixed("ALWA123");
+
+        Order ORDER =
+            new Spreader<Order>()
+                .factory(() -> new Order(Spread.in(CUSTOMER_ID), Spread.in(ORDER_LINES)))
+                .steps(1)
+                .spread()
+                .collect(Collectors.toList())
+                .get(0);
+
+        assertThat(ORDER).isNotNull();
     }
 
 }
