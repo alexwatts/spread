@@ -18,6 +18,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpreaderTest {
 
+    Product PRODUCT_ONE = new Product("ALWA1", BigDecimal.valueOf(13.99));
+    Product PRODUCT_TWO = new Product("ALWA2", BigDecimal.valueOf(5.99));
+    Product PRODUCT_THREE = new Product("ALWA3", BigDecimal.valueOf(24.99));
+
+    Spread<Product> THREE_PRODUCTS =
+        SpreadUtil.sequence(PRODUCT_ONE, PRODUCT_TWO, PRODUCT_THREE);
+
+    Spread<Integer> VARIABLE_QUANTITIES = SpreadUtil.sequence(1, 2, 3);
+
     private LocalDateTime WEEK_START = LocalDateTime.MIN;
 
     private Spread<Instant> EVERY_HOUR =
@@ -27,6 +36,13 @@ public class SpreaderTest {
             .map(dateTime -> dateTime.toInstant(ZoneOffset.UTC));
 
     private Spread<BigDecimal> tenThousandKws = SpreadUtil.cumulative(BigDecimal.valueOf(10000));
+
+    private final Spread<List<OrderLine>> ORDER_LINES =
+        SpreadUtil.list(
+            new Spreader<OrderLine>()
+                .factory(() -> new OrderLine(Spread.in(THREE_PRODUCTS), Spread.in(VARIABLE_QUANTITIES)))
+                .steps(3)
+        );
 
     @Test
     public void viaConstructor() {
@@ -754,6 +770,7 @@ public class SpreaderTest {
             new Spreader<TestDataObject>()
                 .factory(() -> new TestDataObject(Spread.in(EVERY_HOUR), Spread.in(tenThousandKws)))
                 .steps(168)
+                .debug()
                 .spread()
                 .collect(Collectors.toList());
 
@@ -775,22 +792,6 @@ public class SpreaderTest {
     @Test
     public void testOrderLinesTotalUpToCorrectPrice() {
 
-        Product PRODUCT_ONE = new Product("ALWA1", BigDecimal.valueOf(13.99));
-        Product PRODUCT_TWO = new Product("ALWA2", BigDecimal.valueOf(5.99));
-        Product PRODUCT_THREE = new Product("ALWA3", BigDecimal.valueOf(24.99));
-
-        Spread<Product> THREE_PRODUCTS =
-            SpreadUtil.sequence(PRODUCT_ONE, PRODUCT_TWO, PRODUCT_THREE);
-
-        Spread<Integer> VARIABLE_QUANTITIES = SpreadUtil.sequence(1, 2, 3);
-
-        Spread<List<OrderLine>> ORDER_LINES =
-            SpreadUtil.list(
-                new Spreader<OrderLine>()
-                    .factory(() -> new OrderLine(Spread.in(THREE_PRODUCTS), Spread.in(VARIABLE_QUANTITIES)))
-                    .steps(3)
-            );
-
         Spread<String> CUSTOMER_ID = SpreadUtil.fixed("ALWA123");
 
         Order ORDER =
@@ -801,7 +802,7 @@ public class SpreaderTest {
                 .collect(Collectors.toList())
                 .get(0);
 
-        assertThat(ORDER).isNotNull();
+        assertThat(ORDER.getOrderTotal()).isEqualTo(BigDecimal.valueOf(100.94));
     }
 
 }

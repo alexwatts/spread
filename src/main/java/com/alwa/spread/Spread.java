@@ -41,6 +41,11 @@ public class Spread<T> extends BaseSpread {
     }
 
     protected void init(int steps) {
+        if (initialised) {
+            if (steps < values.length) {
+                return;
+            }
+        }
         values = new Object[steps];
         IntStream.range(0, steps)
             .forEach(i ->
@@ -57,12 +62,17 @@ public class Spread<T> extends BaseSpread {
     }
 
     private T next() {
+        wrapValues();
         T value = (T) getValues()[current];
         if (mapFunction != null) {
             value = (T) ((Function<Object, Object>)mapFunction).apply(value);
         }
         current++;
         return value;
+    }
+
+    private void wrapValues() {
+        if (current == getValues().length) current = 0;
     }
 
     private Object nextValue(

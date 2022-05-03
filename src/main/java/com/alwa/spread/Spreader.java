@@ -125,7 +125,7 @@ public class Spreader<T> {
                 factoryParameters.stream().map(param -> " |----------------Spread----------------| ").collect(Collectors.joining())
             );
             factoryValueMatrix.append("\n");
-            IntStream.range(0, steps).forEach(i -> factoryValueMatrix.append(centeredRow(factoryParameters, i)));
+            IntStream.range(0, steps).forEach(i -> factoryValueMatrix.append(centeredRow(factoryParameters.stream().filter(spread -> spread.getValues().length >= steps).collect(Collectors.toList()), i)));
             LOGGER.info(factoryValueMatrix.toString());
         } else {
             LOGGER.info("Empty factory injectors, no Spreads....\n");
@@ -223,6 +223,10 @@ public class Spreader<T> {
         } else {
             spreadList.addAll(getNestedSpreads(parameter));
         }
+        return filterNulls(spreadList);
+    }
+
+    private List<Spread<T>> filterNulls(List<Spread<T>> spreadList) {
         return spreadList.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
@@ -233,7 +237,7 @@ public class Spreader<T> {
         } else {
             getNestedSpreads(parameter);
         }
-        return spreadList;
+        return filterNulls(spreadList);
     }
 
     private List<Spread<T>> getNestedSpreads(Object parameter) {
@@ -283,7 +287,6 @@ public class Spreader<T> {
         if (mutatorTemplateAndParameters != null) {
             mutatorTemplateAndParameters.stream()
                     .map(MutatorTemplateAndParameters::getParameters)
-                    .filter(Objects::nonNull)
                     .forEach(this::initialiseMutatorParams);
         }
     }
