@@ -17,7 +17,13 @@ public class SequenceSpread<T> extends Spread<T> {
                             Object[] seedsOrExamples,
                             Object previousValue) {
 
-        return seedsOrExamples[(currentStep - 1) % seedsOrExamples.length];
+        if (seedsOrExamples[0] instanceof Spread) {
+            return ((Spread)seedsOrExamples[(currentStep - 1) % seedsOrExamples.length])
+                .applyStep(totalSteps, currentStep, stepFunction, ((Spread<?>) seedsOrExamples[(currentStep - 1) % seedsOrExamples.length]).seedsOrExamples, previousValue);
+        } else {
+            return seedsOrExamples[(currentStep - 1) % seedsOrExamples.length];
+        }
+
     }
 
     @Override

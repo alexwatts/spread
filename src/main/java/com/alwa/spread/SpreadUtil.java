@@ -19,7 +19,9 @@ public class SpreadUtil {
         return spread(seed);
     }
 
-    public static <T> Spread<T> cumulative(BigDecimal example, RoundingMode roundingMode) {
+    public static <T> Spread<T> cumulative(
+        BigDecimal example,
+        RoundingMode roundingMode) {
        return cumulativeSpread(example, roundingMode);
     }
 
@@ -52,12 +54,40 @@ public class SpreadUtil {
         return new CumulativeSpread<>(null, null, RoundingMode.DOWN, fractionalAtom, seed);
     }
 
+    private static <T> Spread<T> cumulativeSpread(Double seed, RoundingMode roundingMode) {
+        return new CumulativeSpread<>(null, null, roundingMode, BigDecimal.valueOf(0.01), seed);
+    }
+
+    private static <T> Spread<T> cumulativeSpread(Double seed, RoundingMode roundingMode, BigDecimal fractionalAtom) {
+        return new CumulativeSpread<>(null, null, roundingMode, fractionalAtom, seed);
+    }
+
+    private static <T> Spread<T> cumulativeSpread(Double seed, BigDecimal fractionalAtom) {
+        return new CumulativeSpread<>(null, null, RoundingMode.DOWN, fractionalAtom, seed);
+    }
+
+    private static <T> Spread<T> cumulativeSpread(Float seed, RoundingMode roundingMode) {
+        return new CumulativeSpread<>(null, null, roundingMode, BigDecimal.valueOf(0.01), seed);
+    }
+
+    private static <T> Spread<T> cumulativeSpread(Float seed, RoundingMode roundingMode, BigDecimal fractionalAtom) {
+        return new CumulativeSpread<>(null, null, roundingMode, fractionalAtom, seed);
+    }
+
+    private static <T> Spread<T> cumulativeSpread(Float seed, BigDecimal fractionalAtom) {
+        return new CumulativeSpread<>(null, null, RoundingMode.DOWN, fractionalAtom, seed);
+    }
+
     private static <T> Spread<T> fixedSpread(T seed) {
         return new FixedSpread<>(null, null, seed);
     }
 
     public static <T> Spread<T> sequence(T... examples) {
         return new SequenceSpread<>(null, null, examples);
+    }
+
+    public static <T> Spread<T> sequence(Spread<T>... spreads) {
+        return new SequenceSpread<>(null, null, spreads);
     }
 
     public static Spread<String> custom(Function<?, ?> functionToCall) {

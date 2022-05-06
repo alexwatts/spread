@@ -18,14 +18,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpreaderTest {
 
-    Product PRODUCT_ONE = new Product("ALWA1", BigDecimal.valueOf(13.99));
-    Product PRODUCT_TWO = new Product("ALWA2", BigDecimal.valueOf(5.99));
-    Product PRODUCT_THREE = new Product("ALWA3", BigDecimal.valueOf(24.99));
+    private final Product PRODUCT_ONE = new Product("ALWA1", BigDecimal.valueOf(13.99));
+    private final Product PRODUCT_TWO = new Product("ALWA2", BigDecimal.valueOf(5.99));
+    private final Product PRODUCT_THREE = new Product("ALWA3", BigDecimal.valueOf(24.99));
 
-    Spread<Product> THREE_PRODUCTS =
+    private final Spread<Product> THREE_PRODUCTS =
         SpreadUtil.sequence(PRODUCT_ONE, PRODUCT_TWO, PRODUCT_THREE);
 
-    Spread<Integer> VARIABLE_QUANTITIES = SpreadUtil.sequence(1, 2, 3);
+    private final Spread<Integer> VARIABLE_QUANTITIES = SpreadUtil.sequence(1, 2, 3);
+
+    private final Spread<List<OrderLine>> ORDER_LINES =
+        SpreadUtil.list(
+            new Spreader<OrderLine>()
+                .factory(() -> new OrderLine(Spread.in(THREE_PRODUCTS), Spread.in(VARIABLE_QUANTITIES)))
+                .steps(3)
+        );
 
     private LocalDateTime WEEK_START = LocalDateTime.MIN;
 
@@ -36,13 +43,6 @@ public class SpreaderTest {
             .map(dateTime -> dateTime.toInstant(ZoneOffset.UTC));
 
     private Spread<BigDecimal> tenThousandKws = SpreadUtil.cumulative(BigDecimal.valueOf(10000));
-
-    private final Spread<List<OrderLine>> ORDER_LINES =
-        SpreadUtil.list(
-            new Spreader<OrderLine>()
-                .factory(() -> new OrderLine(Spread.in(THREE_PRODUCTS), Spread.in(VARIABLE_QUANTITIES)))
-                .steps(3)
-        );
 
     @Test
     public void viaConstructor() {
@@ -121,7 +121,6 @@ public class SpreaderTest {
             .stream()
             .map(TestDataObject::getTimeField)
             .forEach(date -> assertDateInRange(date, LocalDateTime.MIN, LocalDateTime.MIN.plusHours(169)));
-
     }
 
     @Test
@@ -770,7 +769,6 @@ public class SpreaderTest {
             new Spreader<TestDataObject>()
                 .factory(() -> new TestDataObject(Spread.in(EVERY_HOUR), Spread.in(tenThousandKws)))
                 .steps(168)
-                .debug()
                 .spread()
                 .collect(Collectors.toList());
 
@@ -803,6 +801,33 @@ public class SpreaderTest {
                 .get(0);
 
         assertThat(ORDER.getOrderTotal()).isEqualTo(BigDecimal.valueOf(100.94));
+    }
+
+    @Test
+    public void testSequencedSpreads() {
+        Spread<BigDecimal> sequence =
+            SpreadUtil.sequence(
+                SpreadUtil.cumulative(BigDecimal.valueOf(10000)),
+                SpreadUtil.cumulative(BigDecimal.valueOf(20000)),
+                SpreadUtil.cumulative(BigDecimal.valueOf(30000)),
+                SpreadUtil.cumulative(BigDecimal.valueOf(40000)),
+                SpreadUtil.cumulative(BigDecimal.valueOf(50000))
+            );
+
+        Spread<List<BigDecimal>> sequencedCumulatives =
+            SpreadUtil.list(
+                sequence, 20
+            );
+
+        List<TestDataObject> dataObjects =
+            new Spreader<TestDataObject>()
+                .factory(() -> new TestDataObject())
+                .mutators(testDataObject -> testDataObject.setListField(Spread.in(sequencedCumulatives)))
+                .steps(15)
+                .spread()
+                .collect(Collectors.toList());
+
+        assertThat(dataObjects.size()).isEqualTo(15);
     }
 
 }
