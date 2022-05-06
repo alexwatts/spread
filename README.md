@@ -6,7 +6,7 @@ Spread can make very readable tests quickly, because it allows for isolated name
 
 It also has some useful features that allow you to define target values with a cumulative total, and supports nesting of Complex types as well as nested Collection/Map types
 
-You can use to generate your test objects which can help to make that code a bit more succinct/readable/standardised in your Unit or Integeration tests
+You can use <code>Spread</code> to generate your test objects which can help to make that code a bit more succinct/readable/standardised in your Unit or Integeration tests
 
 As well as the below documentation, there is an [examples project](https://github.com/alexwatts/spread-examples) that contains many different more realistic usages of Spread
 
@@ -17,12 +17,12 @@ You can find <code>Spread</code> on Maven central and import it into a Maven or 
     <dependency>
         <groupId>io.github.alexwatts</groupId>
         <artifactId>spread</artifactId>
-        <version>1.0.7</version>
+        <version>1.1.0</version>
         <scope>test</scope>
     </dependency>
 
 #### Gradle
-    testImplementation 'io.github.alexwatts:spread:1.0.7'
+    testImplementation 'io.github.alexwatts:spread:1.1.0'
 
 #### Usage
 You can define a spread of values to be injected into test objects via constructor/factory method/mutatator methods or public fields.
