@@ -1,14 +1,7 @@
 # Spread
-Spread is an ergonomic helper library for building test objects quickly and fluently without needing to write or generate builders.
-Spread tries to preserve full control of the generated objects whilst also doing what you would expect where things are unspecified.
+Spread is an ergonomic helper library for building test objects. It lets you define ranges of objects, either in a sequence, or a dynamic range, or by a cumulative total. Spread gathers <code>@In</code> definitions and injects values into your test objects for you. It simplifies some of the boiler plate logic you would need to write to construct objects, feed values through in sequence and manage collection types.
 
-Spread can make very readable tests quickly, because it allows for isolated named definitions that can be reused and shared and injected into test objects without writing methods to handle sequence and binding
-
-It also has some useful features that allow you to define target values with a cumulative total, and supports nesting of Complex types as well as nested Collection/Map types
-
-You can use <code>Spread</code> to generate your test objects which can help to make that code a bit more succinct/readable/standardised in your Unit or Integeration tests
-
-As well as the below documentation, there is an [examples project](https://github.com/alexwatts/spread-examples) that contains many different more realistic usages of Spread
+As well as the below documentation, there is an [examples project](https://github.com/alexwatts/spread-examples) that contains many usages of Spread
 
 ## Getting Started
 You can find <code>Spread</code> on Maven central and import it into a Maven or Gradle project with:
@@ -17,20 +10,33 @@ You can find <code>Spread</code> on Maven central and import it into a Maven or 
     <dependency>
         <groupId>io.github.alexwatts</groupId>
         <artifactId>spread</artifactId>
-        <version>1.1.0</version>
+        <version>2.0.0</version>
         <scope>test</scope>
     </dependency>
 
 #### Gradle
-    testImplementation 'io.github.alexwatts:spread:1.1.0'
+    testImplementation 'io.github.alexwatts:spread:2.0.0'
 
 #### Usage
+To use spread, you need to initialise <code>Spread</code> for example, as below, in JUnit5. <code>SpreadUtil.initPackage()</code> takes two arguments. The instace on the class where the <code>@In</code> annotations are defined, and the package name to scan for <code>@In</code> annotations.
+
+```java
+@BeforeEach
+public void setUp() {
+    SpreadUtil.initPackage(
+        this,
+        this.getClass().getPackage().getName()
+    );
+}
+```
+
 You can define a spread of values to be injected into test objects via constructor/factory method/mutatator methods or public fields.
 
 For example, for a range of <code>LocalDateTime</code> values incrementing by hour:
 
 ```java
-Spread<LocalDateTime> everyHour = 
+@In
+private final Spread<LocalDateTime> EVERY_HOUR = 
       SpreadUtil
         .initial(LocalDateTime.MIN)
         .step(previousDate -> previousDate.plusHours(1));
@@ -39,12 +45,14 @@ Spread<LocalDateTime> everyHour =
 You can also define 'cumulative' Spreads. The majority of Java number types are supported. for example, you can define a series of <code>BigDecimal</code> values with a cumulative total of 10000:
 
 ```java
-Spread<BigDecimal> cumulativeReadings = SpreadUtil.cumulative(BigDecimal.valueOf(10000));
+@In
+private final Spread<BigDecimal> READINGS_TOTALING_10000 = SpreadUtil.cumulative(BigDecimal.valueOf(10000));
 ```    
 If you need to change the type of the <code>Spread</code> you can map a spread to any other type eg:
 
 ```java
-Spread<Instant> everyHour = 
+@In
+private final Spread<Instant> EVERY_HOUR = 
       SpreadUtil
         .initial(LocalDateTime.MIN)
         .step(previousDate -> previousDate.plusHours(1))
@@ -69,8 +77,8 @@ List<ElectricityReading> readings =
         new Spreader<ElectricityReading>()
             .factory(
                 () -> new ElectricityReading(
-                             Spread.in(everyHour), 
-                             Spread.in(cumulativeReadings)
+                             Spread.in(EVERY_HOUR), 
+                             Spread.in(READINGS_TOTALING_10000)
                       )
             )
             .steps(24 * 7)
@@ -85,8 +93,8 @@ List<ElectricityReading> readings =
         new Spreader<ElectricityReading>()
             .factory(
                 () -> ElectricityReading.newInstance(
-                         Spread.in(everyHour), 
-                         Spread.in(cumulativeReadings)
+                         Spread.in(EVERY_HOUR), 
+                         Spread.in(READINGS_TOTALING_10000)
                       )
             )
             .steps(24 * 7)
@@ -103,8 +111,8 @@ List<ElectricityReading> readings =
                 () -> ElectricityReading::new
             )
             .mutators(
-                electricityReading -> electricityReading.setReadingTime(Spread.in(everyHour)),
-                electricityReading -> electricityReading.setReading(Spread.in(cumulativeReadings))
+                electricityReading -> electricityReading.setReadingTime(Spread.in(EVERY_HOUR)),
+                electricityReading -> electricityReading.setReading(Spread.in(READINGS_TOTALING_10000))
             )
             .steps(24 * 7)
             .spread()
@@ -114,13 +122,14 @@ List<ElectricityReading> readings =
 You can inject via public fields as below
 
 ```java
- Spread<BigDecimal> cumulativeReadings =
+@In
+private final Spread<BigDecimal> READINGS_TOTALING_70000 =
         SpreadUtil.cumulative(BigDecimal.valueOf(70000));
 
  List<TestDataObject> dataObjects =
      new Spreader<TestDataObject>()
          .factory(TestDataObject::new)
-         .mutators(testDataObject -> testDataObject.publicBigDecimalField = Spread.in(cumulativeReadings))
+         .mutators(testDataObject -> testDataObject.publicBigDecimalField = Spread.in(READINGS_TOTALING_70000))
          .steps(24 * 7)
          .spread()
          .collect(Collectors.toList());
@@ -134,7 +143,8 @@ The <code>spread()</code> method of the <code>Spreader</code> class returns a <c
 You can define a sequence of values in a <code>Spread</code> which will feed in and repeat for as many steps are defined eg.
 
 ```java
-Spread<String> threeNames =
+@In
+private final Spread<String> THREE_NAMES =
         SpreadUtil.sequence(
             "John",
             "Emma",
@@ -145,7 +155,8 @@ Spread<String> threeNames =
 The argument list for <code>sequence()</code> is a <code>varargs</code> so it's simple to specify dynamic ranges, eg. below, a range of 1000 <code>Integer</code>:
 
 ```java
-Spread<Integer> rangeOfIntegers =
+@In
+private final Spread<Integer> RANGE_OF_INTEGERS =
     SpreadUtil.sequence(
         IntStream.range(0, 1000)
             .boxed()
@@ -157,14 +168,16 @@ Spread<Integer> rangeOfIntegers =
 You can define fixed values which will fill as specified, for as many steps as specified eg:
 
 ```java
-Spread<Double> fixedDouble = SpreadUtil.fixed(1.6d);
+@In
+private final Spread<Double> FIXED_DOUBLE = SpreadUtil.fixed(1.6d);
 ```
 
 ### Custom
 You can define your own logic to fill values for the defined steps eg:
 
 ```java    
-Spread<String> randomString = SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
+@In
+private final Spread<String> RANDOM_STRING = SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
 ```
 
 ### Debug
@@ -187,7 +200,8 @@ List<Foo> foo =
 The cumulative feature tries to feed values in as uniform a way as possible. Meaning that it strives to try to keep all values across a dataset as close as is possible, ideally, all the same value. This is not always possible tho depending on the cumulative value and the number of specified steps. If there is any fractional part of a cumulative target to be distributed across test objects, <code>Spreader</code> tries to break up a fractional portion of a number into 'fractional atoms' before spreading these across test objects. The default fractional atom is 0.01 but can be specified where required. Additionally, the <code>RoundingMode</code> can be configured. eg:
 
 ```java
-Spread<BigDecimal> cumulativeReadings =
+@In
+private final Spread<BigDecimal> READINGS_TOTALING_10000 =
         SpreadUtil.cumulative(
             BigDecimal.valueOf(10000),
             RoundingMode.DOWN, //rounding mode
@@ -199,32 +213,65 @@ Spread<BigDecimal> cumulativeReadings =
 You can define a <code>Spread</code> that is based on the values of another 'related' spread. For instance, you can define a spread that will evaluate its value based on the step value of another spread. For instance as below a <code>Boolean</code> value that feeds in <code>true</code> if the step value of the related spread starts with an 'a' eg:
 
 ```java
-Spread<String> threeLetterSpread =
+@In
+private final Spread<String> THREE_LETTERS =
         SpreadUtil.sequence("a", "b", "c");
 
-Spread<Boolean> startsWithAnA =
+@In
+private final Spread<Boolean> STARTS_WITH_AN_A =
     SpreadUtil.
         related(threeLetterSpread)
         .step(relatedValue -> relatedValue.startsWith("a"));
 ```
+### Complex Types
+You can use all of the features of Spread using Complex Types as well as simple types. For example, as below, you can generate a List of <code>AnotherTestDataObject</code>
+
+```java
+@In
+private final Spread<Integer> SOME_INTEGERS = SpreadUtil.sequence(1, 2, 3, 4, 5, 6, 7 ,8, 9);
+
+@In
+private final Spread<AnotherTestDataObject> COMPLEX_TYPE_SPREAD =
+    SpreadUtil.complexType(
+        new Spreader<AnotherTestDataObject>()
+            .factory(AnotherTestDataObject::new)
+            .mutator(object -> object.setIntField(Spread.in(SOME_INTEGERS)))
+    );
+
+...
+
+List<TestDataObject> dataObjects =
+    new Spreader<TestDataObject>()
+    .factory(TestDataObject::new)
+    .mutator(testDataObject -> testDataObject.setNestedObjectField(Spread.in(COMPLEX_TYPE_SPREAD)))
+    .steps(9)
+    .spread()
+    .collect(Collectors.toList());
+
+```
 
 ### Nesting Collection types
-If you need to inject collection, or map types into a Test Object, you can wrap a <code>Spread</code> using a collection helper from <code>SpreadUtil</code>. You need to specify a nested number of steps, and <code>Spreader</code> will nest as many elements as specified steps into each generated test object
+If you need to inject collection, or map types into a Test Object, you can embed a <code>Spread</code> using the <code>@Embed</code> annotation. You need to specify a nested number of steps and a collection type, and <code>Spreader</code> will nest as many elements as specified steps into each generated test object. You need to replace <code>Spread.in()</code> with< code>Spread.embed()</code> and cast the collection type.
+
 
 #### Lists
 For example as below, where a nested <code>List<BigDecimal></code> containing 6 elements is nested in to each of the 168 test Objects
 
 ```java
-Spread<List<BigDecimal>> cumulativeReadingsListed =
+@In
+@Embed(clazz = List.class, steps = 6)
+private final Spread<List<BigDecimal>> READINGS_TOTALING_70000 =
         SpreadUtil.list(
             SpreadUtil.cumulative(BigDecimal.valueOf(70000)),
             6
         );
 
+...
+    
 List<TestDataObject> dataObjects =
     new Spreader<TestDataObject>()
             .factory(TestDataObject::new)
-            .mutators(testDataObject -> testDataObject.setListField(Spread.in(cumulativeReadingsListed)))
+            .mutators(testDataObject -> testDataObject.setListField((List<BigDecimal>)Spread.embed(READINGS_TOTALING_70000)))
             .steps(24 * 7)
             .spread()
             .collect(Collectors.toList());
@@ -234,16 +281,16 @@ List<TestDataObject> dataObjects =
 For example as below, where a nested <code>Set<BigDecimal></code> containing 6 elements is nested in to each of the 168 test Objects
 
 ```java
-Spread<Set<Integer>> cumulativeReadingsSetted =
-        SpreadUtil.set(
-            SpreadUtil.cumulative(6),
-            6
-        );
+@In
+@Embed(clazz = Set.class, steps = 6)
+private final Spread<Set<Integer>> READINGS_TOTALLING_6 = SpreadUtil.cumulative(6),
+
+...
 
 List<TestDataObject> dataObjects =
     new Spreader<TestDataObject>()
         .factory(TestDataObject::new)
-        .mutators(testDataObject -> testDataObject.setSetField(Spread.in(cumulativeReadingsSetted)))
+        .mutators(testDataObject -> testDataObject.setSetField((Set<BigDecimal>)Spread.embed(READINGS_TOTALLING_6)))
         .steps(24 * 7)
         .spread()
         .collect(Collectors.toList());
@@ -253,112 +300,22 @@ List<TestDataObject> dataObjects =
 For example as below, where a nested <code>Map<String, Integer></code> containing 6 entries is nested in to each of the 168 test Objects
 
 ```java
-Spread<String> randomMapKey =
+@In
+@Embed(clazz = Map.class, steps = 6)
+private final Spread<Integer> READINGS_TOTALLING_70000 = SpreadUtil.cumulative(70000);
+
+@In
+private final Spread<String> RANDOM_MAP_KEY =
     SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
 
-Spread<Integer> cumulativeReadings = SpreadUtil.cumulative(70000);
-
-Spread<Map<String, Integer>> readingsInMap =
-    SpreadUtil.map(
-        randomMapKey,
-        cumulativeReadings,
-        6
-    );
-
+...
+    
+    
 List<TestDataObject> dataObjects =
     new Spreader<TestDataObject>()
         .factory(TestDataObject::new)
-        .mutators(testDataObject -> testDataObject.setMapField(Spread.in(readingsInMap)))
+        .mutators(testDataObject -> testDataObject.setMapField(Spread.embedMap(READINGS_TOTALLING_70000, RANDOM_MAP_KEY)))
         .steps(24 * 7)
-        .spread()
-        .collect(Collectors.toList());
-```
-
-### Nesting Collection Types with Spreader
-As well as nesting simple types into nested collections, you can also nest complex types into nested collections, with <code>Spreader</code>.
-For instance, as below, we can create a <code>Spreader</code> in the normal way, but instead of invoking <code>spread()</code> and collecting the target objects into a <code>List</code> or a <code>Map</code>, instead we can pass the Spreader instance to <code>SpreadUtil</code> to obtain a collection <code>Spread</code> that we can then use to nest a complex collection type in another object. This example gives us 1000 <code>TestDataObjects</code> each with a nested List field, with three values in it. The three Strings, "a", "b", "c":
-
-#### Lists
-Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
-
-```java
-Spreader<AnotherTestDataObject> nestedObjectSpreader =
-    new Spreader<AnotherTestDataObject>()
-        .factory(AnotherTestDataObject::new)
-        .mutator(anotherTestDataObject -> anotherTestDataObject.setStringField(Spread.in(someStrings)))
-        .steps(3);
-
-Spread<List<AnotherTestDataObject>> nestedObjectsMap =
-    SpreadUtil.list(
-        nestedObjectSpreader
-    );
-
-List<TestDataObject> dataObjects =
-    new Spreader<TestDataObject>()
-        .factory(TestDataObject::new)
-        .mutators(testDataObject -> testDataObject.setNestedObjectListField(Spread.in(nestedObjectsMap)))
-        .steps(1000)
-        .spread()
-        .collect(Collectors.toList());
-```
-
-#### Sets
-Sets can be nested in almost the same way as lists:
-
-```java
-Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
-
-Spreader<AnotherTestDataObject> nestedObjectSpreader =
-    new Spreader<AnotherTestDataObject>()
-        .factory(AnotherTestDataObject::new)
-        .mutator(anotherTestDataObject -> anotherTestDataObject.setStringField(Spread.in(someStrings)))
-        .steps(3);
-
-Spread<Set<AnotherTestDataObject>> nestedObjectsMap =
-    SpreadUtil.set(
-        nestedObjectSpreader
-    );
-
-List<TestDataObject> dataObjects =
-    new Spreader<TestDataObject>()
-        .factory(TestDataObject::new)
-        .mutators(testDataObject -> testDataObject.setNestedObjectSetField(Spread.in(nestedObjectsMap)))
-        .steps(1000)
-        .spread()
-        .collect(Collectors.toList());
-```
-
-#### Maps
-You can do almost exact the same thing with Maps, but you need to supply one additional <code>Spreader</code> for the map key:
-
-```java
-Spread<String> someStrings = SpreadUtil.sequence("a", "b", "c");
-
-Spreader<AnotherTestDataObject> nestedObjectSpreader =
-    new Spreader<AnotherTestDataObject>()
-        .factory(AnotherTestDataObject::new)
-        .mutator(anotherTestDataObject -> anotherTestDataObject.setStringField(Spread.in(someStrings)))
-        .steps(3);
-
-Spread<String> mapKeysSpread =
-    SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
-
-Spreader<String> nestedMapKeySpreader =
-    new Spreader<String>()
-        .factory(() -> String.valueOf(Spread.in(mapKeysSpread)))
-        .steps(3);
-
-Spread<Map<String, AnotherTestDataObject>> nestedObjectsMap =
-    SpreadUtil.map(
-        nestedMapKeySpreader,
-        nestedObjectSpreader
-    );
-
-List<TestDataObject> dataObjects =
-    new Spreader<TestDataObject>()
-        .factory(TestDataObject::new)
-        .mutators(testDataObject -> testDataObject.setNestedObjectMapField(Spread.in(nestedObjectsMap)))
-        .steps(1000)
         .spread()
         .collect(Collectors.toList());
 ```

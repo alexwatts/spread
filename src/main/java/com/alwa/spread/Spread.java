@@ -1,14 +1,17 @@
 package com.alwa.spread;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Spread<T> extends BaseSpread {
 
-    private boolean initialised;
-    private Integer current;
+    protected boolean initialised;
+    protected boolean initialising;
+    protected Integer current;
     protected final Object[] seedsOrExamples;
     protected Function<?, ?> stepFunction;
     protected Function<?, ?> mapFunction;
@@ -40,9 +43,40 @@ public class Spread<T> extends BaseSpread {
         return of.next();
     }
 
+    public static <T> Collection<T> embed(Spread<T> of) {
+        return resolveEmbeded(of);
+    }
+
+    public static <K, V> Map<K, V> embedMap(Spread<V> of, Spread<K> mapKey) {
+        return resolveEmbedded(of, mapKey);
+    }
+
+    private static <T> Collection<T> resolveEmbeded(Spread<T> of) {
+        EmbeddedCollection embeddedCollection = SpreadUtil.embedContainers.get(of);
+        Collection collectionObject = ((Collection)embeddedCollection.getContainer());
+        collectionObject.clear();
+        for (int i = 0; i < embeddedCollection.getSteps(); i++) {
+            collectionObject.add(of.next());
+        }
+        return collectionObject;
+    }
+
+    private static <K, V> Map<K, V> resolveEmbedded(Spread<V> of, Spread<K> mapKey) {
+        EmbeddedCollection embeddedCollection = SpreadUtil.embedContainers.get(of);
+        Map mapObject = ((Map)embeddedCollection.getContainer());
+        mapObject.clear();
+        for (int i = 0; i < embeddedCollection.getSteps(); i++) {
+            mapObject.put(mapKey.next(), of.next());
+        }
+        return mapObject;
+    }
+
     protected void init(int steps) {
+        if (initialising) return;
+        initialising = true;
         if (initialised) {
             if (steps < values.length) {
+                initialising = false;
                 return;
             }
         }
@@ -59,6 +93,7 @@ public class Spread<T> extends BaseSpread {
             );
         current = 0;
         initialised = true;
+        initialising = false;
     }
 
     private T next() {

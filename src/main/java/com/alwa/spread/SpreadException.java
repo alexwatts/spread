@@ -6,4 +6,8 @@ public class SpreadException extends RuntimeException {
         super(message);
     }
 
+    public SpreadException(String message, Throwable e) {
+        super(message, e);
+    }
+
 }
