@@ -10,12 +10,12 @@ You can find <code>Spread</code> on Maven central and import it into a Maven or 
     <dependency>
         <groupId>io.github.alexwatts</groupId>
         <artifactId>spread</artifactId>
-        <version>2.0.0</version>
+        <version>2.0.2</version>
         <scope>test</scope>
     </dependency>
 
 #### Gradle
-    testImplementation 'io.github.alexwatts:spread:2.0.0'
+    testImplementation 'io.github.alexwatts:spread:2.0.2'
 
 #### Usage
 To use spread, you need to initialise <code>Spread</code> for example, as below, in JUnit5. <code>SpreadUtil.initPackage()</code> takes two arguments. The instace on the class where the <code>@In</code> annotations are defined, and the package name to scan for <code>@In</code> annotations.
