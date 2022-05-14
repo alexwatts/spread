@@ -74,12 +74,6 @@ public class Spread<T> extends BaseSpread {
     protected void init(int steps) {
         if (initialising) return;
         initialising = true;
-        if (initialised) {
-            if (steps < values.length) {
-                initialising = false;
-                return;
-            }
-        }
         values = new Object[steps];
         IntStream.range(0, steps)
             .forEach(i ->
