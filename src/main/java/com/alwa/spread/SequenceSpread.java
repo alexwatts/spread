@@ -10,6 +10,29 @@ public class SequenceSpread<T> extends Spread<T> {
         super(stepFunction, mapFunction, seedsOrExamples);
     }
 
+    protected void init(int steps) {
+        if (!(seedsOrExamples[0] instanceof Spread)) {
+            Integer lastCurrent = current;
+            super.init(steps);
+            if (lastCurrent == null) {
+                current = 0;
+            } else {
+                current = lastCurrent;
+            }
+            return;
+        }
+        if (initialising) return;
+        initialising = true;
+        values = new Object[seedsOrExamples.length];
+        for (int i = 0; i < seedsOrExamples.length; i++) {
+            ((Spread)seedsOrExamples[i]).init(steps);
+            values[i] = seedsOrExamples[i];
+        }
+        if (current == null) current = 0;
+        initialised = true;
+        initialising = false;
+    }
+
     @Override
     public Object applyStep(int totalSteps,
                             int currentStep,

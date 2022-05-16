@@ -10,12 +10,12 @@ You can find <code>Spread</code> on Maven central and import it into a Maven or 
     <dependency>
         <groupId>io.github.alexwatts</groupId>
         <artifactId>spread</artifactId>
-        <version>2.0.0</version>
+        <version>2.0.3</version>
         <scope>test</scope>
     </dependency>
 
 #### Gradle
-    testImplementation 'io.github.alexwatts:spread:2.0.0'
+    testImplementation 'io.github.alexwatts:spread:2.0.3'
 
 #### Usage
 To use spread, you need to initialise <code>Spread</code> for example, as below, in JUnit5. <code>SpreadUtil.initPackage()</code> takes two arguments. The instace on the class where the <code>@In</code> annotations are defined, and the package name to scan for <code>@In</code> annotations.
@@ -318,4 +318,63 @@ List<TestDataObject> dataObjects =
         .steps(24 * 7)
         .spread()
         .collect(Collectors.toList());
+```
+
+### Sequence of Spreads
+You can create nested sequences of spreads which defines a different spread to be used for each embedding of a collection type.
+If there is no collection type and the <code>Speader</code> is writing a flat list the the sequence will rotate for the specificed number of steps in the <code>Spread.in()</code>.
+
+You need to mark a <code>Spread</code> making use of nested spreads in sequence with <code>@Dynamic</code> so that it will re-calculate its value array at the end of each cycle, instead of wrapping.
+
+This nested sequence of spreads will generate an embedded list with 2 elements into a TestDataObject with the cumulative totals defined in the nested sequence
+
+```java
+@In
+private final Spread<Integer> INTEGERS_TOTALING =
+    SpreadUtil.sequence(
+        SpreadUtil.cumulative(5),
+        SpreadUtil.cumulative(10),
+        SpreadUtil.cumulative(15),
+        SpreadUtil.cumulative(20),
+        SpreadUtil.cumulative(25)
+    );
+;
+
+@In
+@Dynamic
+@Embed(clazz = List.class, steps = 2)
+private final Spread<TestDataObject> DATA_OBJECTS =
+    SpreadUtil.complexType(
+        new Spreader<TestDataObject>()
+            .factory(TestDataObject::new)
+            .mutator(testDataObject -> testDataObject.setIntegerField(Spread.in(INTEGERS_TOTALING, 2)))
+    );
+
+@BeforeEach
+public void setup() {
+    SpreadUtil.initPackage(
+        this,
+        this.getClass().getPackage().getName()
+    );
+
+}
+
+@Test
+public void testDynamicSpreadOfSequences() {
+    List<List<TestDataObject>> TEST_DATA_OBJECTS =
+        new Spreader<List<TestDataObject>>()
+            .factory(ArrayList::new)
+            .mutator(list -> list.addAll(Spread.embed(DATA_OBJECTS)))
+            .steps(5)
+            .spread()
+            .collect(
+                Collectors.toList()
+            );
+    assertThat(
+        TEST_DATA_OBJECTS
+            .stream().flatMap(List::stream)
+            .map(TestDataObject::getIntegerField)
+            .reduce(0, Integer::sum)
+    ).isEqualTo(Integer.valueOf(75));
+}
 ```

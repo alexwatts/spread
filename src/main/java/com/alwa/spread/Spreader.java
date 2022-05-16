@@ -34,7 +34,6 @@ public class Spreader<T> {
         return this.spread().collect(Collectors.toList()).get(0);
     }
 
-
     public Stream<T> spread() {
         validateSpread();
         SpreadUtil.initialiseInjectors(steps);
@@ -49,9 +48,7 @@ public class Spreader<T> {
         }
 
         Object[] dataObjects =
-            (isCollection() || isMap()) ?
-                getCollectionDataObjects() :
-                    getNonCollectionDataObjects();
+            getNonCollectionDataObjects();
 
         return (Stream<T>)Arrays.stream(dataObjects);
     }
@@ -60,38 +57,12 @@ public class Spreader<T> {
         return steps;
     }
 
-    private boolean isCollection() {
-        String factoryTemplateClassName = factoryTemplate.getClass().getName();
-        return factoryTemplateClassName.startsWith("com.alwa.spread.ListSpread") ||
-            factoryTemplateClassName.startsWith("com.alwa.spread.SetSpread");
-    }
-
-    private boolean isMap() {
-        String factoryTemplateClassName = factoryTemplate.getClass().getName();
-        return factoryTemplateClassName.startsWith("com.alwa.spread.MapSpread");
-    }
-
     private Object[] getNonCollectionDataObjects() {
         Object[] dataObjects = new Object[steps];
         for (int i = 0; i < steps; i++) {
             dataObjects[i] = createNextObject();
         }
         return dataObjects;
-    }
-
-    private Object[] getCollectionDataObjects() {
-        try {
-            Object[] dataObjects = new Object[1];
-            Callable<T> factoryTemplate = this.factoryTemplate;
-            T collectionObject = factoryTemplate.call();
-            for (int i = 0; i < steps; i++) {
-                applyMutators(collectionObject);
-            }
-            dataObjects[0] = collectionObject;
-            return dataObjects;
-        } catch (Exception e) {
-            throw new SpreaderException("Exception thrown whilst creating next object", e);
-        }
     }
 
     private void printSplash() {

@@ -1,8 +1,8 @@
 package com.alwa.spread;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
+import com.alwa.spread.annotations.Embed;
+
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -25,6 +25,7 @@ public class Spread<T> extends BaseSpread {
         this.mapFunction = mapFunction;
     }
 
+
     public <R> Spread<R> step(Function<? super T, ? extends R> stepFunction) {
         this.stepFunction = stepFunction;
         return new Spread<>(stepFunction, mapFunction, seedsOrExamples);
@@ -43,6 +44,26 @@ public class Spread<T> extends BaseSpread {
         return of.next();
     }
 
+    public static <T> T in(Spread<T> of, int steps) {
+        if (isSequenceOfSpreads(of)) {
+            return nextSequencedValue((SequenceSpread<T>)of, steps);
+        }
+        return of.next();
+    }
+
+    private static <T> T nextSequencedValue(SequenceSpread<T> of, int steps) {
+        T nextValue = (T)((Spread)of.values[of.current]).next();
+        int sequenceCurrent = ((Spread)of.values[of.current]).current;
+        if (sequenceCurrent != 0 && sequenceCurrent % steps == 0) {
+            of.next();
+        }
+        return nextValue;
+    }
+
+    private static <T> boolean isSequenceOfSpreads(Spread<T> of) {
+        return (of instanceof SequenceSpread) && (of.seedsOrExamples[0] instanceof Spread);
+    }
+
     public static <T> Collection<T> embed(Spread<T> of) {
         return resolveEmbeded(of);
     }
@@ -52,24 +73,33 @@ public class Spread<T> extends BaseSpread {
     }
 
     private static <T> Collection<T> resolveEmbeded(Spread<T> of) {
-        EmbeddedCollection embeddedCollection = SpreadUtil.embedContainers.get(of);
-        Collection collectionObject = ((Collection)embeddedCollection.getContainer());
-        collectionObject.clear();
-        for (int i = 0; i < embeddedCollection.getSteps(); i++) {
+        Embed embed = SpreadUtil.embedContainers.get(of);
+        Collection collectionObject = createContainer(embed);
+        for (int i = 0; i < embed.steps(); i++) {
             collectionObject.add(of.next());
         }
         return collectionObject;
     }
 
     private static <K, V> Map<K, V> resolveEmbedded(Spread<V> of, Spread<K> mapKey) {
-        EmbeddedCollection embeddedCollection = SpreadUtil.embedContainers.get(of);
-        Map mapObject = ((Map)embeddedCollection.getContainer());
-        mapObject.clear();
-        for (int i = 0; i < embeddedCollection.getSteps(); i++) {
+        Embed embed = SpreadUtil.embedContainers.get(of);
+        Map mapObject = new HashMap<>();
+        for (int i = 0; i < embed.steps(); i++) {
             mapObject.put(mapKey.next(), of.next());
         }
         return mapObject;
     }
+
+    private static Collection createContainer(Embed embed) {
+        if (embed.clazz().equals(List.class)) {
+            return new ArrayList();
+        } else if (embed.clazz().equals(Set.class)) {
+            return new HashSet();
+        } else {
+            return new ArrayList();
+        }
+    }
+
 
     protected void init(int steps) {
         if (initialising) return;
@@ -90,8 +120,15 @@ public class Spread<T> extends BaseSpread {
         initialising = false;
     }
 
-    private T next() {
-        wrapValues();
+    protected void reInitialise(int steps) {
+        initialised = false;
+        current = null;
+        values = null;
+        this.init(steps);
+    }
+
+    protected T next() {
+        wrapValuesOrReInit();
         T value = (T) getValues()[current];
         if (mapFunction != null) {
             value = (T) ((Function<Object, Object>)mapFunction).apply(value);
@@ -100,8 +137,13 @@ public class Spread<T> extends BaseSpread {
         return value;
     }
 
-    private void wrapValues() {
-        if (current == getValues().length) current = 0;
+    private void wrapValuesOrReInit() {
+        if (current == getValues().length) {
+            current = 0;
+            if (SpreadUtil.dynamicSpreads != null && SpreadUtil.dynamicSpreads.containsKey(this)) {
+                this.reInitialise(getValues().length);
+            }
+        }
     }
 
     private Object nextValue(

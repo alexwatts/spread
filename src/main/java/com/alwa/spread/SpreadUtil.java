@@ -1,10 +1,10 @@
 package com.alwa.spread;
 
+import com.alwa.spread.annotations.Dynamic;
 import com.alwa.spread.annotations.Embed;
 import com.alwa.spread.annotations.In;
 import org.reflections.Reflections;
 import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -19,21 +19,22 @@ import static org.reflections.scanners.Scanners.FieldsAnnotated;
 public class SpreadUtil {
 
     public static List<Spread> injectors;
-    public static Map<Spread, EmbeddedCollection> embedContainers;
+    public static Map<Spread, Embed> embedContainers;
+    public static Map<Spread, Dynamic> dynamicSpreads;
 
     public static void initPackage(Object container, String packageToScan) {
         Reflections reflections = new Reflections(
             new ConfigurationBuilder()
                 .forPackage(packageToScan)
-                .filterInputsBy(new FilterBuilder().includePackage(packageToScan))
                 .setScanners(FieldsAnnotated));
 
         Set<Field> injectorFields = reflections.get(FieldsAnnotated.with(In.class).as(Field.class));
         Set<Field> embedFields = reflections.get(FieldsAnnotated.with(Embed.class).as(Field.class));
-        captureInjectors(container, injectorFields, embedFields);
+        Set<Field> dynamicFields = reflections.get(FieldsAnnotated.with(Dynamic.class).as(Field.class));
+        captureInjectors(container, injectorFields, embedFields, dynamicFields);
     }
 
-    private static void captureInjectors(Object container, Set<Field> fields, Set<Field> embedFields) {
+    private static void captureInjectors(Object container, Set<Field> fields, Set<Field> embedFields, Set<Field> dynamicFields) {
         List<Spread> injectorList = new ArrayList<>();
         for (Field field: fields) {
             Spread injectorField = getInjectorFieldOrNull(container, field);
@@ -43,15 +44,12 @@ public class SpreadUtil {
                 if (embedField != null) {
                     Embed embed = Arrays.stream(embedField.getDeclaredAnnotationsByType(Embed.class)).collect(Collectors.toList()).get(0);
                     if (embedContainers == null) embedContainers = new HashMap<>();
-                    if (embed.clazz().equals(List.class)) {
-                        embedContainers.put(injectorField, new EmbeddedCollection(new ArrayList(), embed.steps()));
-                    } else if (embed.clazz().equals(Set.class)) {
-                        embedContainers.put(injectorField, new EmbeddedCollection(new HashSet(), embed.steps()));
-                    } else if (embed.clazz().equals(Map.class)) {
-                        embedContainers.put(injectorField, new EmbeddedCollection(new HashMap(), embed.steps()));
-                    } else {
-                        embedContainers.put(injectorField, new EmbeddedCollection(new ArrayList(), embed.steps()));
-                    }
+                    embedContainers.put(injectorField, embed);
+                }
+                Field dynamicField = getDynamicFieldOrNull(field, dynamicFields);
+                if (dynamicField != null) {
+                    if (dynamicSpreads == null) dynamicSpreads = new HashMap<>();
+                    dynamicSpreads.put(injectorField, dynamicField.getAnnotation(Dynamic.class));
                 }
             }
         }
@@ -60,6 +58,10 @@ public class SpreadUtil {
 
     private static Field getEmbedFieldOrNull(Field field, Set<Field> embedFields) {
         return embedFields.stream().filter(embedField -> embedField.equals(field)).findFirst().orElse(null);
+    }
+
+    private static Field getDynamicFieldOrNull(Field field, Set<Field> dynamicFields) {
+        return dynamicFields.stream().filter(embedField -> embedField.equals(field)).findFirst().orElse(null);
     }
 
     private static Spread getInjectorFieldOrNull(Object container, Field field) {
@@ -82,7 +84,7 @@ public class SpreadUtil {
     private static void initialiseInjector(int steps, Spread injector) {
         if (embedContainers != null &&
             embedContainers.get(injector) != null) {
-            injector.init(embedContainers.get(injector).getSteps());
+            injector.init(embedContainers.get(injector).steps());
         } else {
             injector.init(steps);
         }
@@ -169,6 +171,10 @@ public class SpreadUtil {
 
     public static <T> Spread<T> sequence(Spread<T>... spreads) {
         return new SequenceSpread<>(null, null, spreads);
+    }
+
+    public static <T> Spread<T> sequence(List<Spread<T>> spreads) {
+        return new SequenceSpread<>(null, null, spreads.toArray());
     }
 
     public static Spread<String> custom(Function<?, ?> functionToCall) {
