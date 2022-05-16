@@ -1,12 +1,14 @@
 package com.alwa.spread.core;
 
+
 import java.util.function.Function;
+import java.util.function.Supplier;
 
-public class CallSpread<T> extends Spread<T> {
+public class CustomSpread<T> extends Spread<T> {
 
-    public CallSpread(Function<?, ?> stepFunction,
-                      Function<?, ?> mapFunction,
-                      Object... seedsOrExamples) {
+    public CustomSpread(Function<?, ?> stepFunction,
+                        Function<?, ?> mapFunction,
+                        Object... seedsOrExamples) {
         super(stepFunction, mapFunction, seedsOrExamples);
     }
 
@@ -16,19 +18,29 @@ public class CallSpread<T> extends Spread<T> {
                                Function<Object, Object> stepFunction,
                                Object[] seedsOrExamples,
                                Object previousValue) {
-        return stepFunction.apply(seedsOrExamples[0]);
+        return ((Supplier<T>)seedsOrExamples[0]).get();
     }
 
     @Override
     public <R> Spread<R> step(Function<? super T, ? extends R> stepFunction) {
         this.stepFunction = stepFunction;
-        return new CallSpread<>(stepFunction, mapFunction, seedsOrExamples);
+        return new CustomSpread<>(stepFunction, mapFunction, seedsOrExamples);
     }
 
     @Override
     public <R> Spread<R> map(Function<? super T, ? extends R> mapFunction) {
         this.mapFunction = mapFunction;
-        return new CallSpread<>(stepFunction, mapFunction, seedsOrExamples);
+        return new CustomSpread<>(stepFunction, mapFunction, seedsOrExamples);
+    }
+
+    protected CustomSpread(CustomSpread another)
+    {
+        super(another);
+    }
+
+    public Object clone()
+    {
+        return new CustomSpread<T>(this);
     }
 
 }

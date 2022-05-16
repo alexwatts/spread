@@ -26,7 +26,7 @@ public class NestedMapTest {
 
     @In
     private final Spread<String> randomMapKey =
-        SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
+        SpreadUtil.custom(() -> RandomStringUtils.random(7, true, true));
 
     @BeforeEach
     public void setUp() {

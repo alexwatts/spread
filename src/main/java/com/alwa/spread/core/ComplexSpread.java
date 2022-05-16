@@ -60,4 +60,14 @@ public class ComplexSpread<T> extends Spread<T> {
         return new ComplexSpread<>(stepFunction, mapFunction, seedsOrExamples);
     }
 
+    protected ComplexSpread(ComplexSpread another)
+    {
+        super(another);
+    }
+
+    public Object clone()
+    {
+        return new ComplexSpread<T>(this);
+    }
+
 }

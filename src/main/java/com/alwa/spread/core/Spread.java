@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class Spread<T> extends BaseSpread {
+public class Spread<T> extends BaseSpread implements Cloneable {
 
     protected boolean initialised;
     protected boolean initialising;
@@ -169,6 +169,18 @@ public class Spread<T> extends BaseSpread {
         } else {
             return values[i - 1];
         }
+    }
+
+    protected Spread(Spread another)
+    {
+        this.mapFunction = another.mapFunction;
+        this.stepFunction = another.stepFunction;
+        this.seedsOrExamples = another.seedsOrExamples;
+    }
+
+    public Object clone()
+    {
+        return new Spread<T>(this);
     }
 
     @Override

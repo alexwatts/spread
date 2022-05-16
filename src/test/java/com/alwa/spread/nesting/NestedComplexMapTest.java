@@ -24,7 +24,7 @@ public class NestedComplexMapTest {
 
     @In
     private final Spread<String> MAP_KEYS_SPREAD =
-        SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
+        SpreadUtil.custom(() -> RandomStringUtils.random(7, true, true));
 
     @In
     @Embed(clazz = Map.class, steps = 1000)

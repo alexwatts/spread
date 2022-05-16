@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.alwa.spread.SpreadValidator.validateCumulativeSpread;
@@ -178,8 +178,8 @@ public class SpreadUtil {
         return new SequenceSpread<>(null, null, spreads.toArray());
     }
 
-    public static Spread<String> custom(Function<?, ?> functionToCall) {
-        return new CallSpread<>(functionToCall, null, new Object());
+    public static <T> Spread<T> custom(Supplier<T> functionToCall) {
+        return new CustomSpread<>(null, null, functionToCall);
     }
 
     public static  <T> Spread<T> related(Spread<T> related) {

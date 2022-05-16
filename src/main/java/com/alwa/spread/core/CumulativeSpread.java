@@ -64,4 +64,16 @@ public class CumulativeSpread<T> extends Spread<T> {
         return fractionalAtom;
     }
 
+    protected CumulativeSpread(CumulativeSpread another)
+    {
+        super(another);
+        this.roundingMode = another.roundingMode;
+        this.fractionalAtom = another.fractionalAtom;
+    }
+
+    public Object clone()
+    {
+        return new CumulativeSpread<T>(this);
+    }
+
 }

@@ -31,4 +31,14 @@ public class FixedSpread<T> extends Spread<T> {
         return new FixedSpread<>(stepFunction, mapFunction, seedsOrExamples);
     }
 
+    protected FixedSpread(FixedSpread another)
+    {
+        super(another);
+    }
+
+    public Object clone()
+    {
+        return new FixedSpread<T>(this);
+    }
+
 }

@@ -18,7 +18,7 @@ public class CustomSpreadTest {
 
     @In
     private final Spread<String> callRandomString =
-        SpreadUtil.custom((String) -> RandomStringUtils.random(7, true, true));
+        SpreadUtil.custom(() -> RandomStringUtils.random(7, true, true));
 
     @BeforeEach
     public void setUp() {
