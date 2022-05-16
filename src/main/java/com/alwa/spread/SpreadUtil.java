@@ -167,11 +167,11 @@ public class SpreadUtil {
     }
 
     public static <T> Spread<T> sequence(T... examples) {
-        return new SequenceSpread<>(null, null, examples);
+        return new SequenceSpread<>(null, null, Arrays.stream(examples).toArray());
     }
 
     public static <T> Spread<T> sequence(Spread<T>... spreads) {
-        return new SequenceSpread<>(null, null, spreads);
+        return new SequenceSpread<>(null, null, Arrays.stream(spreads).toArray());
     }
 
     public static <T> Spread<T> sequence(List<Spread<T>> spreads) {
