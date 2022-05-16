@@ -1,7 +1,5 @@
 package com.alwa.spread.numeric;
 
-import com.alwa.spread.StepFunctionResolver;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
@@ -29,7 +27,7 @@ public class LongFunctionResolver extends StepFunctionResolver {
     }
 
     @Override
-    protected boolean validateSeed(Object seed) {
+    public boolean validateSeed(Object seed) {
         return seed != null && (Long) seed > 0;
     }
 

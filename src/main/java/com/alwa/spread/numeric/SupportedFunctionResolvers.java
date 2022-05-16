@@ -1,4 +1,4 @@
-package com.alwa.spread;
+package com.alwa.spread.numeric;
 
 import com.alwa.spread.numeric.*;
 

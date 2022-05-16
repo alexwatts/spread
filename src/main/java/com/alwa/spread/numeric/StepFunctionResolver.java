@@ -1,4 +1,4 @@
-package com.alwa.spread;
+package com.alwa.spread.numeric;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -10,7 +10,7 @@ public abstract class StepFunctionResolver {
 
     protected abstract Object[] initialiseValuesMap(String valuesMapKey, int totalSteps, Object seed, RoundingMode roundingMode, BigDecimal fractionalAtom);
 
-    protected abstract boolean validateSeed(Object seed);
+    public abstract boolean validateSeed(Object seed);
 
     protected Map<String, Object[]> valuesMap = new HashMap<>();
 

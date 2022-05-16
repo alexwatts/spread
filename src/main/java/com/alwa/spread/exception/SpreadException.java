@@ -1,4 +1,4 @@
-package com.alwa.spread;
+package com.alwa.spread.exception;
 
 public class SpreadException extends RuntimeException {
 

@@ -1,7 +1,5 @@
 package com.alwa.spread.numeric;
 
-import com.alwa.spread.StepFunctionResolver;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
@@ -9,7 +7,7 @@ import java.util.Arrays;
 public class FloatFunctionResolver extends StepFunctionResolver {
 
     @Override
-    protected boolean validateSeed(Object seed) {
+    public boolean validateSeed(Object seed) {
         return seed != null && ((Double) seed).compareTo(0d) > 0;
     }
 

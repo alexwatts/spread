@@ -2,6 +2,8 @@ package com.alwa.spread.validation;
 
 import com.alwa.spread.*;
 import com.alwa.spread.core.Spread;
+import com.alwa.spread.exception.SpreadException;
+import com.alwa.spread.exception.SpreaderException;
 import com.alwa.spread.model.TestDataObject;
 import com.alwa.spread.model.PrimativeTestDataObject;
 import org.junit.jupiter.api.Test;

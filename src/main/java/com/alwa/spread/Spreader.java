@@ -1,6 +1,7 @@
 package com.alwa.spread;
 
 import com.alwa.spread.core.Spread;
+import com.alwa.spread.exception.SpreaderException;
 
 import java.util.*;
 import java.util.concurrent.Callable;

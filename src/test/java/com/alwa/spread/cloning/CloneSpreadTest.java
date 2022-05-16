@@ -48,7 +48,6 @@ public class CloneSpreadTest {
 
     @Test
     public void testComplexSpreadCanBeCloned() {
-
         Spread<String> spread = SpreadUtil.complexType(
             new Spreader<String>()
                 .factory(() -> String.valueOf(Spread.in(fixedString)))
@@ -62,7 +61,6 @@ public class CloneSpreadTest {
 
     @Test
     public void testCumulativeSpreadCanBeCloned() {
-
         Spread<BigDecimal> spread = SpreadUtil.cumulative(BigDecimal.valueOf(1));
         spread.init(12);
 
@@ -73,7 +71,6 @@ public class CloneSpreadTest {
 
     @Test
     public void testRelatedSpreadCanBeCloned() {
-
         Spread<String> sequenceStrings = SpreadUtil.sequence("a", "b", "c");
 
         Spread<Boolean> spread = SpreadUtil.
@@ -89,7 +86,6 @@ public class CloneSpreadTest {
 
     @Test
     public void testSequenceSpreadCanBeCloned() {
-
         Spread<String> spread = SpreadUtil.sequence("a", "b", "c");
 
         spread.init(12);

@@ -1,7 +1,5 @@
 package com.alwa.spread.numeric;
 
-import com.alwa.spread.StepFunctionResolver;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -30,7 +28,7 @@ public class BigIntegerFunctionResolver extends StepFunctionResolver {
     }
 
     @Override
-    protected boolean validateSeed(Object seed) {
+    public boolean validateSeed(Object seed) {
         return seed != null && ((BigInteger) seed).compareTo(BigInteger.ZERO) > 0;
     }
 
