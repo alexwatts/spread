@@ -318,7 +318,7 @@ List<TestDataObject> dataObjects =
         .steps(24 * 7)
         .spread()
         .collect(Collectors.toList());
-```
+
 
 ### Sequence of Spreads
 You can create nested sequences of spreads which defines a different spread to be used for each embedding of a collection type.
