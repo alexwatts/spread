@@ -18,7 +18,7 @@ You can find <code>Spread</code> on Maven central and import it into a Maven or 
     testImplementation 'io.github.alexwatts:spread:2.0.3'
 
 #### Usage
-To use spread, you need to initialise <code>Spread</code> for example, as below, in JUnit5. <code>SpreadUtil.initPackage()</code> takes two arguments. The instance on the class where the <code>@In</code> annotations are defined, and the package name to scan for <code>@In</code> annotations.
+To use spread, you need to initialise <code>Spread</code> for example, as below, in JUnit5. <code>SpreadUtil.initPackage()</code> takes two arguments. The instance of the test class where the <code>@In</code> annotations are defined, and the package name to scan for <code>@In</code> annotations.
 
 ```java
 @BeforeEach
