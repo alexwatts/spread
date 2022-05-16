@@ -233,7 +233,7 @@ private final Spread<Boolean> STARTS_WITH_AN_A =
         .step(relatedValue -> relatedValue.startsWith("a"));
 ```
 ### Complex Types
-You can use all of the features of Spread using Complex Types as well as simple types. For example, as below, you can generate a List of <code>AnotherTestDataObject</code>
+You can use all of the features of Spread using Complex Types as well as simple types. For example, as below, you can generate a List of <code>AnotherTestDataObject</code> and set these each as a nested field of another object.
 
 ```java
 @In
@@ -260,7 +260,7 @@ List<TestDataObject> dataObjects =
 ```
 
 ### Nesting Collection types
-If you need to inject collection, or map types into a Test Object, you can embed a <code>Spread</code> using the <code>@Embed</code> annotation. You need to specify a nested number of steps and a collection type, and <code>Spreader</code> will nest as many elements as specified steps into each generated test object. You need to replace <code>Spread.in()</code> with< code>Spread.embed()</code> and cast the collection type.
+If you need to inject collection, or map types into a Test Object, you can embed a <code>Spread</code> using the <code>@Embed</code> annotation. You need to specify a nested number of steps and a collection type, and <code>Spreader</code> will nest as many elements as specified steps into each generated test object. You need to replace <code>Spread.in()</code> with <code>Spread.embed()</code> and cast the collection type.
 
 
 #### Lists
