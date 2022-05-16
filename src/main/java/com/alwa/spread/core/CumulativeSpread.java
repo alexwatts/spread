@@ -1,4 +1,6 @@
-package com.alwa.spread;
+package com.alwa.spread.core;
+
+import com.alwa.spread.RangeResolver;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

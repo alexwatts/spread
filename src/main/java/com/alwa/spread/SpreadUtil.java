@@ -3,6 +3,7 @@ package com.alwa.spread;
 import com.alwa.spread.annotations.Dynamic;
 import com.alwa.spread.annotations.Embed;
 import com.alwa.spread.annotations.In;
+import com.alwa.spread.core.*;
 import org.reflections.Reflections;
 import org.reflections.util.ConfigurationBuilder;
 

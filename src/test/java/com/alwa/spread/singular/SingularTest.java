@@ -3,6 +3,7 @@ package com.alwa.spread.singular;
 import com.alwa.spread.*;
 import com.alwa.spread.annotations.Embed;
 import com.alwa.spread.annotations.In;
+import com.alwa.spread.core.Spread;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

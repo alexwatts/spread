@@ -1,4 +1,4 @@
-package com.alwa.spread;
+package com.alwa.spread.core;
 
 import java.util.function.Function;
 
@@ -10,7 +10,7 @@ public class SequenceSpread<T> extends Spread<T> {
         super(stepFunction, mapFunction, seedsOrExamples);
     }
 
-    protected void init(int steps) {
+    public void init(int steps) {
         if (!(seedsOrExamples[0] instanceof Spread)) {
             Integer lastCurrent = current;
             super.init(steps);

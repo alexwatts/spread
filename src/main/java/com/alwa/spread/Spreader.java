@@ -1,5 +1,7 @@
 package com.alwa.spread;
 
+import com.alwa.spread.core.Spread;
+
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
@@ -144,7 +146,6 @@ public class Spreader<T> {
             throw new SpreaderException("Exception thrown whilst creating next object", e);
         }
     }
-
 
     @SafeVarargs
     public final Spreader<T> mutators(Consumer<T>... setterTemplates) {

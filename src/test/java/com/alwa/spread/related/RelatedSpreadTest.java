@@ -2,6 +2,7 @@ package com.alwa.spread.related;
 
 import com.alwa.spread.*;
 import com.alwa.spread.annotations.In;
+import com.alwa.spread.core.Spread;
 import com.alwa.spread.model.TestDataObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

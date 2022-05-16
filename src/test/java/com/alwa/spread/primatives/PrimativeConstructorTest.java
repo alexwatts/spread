@@ -1,7 +1,7 @@
 package com.alwa.spread.primatives;
 
 import com.alwa.spread.model.PrimativeTestDataObject;
-import com.alwa.spread.Spread;
+import com.alwa.spread.core.Spread;
 import com.alwa.spread.SpreadUtil;
 import com.alwa.spread.Spreader;
 import com.alwa.spread.annotations.In;

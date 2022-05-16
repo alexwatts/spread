@@ -1,4 +1,4 @@
-package com.alwa.spread;
+package com.alwa.spread.core;
 
 public abstract class BaseSpread {
 

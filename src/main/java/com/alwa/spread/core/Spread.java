@@ -1,5 +1,6 @@
-package com.alwa.spread;
+package com.alwa.spread.core;
 
+import com.alwa.spread.SpreadUtil;
 import com.alwa.spread.annotations.Embed;
 
 import java.util.*;
@@ -24,7 +25,6 @@ public class Spread<T> extends BaseSpread {
         this.stepFunction = stepFunction;
         this.mapFunction = mapFunction;
     }
-
 
     public <R> Spread<R> step(Function<? super T, ? extends R> stepFunction) {
         this.stepFunction = stepFunction;
@@ -100,8 +100,7 @@ public class Spread<T> extends BaseSpread {
         }
     }
 
-
-    protected void init(int steps) {
+    public void init(int steps) {
         if (initialising) return;
         initialising = true;
         values = new Object[steps];

@@ -1,4 +1,4 @@
-package com.alwa.spread;
+package com.alwa.spread.core;
 
 import java.util.function.Function;
 

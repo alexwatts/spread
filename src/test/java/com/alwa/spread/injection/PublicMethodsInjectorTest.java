@@ -1,6 +1,6 @@
 package com.alwa.spread.injection;
 
-import com.alwa.spread.Spread;
+import com.alwa.spread.core.Spread;
 import com.alwa.spread.SpreadUtil;
 import com.alwa.spread.Spreader;
 import com.alwa.spread.model.TestDataObject;

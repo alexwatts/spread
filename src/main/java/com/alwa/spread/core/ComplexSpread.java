@@ -1,4 +1,6 @@
-package com.alwa.spread;
+package com.alwa.spread.core;
+
+import com.alwa.spread.Spreader;
 
 import java.util.List;
 import java.util.function.Function;
