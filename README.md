@@ -269,11 +269,9 @@ For example as below, where a nested <code>List<BigDecimal></code> containing 6 
 ```java
 @In
 @Embed(clazz = List.class, steps = 6)
-private final Spread<List<BigDecimal>> READINGS_TOTALING_70000 =
-        SpreadUtil.list(
-            SpreadUtil.cumulative(BigDecimal.valueOf(70000)),
-            6
-        );
+private final Spread<BigDecimal> READINGS_TOTALING_70000 =
+    SpreadUtil.cumulative(BigDecimal.valueOf(70000)),
+
 
 ...
     
@@ -292,14 +290,14 @@ For example as below, where a nested <code>Set<BigDecimal></code> containing 6 e
 ```java
 @In
 @Embed(clazz = Set.class, steps = 6)
-private final Spread<Set<Integer>> READINGS_TOTALLING_6 = SpreadUtil.cumulative(6),
+private final Spread<Integer> READINGS_TOTALLING_6 = SpreadUtil.cumulative(6),
 
 ...
 
 List<TestDataObject> dataObjects =
     new Spreader<TestDataObject>()
         .factory(TestDataObject::new)
-        .mutators(testDataObject -> testDataObject.setSetField((Set<BigDecimal>)Spread.embed(READINGS_TOTALLING_6)))
+        .mutators(testDataObject -> testDataObject.setSetField((Set<Integer>)Spread.embed(READINGS_TOTALLING_6)))
         .steps(24 * 7)
         .spread()
         .collect(Collectors.toList());

@@ -1,7 +1,5 @@
 package com.alwa.spread.numeric;
 
-import com.alwa.spread.numeric.*;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
