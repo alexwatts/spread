@@ -33,14 +33,4 @@ public class CustomSpread<T> extends Spread<T> {
         return new CustomSpread<>(stepFunction, mapFunction, seedsOrExamples);
     }
 
-    protected CustomSpread(CustomSpread another)
-    {
-        super(another);
-    }
-
-    public Object clone()
-    {
-        return new CustomSpread<T>(this);
-    }
-
 }

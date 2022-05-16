@@ -61,15 +61,4 @@ public class SequenceSpread<T> extends Spread<T> {
         return new SequenceSpread<>(stepFunction, mapFunction, seedsOrExamples);
     }
 
-    protected SequenceSpread(SequenceSpread another)
-    {
-        super(another);
-    }
-
-    public Object clone()
-    {
-        return new SequenceSpread<T>(this);
-    }
-
-
 }

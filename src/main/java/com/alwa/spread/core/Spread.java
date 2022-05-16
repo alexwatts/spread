@@ -171,18 +171,6 @@ public class Spread<T> extends BaseSpread implements Cloneable {
         }
     }
 
-    protected Spread(Spread another)
-    {
-        this.mapFunction = another.mapFunction;
-        this.stepFunction = another.stepFunction;
-        this.seedsOrExamples = another.seedsOrExamples;
-    }
-
-    public Object clone()
-    {
-        return new Spread<T>(this);
-    }
-
     @Override
     public String toString() {
         return String.format("Spread<%s>{" +

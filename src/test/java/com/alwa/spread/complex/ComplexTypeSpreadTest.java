@@ -53,7 +53,6 @@ public class ComplexTypeSpreadTest {
                 .map(anotherTestDataObject -> anotherTestDataObject.getIntField())
                 .reduce(0, Integer::sum)
         ).isEqualTo(45);
-
     }
 
 }

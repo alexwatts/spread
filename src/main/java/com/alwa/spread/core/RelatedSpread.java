@@ -42,14 +42,4 @@ public class RelatedSpread<T> extends Spread<T> {
         return new RelatedSpread<>(stepFunction, mapFunction, seedsOrExamples);
     }
 
-    protected RelatedSpread(RelatedSpread another)
-    {
-        super(another);
-    }
-
-    public Object clone()
-    {
-        return new RelatedSpread<T>(this);
-    }
-
 }
