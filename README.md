@@ -18,7 +18,7 @@ You can find <code>Spread</code> on Maven central and import it into a Maven or 
     testImplementation 'io.github.alexwatts:spread:2.0.3'
 
 #### Usage
-To use spread, you need to initialise <code>Spread</code> for example, as below, in JUnit5. <code>SpreadUtil.initPackage()</code> takes two arguments. The instace on the class where the <code>@In</code> annotations are defined, and the package name to scan for <code>@In</code> annotations.
+To use spread, you need to initialise <code>Spread</code> for example, as below, in JUnit5. <code>SpreadUtil.initPackage()</code> takes two arguments. The instance on the class where the <code>@In</code> annotations are defined, and the package name to scan for <code>@In</code> annotations.
 
 ```java
 @BeforeEach
@@ -122,10 +122,6 @@ List<ElectricityReading> readings =
 You can inject via public fields as below
 
 ```java
-@In
-private final Spread<BigDecimal> READINGS_TOTALING_70000 =
-        SpreadUtil.cumulative(BigDecimal.valueOf(70000));
-
  List<TestDataObject> dataObjects =
      new Spreader<TestDataObject>()
          .factory(TestDataObject::new)
@@ -136,6 +132,19 @@ private final Spread<BigDecimal> READINGS_TOTALING_70000 =
 ```
                 
 The <code>spread()</code> method of the <code>Spreader</code> class returns a <code>Stream</code> of the target object type, meaning that we are free to collect the resultant stream into any desired groupings or collection types available to us via the Java stream API features, eg. <code>Map</code> <code>Set</code> etc.             
+
+You can collect into a <code>Map</code> as below for example
+
+```java
+Map<String, BigDecimal> READINGS_MAP =
+    new Spreader<Map.Entry<String, BigDecimal>>()
+        .factory(() -> Map.entry(Spread.in(MAP_KEYS_SPREAD), Spread.in(READINGS_SPREAD)))
+        .steps(5)
+        .spread()
+        .collect(
+            Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)
+        );
+```
 
 ## Other Features
 
