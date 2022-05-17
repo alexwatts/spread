@@ -233,7 +233,7 @@ private final Spread<Boolean> STARTS_WITH_AN_A =
         .step(relatedValue -> relatedValue.startsWith("a"));
 ```
 ### Complex Types
-You can use all of the features of Spread using Complex Types as well as simple types. For example, as below, you can generate a List of <code>AnotherTestDataObject</code> and set these each as a nested field of another object.
+You can use all of the features of Spread using Complex Types as well as simple types. For example, as below, you can generate a <code>Spread</code> of <code>AnotherTestDataObject</code> and set each of these as a nested field of another object.
 
 ```java
 @In
