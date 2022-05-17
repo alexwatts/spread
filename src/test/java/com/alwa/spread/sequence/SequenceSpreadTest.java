@@ -1,5 +1,6 @@
 package com.alwa.spread.sequence;
 
+import com.alwa.spread.annotations.Dynamic;
 import com.alwa.spread.core.Spread;
 import com.alwa.spread.SpreadUtil;
 import com.alwa.spread.Spreader;
@@ -105,7 +106,6 @@ public class SequenceSpreadTest {
 
     @Test
     public void testVarargsSequencedSpreads() {
-
         List<TestDataObject> dataObjects =
             new Spreader<TestDataObject>()
                 .factory(() -> new TestDataObject())
@@ -114,11 +114,17 @@ public class SequenceSpreadTest {
                         (List<BigDecimal>)Spread.embed(SEQUENCED_CUMULATIVES)
                     )
                 )
-                .steps(15)
+                .steps(5)
                 .spread()
                 .collect(Collectors.toList());
 
-        assertThat(dataObjects.size()).isEqualTo(15);
+        assertThat(
+            dataObjects
+                .stream()
+                .map(TestDataObject::getListField)
+                .flatMap(List::stream)
+                .reduce(BigDecimal.ZERO, BigDecimal::add))
+            .isEqualTo(BigDecimal.valueOf(150000));
     }
 
     private void assertIsOneOf(Instant date, LocalDateTime... examples) {

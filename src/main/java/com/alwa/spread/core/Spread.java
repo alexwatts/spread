@@ -76,7 +76,11 @@ public class Spread<T> extends BaseSpread implements Cloneable {
         Embed embed = SpreadUtil.embedContainers.get(of);
         Collection collectionObject = createContainer(embed);
         for (int i = 0; i < embed.steps(); i++) {
-            collectionObject.add(of.next());
+            if (isSequenceOfSpreads(of)) {
+                collectionObject.add(nextSequencedValue((SequenceSpread<T>)of, embed.steps())); ;
+            } else {
+                collectionObject.add(of.next());
+            }
         }
         return collectionObject;
     }
