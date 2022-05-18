@@ -1,6 +1,7 @@
 package com.alwa.spread;
 
 import com.alwa.spread.core.Spread;
+import com.alwa.spread.exception.SpreadException;
 import com.alwa.spread.exception.SpreaderException;
 
 import java.util.*;
@@ -143,6 +144,8 @@ public class Spreader<T> {
         try {
             T nextObject = factoryTemplate.call();
             return applyMutators(nextObject);
+        } catch (SpreadException e) {
+            throw e;
         } catch (Exception e) {
             throw new SpreaderException("Exception thrown whilst creating next object", e);
         }

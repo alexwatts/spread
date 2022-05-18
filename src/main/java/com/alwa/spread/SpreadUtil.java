@@ -4,6 +4,7 @@ import com.alwa.spread.annotations.Dynamic;
 import com.alwa.spread.annotations.Embed;
 import com.alwa.spread.annotations.In;
 import com.alwa.spread.core.*;
+import com.alwa.spread.exception.SpreadException;
 import org.reflections.Reflections;
 import org.reflections.util.ConfigurationBuilder;
 
@@ -75,6 +76,7 @@ public class SpreadUtil {
     }
 
     public static void initialiseInjectors(int steps) {
+        if (injectors == null) throwMissingSetupException();
         injectors
             .forEach(
                 injector ->
@@ -89,6 +91,13 @@ public class SpreadUtil {
         } else {
             injector.init(steps);
         }
+    }
+
+    private static void throwMissingSetupException() {
+        throw new SpreadException(
+            String.format(
+                "Spread was not initialised before a Spreader was used. \n" +
+                    "- Check the test setup was done with a call to SpreadUtil.initPackage(). \n"));
     }
 
     private static <T> Spread<T> spread(T seedOrExamples) {
@@ -185,5 +194,6 @@ public class SpreadUtil {
     public static  <T> Spread<T> related(Spread<T> related) {
         return new RelatedSpread<>(null, null, related);
     }
+
 
 }

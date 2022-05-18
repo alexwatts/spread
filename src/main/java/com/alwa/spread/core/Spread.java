@@ -2,6 +2,7 @@ package com.alwa.spread.core;
 
 import com.alwa.spread.SpreadUtil;
 import com.alwa.spread.annotations.Embed;
+import com.alwa.spread.exception.SpreadException;
 
 import java.util.*;
 import java.util.function.Function;
@@ -141,12 +142,22 @@ public class Spread<T> extends BaseSpread implements Cloneable {
     }
 
     private void wrapValuesOrReInit() {
+        if (!this.initialised) throwMissingInWarningMessage();
         if (current == getValues().length) {
             current = 0;
             if (SpreadUtil.dynamicSpreads != null && SpreadUtil.dynamicSpreads.containsKey(this)) {
                 this.reInitialise(getValues().length);
             }
         }
+    }
+
+    public void throwMissingInWarningMessage() {
+        throw new SpreadException(
+            String.format(
+                "Spread was not initialised before it was used in a Spreader. Spread: [%s] \n" +
+                    "- Check the Spread is annotated with @In. \n" +
+                    "- Check that the Spread is defined as a field on the Test class passed to initPackage(). \n" +
+                    "- Check that the package name passed to initPackage() matches the Test class." , this));
     }
 
     private Object nextValue(

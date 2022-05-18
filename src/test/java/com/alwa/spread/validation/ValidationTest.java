@@ -6,6 +6,8 @@ import com.alwa.spread.exception.SpreadException;
 import com.alwa.spread.exception.SpreaderException;
 import com.alwa.spread.model.TestDataObject;
 import com.alwa.spread.model.PrimativeTestDataObject;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -15,6 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ValidationTest {
 
+    @BeforeEach
+    public void setUp() {
+        SpreadUtil.initPackage(
+            this,
+            this.getClass().getPackage().getName()
+        );
+    }
 
     @Test
     public void testUnsupportedCumulativeClassValidation() {
@@ -87,6 +96,11 @@ public class ValidationTest {
         );
         assertThat(thrown.getMessage())
             .contains("Invalid Spread Object - Type:[class java.math.BigDecimal], Value:[-1]");
+    }
+
+    @AfterEach
+    public void tearDown() {
+        SpreadUtil.injectors = null;
     }
 
 }
