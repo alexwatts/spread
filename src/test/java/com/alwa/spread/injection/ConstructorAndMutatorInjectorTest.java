@@ -31,10 +31,9 @@ public class ConstructorAndMutatorInjectorTest {
     private final Spread<BigDecimal> HOURLY_READINGS_OF_TOTAL_10000 =
         SpreadUtil.cumulative(BigDecimal.valueOf(10000));
 
-
     @In
     private final Spread<String> fixedStringValue =
-        SpreadUtil.fixed("bananna");
+        SpreadUtil.fixed("banana");
 
     @BeforeEach
     public void setUp() {
@@ -84,7 +83,7 @@ public class ConstructorAndMutatorInjectorTest {
         readings
             .stream()
             .map(TestDataObject::getStringField)
-            .forEach(value -> assertThat(value).isEqualTo("bananna"));
+            .forEach(value -> assertThat(value).isEqualTo("banana"));
 
     }
 

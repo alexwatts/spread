@@ -195,5 +195,40 @@ public class SpreadUtil {
         return new RelatedSpread<>(null, null, related);
     }
 
+    public static <K, V> Map<K, V> toMap(int steps, Spread<K> k, Spread<V> v) {
+        return new Spreader<AbstractMap.SimpleEntry<K, V>>()
+            .factory(() ->
+                new AbstractMap.SimpleEntry<>(
+                    Spread.in(k),
+                    Spread.in(v)
+                )
+            )
+            .steps(steps)
+            .spread()
+            .collect(
+                Collectors.toMap(
+                    AbstractMap.SimpleEntry<K, V>::getKey,
+                    AbstractMap.SimpleEntry<K, V>::getValue
+                )
+            );
+    }
+
+    public static <K, V> Map<K, List<V>> toEmbeddedMap(int steps, Spread<K> k, Spread<V> v) {
+        return new Spreader<AbstractMap.SimpleEntry<K, List<V>>>()
+            .factory(() ->
+                new AbstractMap.SimpleEntry<>(
+                    Spread.in(k),
+                    (List<V>) Spread.embed(v)
+                )
+            )
+            .steps(steps)
+            .spread()
+            .collect(
+                Collectors.toMap(
+                    AbstractMap.SimpleEntry<K, List<V>>::getKey,
+                    AbstractMap.SimpleEntry<K, List<V>>::getValue
+                )
+            );
+    }
 
 }

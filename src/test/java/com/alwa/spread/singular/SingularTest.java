@@ -31,8 +31,7 @@ public class SingularTest {
         SpreadUtil.complexType(
                 new Spreader<OrderLine>()
                     .factory(
-                        () ->
-                            new OrderLine(Spread.in(THREE_PRODUCTS), Spread.in(VARIABLE_QUANTITIES))
+                        () -> new OrderLine(Spread.in(THREE_PRODUCTS), Spread.in(VARIABLE_QUANTITIES))
                     )
         );
 
@@ -53,7 +52,7 @@ public class SingularTest {
         Order ORDER =
             new Spreader<Order>()
                 .factory(() -> new Order(Spread.in(CUSTOMER_ID), (List<OrderLine>)Spread.embed(ORDER_LINES)))
-                .steps(3)
+                .steps(1)
                 .singular();
 
         assertThat(ORDER.getOrderTotal()).isEqualTo(BigDecimal.valueOf(100.94));

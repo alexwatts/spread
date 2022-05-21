@@ -1,6 +1,5 @@
 package com.alwa.spread.sequence;
 
-import com.alwa.spread.annotations.Dynamic;
 import com.alwa.spread.core.Spread;
 import com.alwa.spread.SpreadUtil;
 import com.alwa.spread.Spreader;
@@ -108,7 +107,7 @@ public class SequenceSpreadTest {
     public void testVarargsSequencedSpreads() {
         List<TestDataObject> dataObjects =
             new Spreader<TestDataObject>()
-                .factory(() -> new TestDataObject())
+                .factory(TestDataObject::new)
                 .mutators(testDataObject ->
                     testDataObject.setListField(
                         (List<BigDecimal>)Spread.embed(SEQUENCED_CUMULATIVES)
