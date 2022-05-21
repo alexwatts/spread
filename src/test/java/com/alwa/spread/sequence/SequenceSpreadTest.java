@@ -80,7 +80,6 @@ public class SequenceSpreadTest {
                     LocalDateTime.of(2020, 1, 3, 1, 1)
                 )
             );
-
     }
 
     @Test

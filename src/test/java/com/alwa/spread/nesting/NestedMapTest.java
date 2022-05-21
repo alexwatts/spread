@@ -38,7 +38,6 @@ public class NestedMapTest {
 
     @Test
     public void testNestedMapField() {
-
         List<TestDataObject> dataObjects =
             new Spreader<TestDataObject>()
                 .factory(TestDataObject::new)

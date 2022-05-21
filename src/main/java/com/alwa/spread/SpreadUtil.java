@@ -231,4 +231,15 @@ public class SpreadUtil {
             );
     }
 
+    public static <T> List<List<T>> toEmbeddedList(int steps, Spread<T> embededSpread) {
+        return new Spreader<List<T>>()
+            .factory(ArrayList::new)
+            .mutator(list -> list.addAll(Spread.embed(embededSpread)))
+            .steps(steps)
+            .spread()
+            .collect(
+                Collectors.toList()
+            );
+    }
+
 }

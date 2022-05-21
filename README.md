@@ -327,6 +327,19 @@ List<TestDataObject> dataObjects =
         .collect(Collectors.toList());
 ```
 
+There are also some convenience methods <code>SpreadUtil.toMap()</code>, <code>SpreadUtil.toEmbeddedMap()</code>, <code>SpreadUtil.toEmbeddedList()</code> for <code>Map</code> and embedded <code>List</code> types. You can use these instead of using Spreader directly, and you need to supply the Spreads and the number of steps.
+
+```java
+
+Map<String, BigDecimal> MAP = SpreadUtil.toMap(3, KEYS, VALUES);
+
+Map<String, List<BigDecimal>> MAP =
+    SpreadUtil.toEmbeddedMap(3, KEYS, VALUES_EMBEDDED);
+
+List<List<TestDataObject>> TEST_DATA_OBJECTS =
+    SpreadUtil.toEmbeddedList(5, DATA_OBJECTS);
+```
+
 ### Sequence of Spreads
 You can create nested sequences of spreads which defines a different spread to be used for each embedding of a collection type.
 If there is no collection type and the <code>Speader</code> is writing a flat list the the sequence will rotate for the specificed number of steps in the <code>Spread.in()</code>.
