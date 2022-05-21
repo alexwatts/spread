@@ -331,9 +331,9 @@ There are also some convenience methods <code>SpreadUtil.toMap()</code>, <code>S
 
 ```java
 
-Map<String, BigDecimal> MAP = SpreadUtil.toMap(3, KEYS, VALUES);
+Map<String, BigDecimal> map = SpreadUtil.toMap(3, KEYS, VALUES);
 
-Map<String, List<BigDecimal>> MAP =
+Map<String, List<BigDecimal>> map =
     SpreadUtil.toEmbeddedMap(3, KEYS, VALUES_EMBEDDED);
 
 List<List<TestDataObject>> TEST_DATA_OBJECTS =

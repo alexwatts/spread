@@ -17,14 +17,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class ConvenienceTest {
 
-    @BeforeEach
-    public void setup() {
-        SpreadUtil.initPackage(
-            this,
-            this.getClass().getPackage().getName()
-        );
-    }
-
     @In
     private final Spread<String> KEYS = SpreadUtil.sequence("a", "b", "c");
 
@@ -45,12 +37,20 @@ public class ConvenienceTest {
                 .mutator(testDataObject -> testDataObject.setBigDecimalField(Spread.in(VALUES, 1000)))
         );
 
+    @BeforeEach
+    public void setup() {
+        SpreadUtil.initPackage(
+            this,
+            this.getClass().getPackage().getName()
+        );
+    }
+
     @Test
     public void testConvenienceToMap() {
-        Map<String, BigDecimal> MAP = SpreadUtil.toMap(3, KEYS, VALUES);
+        Map<String, BigDecimal> map = SpreadUtil.toMap(3, KEYS, VALUES);
 
         assertThat(
-            MAP.values()
+            map.values()
                 .stream()
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
         ).isEqualTo(BigDecimal.valueOf(30000));
@@ -58,11 +58,11 @@ public class ConvenienceTest {
 
     @Test
     public void testConvenienceToEmbeddedMap() {
-        Map<String, List<BigDecimal>> MAP =
+        Map<String, List<BigDecimal>> map =
             SpreadUtil.toEmbeddedMap(3, KEYS, VALUES_EMBEDDED);
 
         assertThat(
-            MAP.values()
+            map.values()
                 .stream()
                 .flatMap(List::stream)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
